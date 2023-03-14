@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\ApiFormat;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -15,7 +17,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $data = Category::all();
+        return new ApiFormat(true, 'Daftar Kategori', $data);
     }
 
     /**
@@ -34,9 +37,22 @@ class CategoryController extends Controller
      * @param  \App\Http\Requests\StoreCategoryRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100',
+        ]);
+        if ($validator->fails()) {
+            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+        }
+
+        $data = Category::create([
+            'name' => $request->name
+        ]);
+        if (!$data) {
+            return new ApiFormat(true, 'Kategori baru gagal ditambahkan!', $data);
+        }
+        return new ApiFormat(true, 'Kategori baru berhasil ditambahkan!', $data);
     }
 
     /**
@@ -47,7 +63,11 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        $data = Category::find($category);
+        if (!$data) {
+            return new ApiFormat(false, 'Data kategori tidak ditemukan!', null);
+        }
+        return new ApiFormat(true, 'Berhasil mendapatkan data kategori!', $data);
     }
 
     /**
@@ -68,9 +88,25 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(Request $request, Category $category)
     {
-        //
+        $data = Category::find($category->id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data kategori tidak ditemukan!', null);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100',
+        ]);
+        if ($validator->fails()) {
+            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+        }
+
+        $data->update([
+            'name' => $request->name
+        ]);
+
+        return new ApiFormat(true, 'Data kategori berhasil diubah!', $data);
     }
 
     /**
@@ -81,6 +117,12 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $data = Category::find($category->id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data kategori tidak ditemukan!', null);
+        }
+        $data->delete();
+
+        return new ApiFormat(true, 'Data kategori berhasil dihapus!', $data);
     }
 }

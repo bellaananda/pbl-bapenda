@@ -15,8 +15,10 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->integer('position_id')->unsigned();
-            $table->integer('department_id')->unsigned();
+            // $table->integer('position_id')->unsigned();
+            // $table->integer('department_id')->unsigned();
+            $table->foreignId('position_id')->nullable()->constrained('positions') ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('department_id')->nullable()->constrained('departments') ->onUpdate('cascade')->onDelete('cascade');
             $table->string('nip');
             $table->string('name');
             $table->string('email')->unique();
@@ -25,8 +27,8 @@ class CreateUsersTable extends Migration
             $table->text('address');
             $table->enum('role', ['admin', 'operator', 'user']);
             $table->integer('status');
-            $table->foreign('position_id')->references('id')->on('positions');
-            $table->foreign('department_id')->references('id')->on('departments');
+            // $table->foreign('position_id')->references('id')->on('positions');
+            // $table->foreign('department_id')->references('id')->on('departments');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

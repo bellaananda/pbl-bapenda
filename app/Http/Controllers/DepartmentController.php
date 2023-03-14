@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
-use App\Http\Requests\StoreDepartmentRequest;
-use App\Http\Requests\UpdateDepartmentRequest;
+use App\Http\Resources\ApiFormat;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
 {
@@ -15,7 +17,8 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
+        $data = Department::all();
+        return new ApiFormat(true, 'Daftar Bidang', $data);
     }
 
     /**
@@ -34,9 +37,22 @@ class DepartmentController extends Controller
      * @param  \App\Http\Requests\StoreDepartmentRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreDepartmentRequest $request)
+    public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100',
+        ]);
+        if ($validator->fails()) {
+            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+        }
+
+        $data = Department::create([
+            'name' => $request->name
+        ]);
+        if (!$data) {
+            return new ApiFormat(true, 'Bidang baru gagal ditambahkan!', $data);
+        }
+        return new ApiFormat(true, 'Bidang baru berhasil ditambahkan!', $data);
     }
 
     /**
@@ -47,7 +63,11 @@ class DepartmentController extends Controller
      */
     public function show(Department $department)
     {
-        //
+        $data = Department::find($department);
+        if (!$data) {
+            return new ApiFormat(false, 'Data bidang tidak ditemukan!', null);
+        }
+        return new ApiFormat(true, 'Berhasil mendapatkan data bidang!', $data);
     }
 
     /**
@@ -68,9 +88,25 @@ class DepartmentController extends Controller
      * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateDepartmentRequest $request, Department $department)
+    public function update(Request $request, Department $department)
     {
-        //
+        $data = Department::find($department->id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data bidang tidak ditemukan!', null);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100',
+        ]);
+        if ($validator->fails()) {
+            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+        }
+
+        $data->update([
+            'name' => $request->name
+        ]);
+
+        return new ApiFormat(true, 'Data bidang berhasil diubah!', $data);
     }
 
     /**
@@ -81,6 +117,12 @@ class DepartmentController extends Controller
      */
     public function destroy(Department $department)
     {
-        //
+        $data = Department::find($department->id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data bidang tidak ditemukan!', null);
+        }
+        $data->delete();
+
+        return new ApiFormat(true, 'Data bidang berhasil dihapus!', $data);
     }
 }
