@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PositionController;
 
 /*
@@ -23,3 +24,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('positions', PositionController::class);
 Route::resource('departments', DepartmentController::class);
 Route::resource('categories', CategoryController::class);
+Route::resource('employees', EmployeeController::class);

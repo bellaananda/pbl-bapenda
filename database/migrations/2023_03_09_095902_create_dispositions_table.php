@@ -21,9 +21,6 @@ class CreateDispositionsTable extends Migration
             $table->foreign('agenda_id')->references('id')->on('agendas');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('department_id')->references('id')->on('departments');
-            // $table->foreignId('agenda_id')->constrained('agendas') ->onUpdate('cascade')->onDelete('cascade');
-            // $table->foreignId('user_id')->nullable()->constrained('users') ->onUpdate('cascade')->onDelete('cascade');
-            // $table->foreignId('department_id')->nullable()->constrained('departments') ->onUpdate('cascade')->onDelete('cascade');
             $table->text('description')->nullable();
             $table->integer('is_all')->nullable();
             $table->timestamps();

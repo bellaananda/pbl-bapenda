@@ -17,8 +17,6 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->bigInteger('position_id')->unsigned();
             $table->bigInteger('department_id')->unsigned();
-            // $table->foreignId('position_id')->nullable()->constrained('positions') ->onUpdate('cascade')->onDelete('cascade');
-            // $table->foreignId('department_id')->nullable()->constrained('departments') ->onUpdate('cascade')->onDelete('cascade');
             $table->string('nip');
             $table->string('name');
             $table->string('email')->unique();

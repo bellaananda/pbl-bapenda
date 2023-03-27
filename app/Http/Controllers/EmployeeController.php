@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employee;
-use App\Http\Requests\StoreEmployeeRequest;
-use App\Http\Requests\UpdateEmployeeRequest;
+use App\Models\User;
+use App\Http\Resources\ApiFormat;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
@@ -15,7 +16,12 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        //
+        $data = DB::table('users')
+                ->join('positions', 'users.position_id', '=', 'positions.id')
+                ->join('departments', 'users.department_id', '=', 'departments.id')
+                ->select('users.*', DB::raw('positions.name AS position', 'departments.name AS department'))
+                ->get();
+        return new ApiFormat(true, 'Data Pegawai', $data);
     }
 
     /**
@@ -34,18 +40,22 @@ class EmployeeController extends Controller
      * @param  \App\Http\Requests\StoreEmployeeRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreEmployeeRequest $request)
+    public function store(Request $request)
     {
-        //
+        $data = new User();
+        
+        $data->save();
+        
+        return new ApiFormat(true, 'Data pegawai berhasil ditambahkan!', $data);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(Employee $employee)
+    public function show(User $user)
     {
         //
     }
@@ -53,10 +63,10 @@ class EmployeeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(Employee $employee)
+    public function edit(User $user)
     {
         //
     }
@@ -65,10 +75,10 @@ class EmployeeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\UpdateEmployeeRequest  $request
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateEmployeeRequest $request, Employee $employee)
+    public function update(Request $request, User $user)
     {
         //
     }
@@ -76,10 +86,10 @@ class EmployeeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Employee  $employee
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Employee $employee)
+    public function destroy(User $user)
     {
         //
     }
