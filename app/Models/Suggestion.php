@@ -20,6 +20,10 @@ class Suggestion extends Model
     public function category() {
         return $this->belongsTo(Category::class);
     }
+
+    public function room() {
+        return $this->belongsTo(Room::class);
+    }
     
     public function agenda() {
         return $this->hasOne(Agenda::class);

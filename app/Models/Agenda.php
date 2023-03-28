@@ -16,6 +16,10 @@ class Agenda extends Model
     public function category() {
         return $this->belongsTo(Category::class);
     }
+
+    public function room() {
+        return $this->belongsTo(Room::class);
+    }
     
     public function suggestion() {
         return $this->belongsTo(Suggestion::class);

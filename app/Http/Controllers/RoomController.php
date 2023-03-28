@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
-use App\Http\Requests\StoreRoomRequest;
-use App\Http\Requests\UpdateRoomRequest;
+use App\Http\Resources\ApiFormat;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class RoomController extends Controller
 {
@@ -15,7 +17,8 @@ class RoomController extends Controller
      */
     public function index()
     {
-        //
+        $data = Room::all();
+        return new ApiFormat(true, 'Daftar Ruangan', $data);
     }
 
     /**
@@ -34,9 +37,22 @@ class RoomController extends Controller
      * @param  \App\Http\Requests\StoreRoomRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreRoomRequest $request)
+    public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100',
+        ]);
+        if ($validator->fails()) {
+            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+        }
+
+        $data = Room::create([
+            'name' => $request->name
+        ]);
+        if (!$data) {
+            return new ApiFormat(true, 'Ruangan baru gagal ditambahkan!', $data);
+        }
+        return new ApiFormat(true, 'Ruangan baru berhasil ditambahkan!', $data);
     }
 
     /**
@@ -47,7 +63,11 @@ class RoomController extends Controller
      */
     public function show(Room $room)
     {
-        //
+        $data = Room::find($room);
+        if (!$data) {
+            return new ApiFormat(false, 'Data ruangan tidak ditemukan!', null);
+        }
+        return new ApiFormat(true, 'Berhasil mendapatkan data ruangan!', $data);
     }
 
     /**
@@ -68,9 +88,25 @@ class RoomController extends Controller
      * @param  \App\Models\Room  $room
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateRoomRequest $request, Room $room)
+    public function update(Request $request, Room $room)
     {
-        //
+        $data = Room::find($room->id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data ruangan tidak ditemukan!', null);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:100',
+        ]);
+        if ($validator->fails()) {
+            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+        }
+
+        $data->update([
+            'name' => $request->name
+        ]);
+
+        return new ApiFormat(true, 'Data ruangan berhasil diubah!', $data);
     }
 
     /**
@@ -81,6 +117,12 @@ class RoomController extends Controller
      */
     public function destroy(Room $room)
     {
-        //
+        $data = Room::find($room->id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data ruangan tidak ditemukan!', null);
+        }
+        $data->delete();
+
+        return new ApiFormat(true, 'Data ruangan berhasil dihapus!', $data);
     }
 }

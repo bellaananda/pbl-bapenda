@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PositionController;
+use App\Http\Controllers\RoomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,4 +25,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('positions', PositionController::class);
 Route::resource('departments', DepartmentController::class);
 Route::resource('categories', CategoryController::class);
+Route::resource('rooms', RoomController::class);
 Route::resource('employees', EmployeeController::class);
