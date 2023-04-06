@@ -19,18 +19,19 @@ class CreateAgendasTable extends Migration
             $table->bigInteger('category_id')->unsigned();
             $table->bigInteger('room_id')->unsigned()->nullable();
             $table->bigInteger('suggestion_id')->unsigned()->nullable();
+            $table->bigInteger('person_in_charge')->unsigned();
             $table->string('title');
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time')->nullable();
             $table->text('location')->nullable();
             $table->text('contents');
-            $table->string('person_in_charge');
             $table->text('attachment')->nullable();
             $table->foreign('department_id')->references('id')->on('departments');
             $table->foreign('category_id')->references('id')->on('categories');
             $table->foreign('room_id')->references('id')->on('rooms');
             $table->foreign('suggestion_id')->references('id')->on('suggestions');
+            $table->foreign('person_in_charge')->references('id')->on('users');
             $table->timestamps();
         });
     }

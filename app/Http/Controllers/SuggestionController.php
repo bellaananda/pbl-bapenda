@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Suggestion;
 use App\Http\Resources\ApiFormat;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -19,7 +18,9 @@ class SuggestionController extends Controller
      */
     public function index()
     {
-        //
+        $data = DB::table('suggestions')
+                ->get();
+        return new ApiFormat(true, 'Data Pengajuan Agenda', $data);
     }
 
     /**
@@ -45,14 +46,14 @@ class SuggestionController extends Controller
             'user_id' => 'required',
             'department_id' => 'required',
             'category_id' => 'required',
-            'room_id' => 'required',
+            'room_id' => '',
             'title' => 'required|string',
             'date' => 'required',
             'start_time' => 'required',
             'end_time' => '',
-            'location' => 'required|string',
+            'location' => '',
             'contents' => 'required|string',
-            'person_in_charge' => 'required|string',
+            'person_in_charge' => 'required',
             'attachment' => '',
         ]);
         if ($validator->fails()) {
@@ -85,9 +86,13 @@ class SuggestionController extends Controller
      * @param  \App\Models\Suggestion  $suggestion
      * @return \Illuminate\Http\Response
      */
-    public function show(Suggestion $suggestion)
+    public function show($id)
     {
-        //
+        $data = Suggestion::find($id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data pengajuan agenda tidak ditemukan!', null);
+        }
+        return new ApiFormat(true, 'Berhasil mendapatkan data pengajuan agenda!', $data);
     }
 
     /**
@@ -120,14 +125,14 @@ class SuggestionController extends Controller
             'user_id' => 'required',
             'department_id' => 'required',
             'category_id' => 'required',
-            'room_id' => 'required',
+            'room_id' => '',
             'title' => 'required|string',
             'date' => 'required',
             'start_time' => 'required',
             'end_time' => '',
-            'location' => 'required|string',
+            'location' => '',
             'contents' => 'required|string',
-            'person_in_charge' => 'required|string',
+            'person_in_charge' => 'required',
             'attachment' => '',
         ]);
         if ($validator->fails()) {

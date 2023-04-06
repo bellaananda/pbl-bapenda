@@ -30,9 +30,10 @@ class Suggestion extends Model
     }
 
     protected $fillable = [
-        'employee_id',
+        'user_id',
         'department_id',
         'category_id',
+        'room_id',
         'title',
         'date',
         'start_time',
