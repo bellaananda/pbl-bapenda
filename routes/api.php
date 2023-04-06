@@ -7,6 +7,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\SuggestionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,3 +28,4 @@ Route::resource('departments', DepartmentController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('rooms', RoomController::class);
 Route::resource('employees', EmployeeController::class);
+Route::resource('suggestions', SuggestionController::class);

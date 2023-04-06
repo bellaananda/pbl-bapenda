@@ -16,4 +16,8 @@ class Room extends Model
     public function suggestion() {
         return $this->hasMany(Suggestion::class);
     }
+
+    protected $fillable = [
+        'name'
+    ];
 }

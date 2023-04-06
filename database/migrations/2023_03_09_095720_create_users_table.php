@@ -23,8 +23,8 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('phone_number');
             $table->text('address');
-            $table->enum('role', ['admin', 'operator', 'user']);
-            $table->integer('status');
+            $table->enum('role', ['admin', 'operator', 'user'])->default('user');
+            $table->integer('status')->default(1);
             $table->foreign('position_id')->references('id')->on('positions');
             $table->foreign('department_id')->references('id')->on('departments');
             $table->timestamp('email_verified_at')->nullable();
