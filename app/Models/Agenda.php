@@ -32,6 +32,7 @@ class Agenda extends Model
     protected $fillable = [
         'department_id',
         'category_id',
+        'room_id',
         'suggestion_id',
         'title',
         'date',

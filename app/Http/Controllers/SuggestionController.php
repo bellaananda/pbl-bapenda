@@ -47,13 +47,13 @@ class SuggestionController extends Controller
             'department_id' => 'required',
             'category_id' => 'required',
             'room_id' => '',
+            'person_in_charge' => 'required',
             'title' => 'required|string',
             'date' => 'required',
             'start_time' => 'required',
             'end_time' => '',
             'location' => '',
             'contents' => 'required|string',
-            'person_in_charge' => 'required',
             'attachment' => '',
         ]);
         if ($validator->fails()) {
@@ -65,13 +65,13 @@ class SuggestionController extends Controller
             'department_id' => $request->department_id,
             'category_id' => $request->category_id,
             'room_id' => $request->room_id,
+            'person_in_charge' => $request->person_in_charge,
             'title' => $request->title,
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'location' => $request->location,
             'contents' => $request->contents,
-            'person_in_charge' => $request->person_in_charge,
             'attachment' => $request->attachment,
         ]);
         if (!$data) {
@@ -126,13 +126,13 @@ class SuggestionController extends Controller
             'department_id' => 'required',
             'category_id' => 'required',
             'room_id' => '',
+            'person_in_charge' => 'required',
             'title' => 'required|string',
             'date' => 'required',
             'start_time' => 'required',
             'end_time' => '',
             'location' => '',
             'contents' => 'required|string',
-            'person_in_charge' => 'required',
             'attachment' => '',
         ]);
         if ($validator->fails()) {
@@ -144,13 +144,13 @@ class SuggestionController extends Controller
             'department_id' => $request->department_id,
             'category_id' => $request->category_id,
             'room_id' => $request->room_id,
+            'person_in_charge' => $request->person_in_charge,
             'title' => $request->title,
             'date' => $request->date,
             'start_time' => $request->start_time,
             'end_time' => $request->end_time,
             'location' => $request->location,
             'contents' => $request->contents,
-            'person_in_charge' => $request->person_in_charge,
             'attachment' => $request->attachment,
         ]);
         if (!$data) {

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AgendaController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
@@ -29,3 +30,4 @@ Route::resource('categories', CategoryController::class);
 Route::resource('rooms', RoomController::class);
 Route::resource('employees', EmployeeController::class);
 Route::resource('suggestions', SuggestionController::class);
+Route::resource('agendas', AgendaController::class);
