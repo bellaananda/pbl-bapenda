@@ -17,7 +17,7 @@ class RoomController extends Controller
      */
     public function index()
     {
-        $data = Room::all();
+        $data = Room::paginate(15);
         return new ApiFormat(true, 'Daftar Ruangan', $data);
     }
 

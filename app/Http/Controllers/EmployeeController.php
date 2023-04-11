@@ -35,7 +35,7 @@ class EmployeeController extends Controller
                     DB::raw('positions.name AS position'), 
                     DB::raw('departments.name AS department')
                 )
-                ->get();
+                ->paginate(15);
         return new ApiFormat(true, 'Data Pegawai', $data);
     }
 

@@ -18,6 +18,7 @@ class AgendaController extends Controller
      */
     public function index()
     {
+        //agendah where date
         $data = DB::table('agendas')
                 ->get();
         return new ApiFormat(true, 'Data Agenda', $data);

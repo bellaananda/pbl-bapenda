@@ -18,8 +18,9 @@ class DispositionController extends Controller
      */
     public function index()
     {
+        // $page = $request->page == null ? 15 : $request->page;
         $data = DB::table('dispositions')
-                ->get();
+                ->paginate(15);
         return new ApiFormat(true, 'Data Disposisi Agenda', $data);
     }
 

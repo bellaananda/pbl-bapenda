@@ -19,7 +19,7 @@ class SuggestionController extends Controller
     public function index()
     {
         $data = DB::table('suggestions')
-                ->get();
+                ->paginate(15);
         return new ApiFormat(true, 'Data Pengajuan Agenda', $data);
     }
 

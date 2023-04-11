@@ -17,7 +17,7 @@ class PositionController extends Controller
      */
     public function index()
     {
-        $data = Position::all();
+        $data = Position::paginate(15);
         return new ApiFormat(true, 'Daftar Jabatan', $data);
     }
 

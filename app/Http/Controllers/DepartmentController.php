@@ -17,7 +17,7 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $data = Department::all();
+        $data = Department::paginate(15);
         return new ApiFormat(true, 'Daftar Bidang', $data);
     }
 
