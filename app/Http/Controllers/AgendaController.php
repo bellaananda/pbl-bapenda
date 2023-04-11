@@ -20,7 +20,7 @@ class AgendaController extends Controller
     {
         $data = DB::table('agendas')
                 ->get();
-        return new ApiFormat(true, 'Data Pengajuan Agenda', $data);
+        return new ApiFormat(true, 'Data Agenda', $data);
     }
 
     /**

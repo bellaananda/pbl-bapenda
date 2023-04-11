@@ -23,7 +23,7 @@ class Disposition extends Model
 
     protected $fillable = [
         'agenda_id',
-        'employee_id',
+        'user_id',
         'department_id',
         'description',
         'is_all'

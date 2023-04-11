@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disposition;
-use App\Http\Requests\StoreDispositionRequest;
-use App\Http\Requests\UpdateDispositionRequest;
+use App\Http\Resources\ApiFormat;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class DispositionController extends Controller
 {
@@ -15,7 +18,9 @@ class DispositionController extends Controller
      */
     public function index()
     {
-        //
+        $data = DB::table('dispositions')
+                ->get();
+        return new ApiFormat(true, 'Data Disposisi Agenda', $data);
     }
 
     /**
@@ -34,9 +39,30 @@ class DispositionController extends Controller
      * @param  \App\Http\Requests\StoreDispositionRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreDispositionRequest $request)
+    public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'agenda_id' => 'required',
+            'user_id' => '',
+            'department_id' => '',
+            'description' => '',
+            'is_all' => '',
+        ]);
+        if ($validator->fails()) {
+            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+        }
+
+        $data = Disposition::create([
+            'agenda_id' => $request->agenda_id,
+            'user_id' => $request->user_id,
+            'department_id' => $request->department_id,
+            'description' => $request->description,
+            'is_all' => $request->is_all,
+        ]);
+        if (!$data) {
+            return new ApiFormat(true, 'Disposisi agenda baru gagal ditambahkan!', $data);
+        }
+        return new ApiFormat(true, 'Disposisi agenda baru berhasil ditambahkan!', $data);
     }
 
     /**
@@ -45,9 +71,13 @@ class DispositionController extends Controller
      * @param  \App\Models\Disposition  $disposition
      * @return \Illuminate\Http\Response
      */
-    public function show(Disposition $disposition)
+    public function show($id)
     {
-        //
+        $data = Disposition::find($id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data disposisi agenda tidak ditemukan!', null);
+        }
+        return new ApiFormat(true, 'Berhasil mendapatkan data disposisi agenda!', $data);
     }
 
     /**
@@ -68,9 +98,35 @@ class DispositionController extends Controller
      * @param  \App\Models\Disposition  $disposition
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateDispositionRequest $request, Disposition $disposition)
+    public function update(Request $request, $id)
     {
-        //
+        $data = Disposition::find($id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data disposisi agenda tidak ditemukan!', null);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'agenda_id' => 'required',
+            'user_id' => '',
+            'department_id' => '',
+            'description' => '',
+            'is_all' => '',
+        ]);
+        if ($validator->fails()) {
+            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+        }
+
+        $data->update([
+            'agenda_id' => $request->agenda_id,
+            'user_id' => $request->user_id,
+            'department_id' => $request->department_id,
+            'description' => $request->description,
+            'is_all' => $request->is_all,
+        ]);
+        if (!$data) {
+            return new ApiFormat(true, 'Data disposisi agenda gagal diubah!', $data);
+        }
+        return new ApiFormat(true, 'Data disposisi agenda berhasil diubah!', $data);
     }
 
     /**
@@ -79,8 +135,14 @@ class DispositionController extends Controller
      * @param  \App\Models\Disposition  $disposition
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Disposition $disposition)
+    public function destroy($id)
     {
-        //
+        $data = Disposition::find($id);
+        if (!$data) {
+            return new ApiFormat(false, 'Data disposisi agenda tidak ditemukan!', null);
+        }
+        $data->delete();
+
+        return new ApiFormat(true, 'Data disposisi agenda berhasil dihapus!', $data);
     }
 }
