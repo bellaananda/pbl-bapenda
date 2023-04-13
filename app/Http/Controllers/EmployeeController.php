@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Http\Resources\ApiFormat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -36,7 +35,11 @@ class EmployeeController extends Controller
                     DB::raw('departments.name AS department')
                 )
                 ->paginate(15);
-        return new ApiFormat(true, 'Data Pegawai', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Pegawai',
+            'data'    => $data  
+        ], 200);
     }
 
     /**
@@ -67,7 +70,7 @@ class EmployeeController extends Controller
             'address' => 'required|string',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data = User::create([
@@ -81,9 +84,16 @@ class EmployeeController extends Controller
             'address' => $request->address
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Pegawai baru gagal ditambahkan!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Pegawai baru gagal ditambahkan!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Pegawai baru berhasil ditambahkan!', $data);        
+        return response()->json([
+            'success' => true,
+            'message' => 'Pegawai baru berhasil ditambahkan!',
+            'data'    => $data
+        ], 201);      
     }
 
     /**
@@ -96,9 +106,16 @@ class EmployeeController extends Controller
     {
         $data = User::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data pegawai tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pegawai tidak ditemukan!'
+            ], 404);
         }
-        return new ApiFormat(true, 'Berhasil mendapatkan data pegawai!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data pegawai!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -123,7 +140,10 @@ class EmployeeController extends Controller
     {
         $data = User::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data pegawai tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pegawai tidak ditemukan!'
+            ], 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -136,7 +156,7 @@ class EmployeeController extends Controller
             'address' => 'required|string',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data->update([
@@ -151,9 +171,16 @@ class EmployeeController extends Controller
             'status' => $request->status
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Data pegawai gagal diubah!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pegawai gagal diubah!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Data pegawai berhasil diubah!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Data pegawai berhasil diubah!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -166,10 +193,21 @@ class EmployeeController extends Controller
     {
         $data = User::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data pegawai tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pegawai tidak ditemukan!'
+            ], 404);
         }
         $data->delete();
-
-        return new ApiFormat(true, 'Data pegawai berhasil dihapus!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pegawai gagal dihapus!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data pegawai berhasil dihapus!'
+        ], 200);
     }
 }

@@ -21,7 +21,11 @@ class DispositionController extends Controller
         // $page = $request->page == null ? 15 : $request->page;
         $data = DB::table('dispositions')
                 ->paginate(15);
-        return new ApiFormat(true, 'Data Disposisi Agenda', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Disposisi Agenda',
+            'data'    => $data  
+        ], 200);
     }
 
     /**
@@ -50,7 +54,7 @@ class DispositionController extends Controller
             'is_all' => '',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data = Disposition::create([
@@ -61,9 +65,16 @@ class DispositionController extends Controller
             'is_all' => $request->is_all,
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Disposisi agenda baru gagal ditambahkan!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Disposisi agenda baru gagal ditambahkan!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Disposisi agenda baru berhasil ditambahkan!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Disposisi agenda baru berhasil ditambahkan!',
+            'data'    => $data
+        ], 201);
     }
 
     /**
@@ -77,8 +88,16 @@ class DispositionController extends Controller
         $data = Disposition::find($id);
         if (!$data) {
             return new ApiFormat(false, 'Data disposisi agenda tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data disposisi agenda tidak ditemukan!'
+            ], 404);
         }
-        return new ApiFormat(true, 'Berhasil mendapatkan data disposisi agenda!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data disposisi agenda!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -103,7 +122,10 @@ class DispositionController extends Controller
     {
         $data = Disposition::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data disposisi agenda tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data disposisi agenda tidak ditemukan!'
+            ], 404);
         }
 
         $validator = Validator::make($request->all(), [
@@ -114,7 +136,7 @@ class DispositionController extends Controller
             'is_all' => '',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data->update([
@@ -125,9 +147,16 @@ class DispositionController extends Controller
             'is_all' => $request->is_all,
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Data disposisi agenda gagal diubah!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data disposisi agenda gagal diubah!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Data disposisi agenda berhasil diubah!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Data disposisi agenda berhasil diubah!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -141,9 +170,21 @@ class DispositionController extends Controller
         $data = Disposition::find($id);
         if (!$data) {
             return new ApiFormat(false, 'Data disposisi agenda tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data disposisi agenda tidak ditemukan!'
+            ], 404);
         }
         $data->delete();
-
-        return new ApiFormat(true, 'Data disposisi agenda berhasil dihapus!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data disposisi agenda gagal dihapus!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data disposisi agenda berhasil dihapus!'
+        ], 200);
     }
 }

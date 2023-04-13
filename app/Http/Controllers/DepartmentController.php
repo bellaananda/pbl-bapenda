@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Department;
-use App\Http\Resources\ApiFormat;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,7 +17,11 @@ class DepartmentController extends Controller
     public function index()
     {
         $data = Department::paginate(15);
-        return new ApiFormat(true, 'Daftar Bidang', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Bidang',
+            'data'    => $data  
+        ], 200);
     }
 
     /**
@@ -43,16 +46,23 @@ class DepartmentController extends Controller
             'name' => 'required|string|max:100',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data = Department::create([
             'name' => $request->name
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Bidang baru gagal ditambahkan!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Bidang baru gagal ditambahkan!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Bidang baru berhasil ditambahkan!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Bidang baru berhasil ditambahkan!',
+            'data'    => $data
+        ], 201);
     }
 
     /**
@@ -61,13 +71,20 @@ class DepartmentController extends Controller
      * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function show(Department $department)
+    public function show($id)
     {
-        $data = Department::find($department);
+        $data = Department::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data bidang tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data bidang tidak ditemukan!'
+            ], 404);
         }
-        return new ApiFormat(true, 'Berhasil mendapatkan data bidang!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data bidang!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -92,21 +109,33 @@ class DepartmentController extends Controller
     {
         $data = Department::find($department->id);
         if (!$data) {
-            return new ApiFormat(false, 'Data bidang tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data bidang tidak ditemukan!'
+            ], 404);
         }
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data->update([
             'name' => $request->name
         ]);
-
-        return new ApiFormat(true, 'Data bidang berhasil diubah!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data bidang gagal diubah!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data bidang berhasil diubah!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -119,10 +148,21 @@ class DepartmentController extends Controller
     {
         $data = Department::find($department->id);
         if (!$data) {
-            return new ApiFormat(false, 'Data bidang tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data bidang tidak ditemukan!'
+            ], 404);
         }
         $data->delete();
-
-        return new ApiFormat(true, 'Data bidang berhasil dihapus!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data bidang gagal dihapus!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data bidang berhasil dihapus!'
+        ], 200);
     }
 }

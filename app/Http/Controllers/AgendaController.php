@@ -21,7 +21,11 @@ class AgendaController extends Controller
         //agendah where date
         $data = DB::table('agendas')
                 ->get();
-        return new ApiFormat(true, 'Data Agenda', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Agenda',
+            'data'    => $data  
+        ], 200);
     }
 
     /**
@@ -57,7 +61,7 @@ class AgendaController extends Controller
             'attachment' => '',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data = Agenda::create([
@@ -75,9 +79,16 @@ class AgendaController extends Controller
             'attachment' => $request->attachment,
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Agenda baru gagal ditambahkan!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Agenda baru gagal ditambahkan!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Agenda baru berhasil ditambahkan!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Agenda baru berhasil ditambahkan!',
+            'data'    => $data
+        ], 201);
     }
 
     /**
@@ -90,9 +101,16 @@ class AgendaController extends Controller
     {
         $data = Agenda::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data agenda tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda tidak ditemukan!'
+            ], 404);
         }
-        return new ApiFormat(true, 'Berhasil mendapatkan data agenda!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data agenda!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -117,7 +135,10 @@ class AgendaController extends Controller
     {
         $data = Agenda::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data agenda tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda tidak ditemukan!'
+            ], 404);
         }
 
         //if
@@ -135,7 +156,7 @@ class AgendaController extends Controller
             'attachment' => '',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data->update([
@@ -153,10 +174,16 @@ class AgendaController extends Controller
             'attachment' => $request->attachment,
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Data agenda gagal diubah!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda gagal diubah!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Data agenda berhasil diubah!', $data);
-    }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data agenda berhasil diubah!',
+            'data'    => $data
+        ], 200);    }
 
     /**
      * Remove the specified resource from storage.
@@ -168,10 +195,21 @@ class AgendaController extends Controller
     {
         $data = Agenda::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data agenda tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda tidak ditemukan!'
+            ], 404);
         }
         $data->delete();
-
-        return new ApiFormat(true, 'Data agenda berhasil dihapus!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda gagal dihapus!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data agenda berhasil dihapus!'
+        ], 200);
     }
 }

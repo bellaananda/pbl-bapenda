@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Position;
-use App\Http\Resources\ApiFormat;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,7 +17,11 @@ class PositionController extends Controller
     public function index()
     {
         $data = Position::paginate(15);
-        return new ApiFormat(true, 'Daftar Jabatan', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Jabatan',
+            'data'    => $data  
+        ], 200);
     }
 
     /**
@@ -43,16 +46,23 @@ class PositionController extends Controller
             'name' => 'required|string|max:100',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data = Position::create([
             'name' => $request->name
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Jabatan baru gagal ditambahkan!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Jabatan baru gagal ditambahkan!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Jabatan baru berhasil ditambahkan!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Jabatan baru berhasil ditambahkan!',
+            'data'    => $data
+        ], 201);
     }
 
     /**
@@ -61,13 +71,20 @@ class PositionController extends Controller
      * @param  \App\Models\Position  $position
      * @return \Illuminate\Http\Response
      */
-    public function show(Position $position)
+    public function show($id)
     {
-        $data = Position::find($position);
+        $data = Position::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data jabatan tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data jabatan tidak ditemukan!'
+            ], 404);
         }
-        return new ApiFormat(true, 'Berhasil mendapatkan data jabatan!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data jabatan!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -92,21 +109,33 @@ class PositionController extends Controller
     {
         $data = Position::find($position->id);
         if (!$data) {
-            return new ApiFormat(false, 'Data jabatan tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data jabatan tidak ditemukan!'
+            ], 404);
         }
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data->update([
             'name' => $request->name
         ]);
-
-        return new ApiFormat(true, 'Data jabatan berhasil diubah!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data jabatan gagal diubah!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data jabatan berhasil diubah!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -119,10 +148,21 @@ class PositionController extends Controller
     {
         $data = Position::find($position->id);
         if (!$data) {
-            return new ApiFormat(false, 'Data jabatan tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data jabatan tidak ditemukan!'
+            ], 404);
         }
         $data->delete();
-
-        return new ApiFormat(true, 'Data jabatan berhasil dihapus!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data jabatan gagal dihapus!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data jabatan berhasil dihapus!'
+        ], 200);
     }
 }

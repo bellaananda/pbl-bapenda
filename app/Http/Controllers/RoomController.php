@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
-use App\Http\Resources\ApiFormat;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,7 +17,11 @@ class RoomController extends Controller
     public function index()
     {
         $data = Room::paginate(15);
-        return new ApiFormat(true, 'Daftar Ruangan', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Ruangan',
+            'data'    => $data  
+        ], 200);
     }
 
     /**
@@ -43,16 +46,23 @@ class RoomController extends Controller
             'name' => 'required|string|max:100',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data = Room::create([
             'name' => $request->name
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Ruangan baru gagal ditambahkan!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Ruangan baru gagal ditambahkan!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Ruangan baru berhasil ditambahkan!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Ruangan baru berhasil ditambahkan!',
+            'data'    => $data
+        ], 201);
     }
 
     /**
@@ -61,13 +71,20 @@ class RoomController extends Controller
      * @param  \App\Models\Room  $room
      * @return \Illuminate\Http\Response
      */
-    public function show(Room $room)
+    public function show($id)
     {
-        $data = Room::find($room);
+        $data = Room::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data ruangan tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data ruangan tidak ditemukan!'
+            ], 404);
         }
-        return new ApiFormat(true, 'Berhasil mendapatkan data ruangan!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data ruangan!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -92,21 +109,33 @@ class RoomController extends Controller
     {
         $data = Room::find($room->id);
         if (!$data) {
-            return new ApiFormat(false, 'Data ruangan tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data ruangan tidak ditemukan!'
+            ], 404);
         }
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data->update([
             'name' => $request->name
         ]);
-
-        return new ApiFormat(true, 'Data ruangan berhasil diubah!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data ruangan gagal diubah!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data ruangan berhasil diubah!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -119,10 +148,21 @@ class RoomController extends Controller
     {
         $data = Room::find($room->id);
         if (!$data) {
-            return new ApiFormat(false, 'Data ruangan tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data ruangan tidak ditemukan!'
+            ], 404);
         }
         $data->delete();
-
-        return new ApiFormat(true, 'Data ruangan berhasil dihapus!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data ruangan gagal dihapus!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data ruangan berhasil dihapus!'
+        ], 200);
     }
 }

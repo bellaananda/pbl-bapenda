@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Http\Resources\ApiFormat;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,7 +17,11 @@ class CategoryController extends Controller
     public function index()
     {
         $data = Category::paginate(15);
-        return new ApiFormat(true, 'Daftar Kategori', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Kategori',
+            'data'    => $data  
+        ], 200);
     }
 
     /**
@@ -43,16 +46,23 @@ class CategoryController extends Controller
             'name' => 'required|string|max:100',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data = Category::create([
             'name' => $request->name
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Kategori baru gagal ditambahkan!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Kategori baru gagal ditambahkan!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Kategori baru berhasil ditambahkan!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Kategori baru berhasil ditambahkan!',
+            'data'    => $data
+        ], 201);
     }
 
     /**
@@ -61,13 +71,20 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show($id)
     {
-        $data = Category::find($category);
+        $data = Category::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data kategori tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data kategori tidak ditemukan!'
+            ], 404);
         }
-        return new ApiFormat(true, 'Berhasil mendapatkan data kategori!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data kategori!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -92,21 +109,33 @@ class CategoryController extends Controller
     {
         $data = Category::find($category->id);
         if (!$data) {
-            return new ApiFormat(false, 'Data kategori tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data kategori tidak ditemukan!'
+            ], 404);
         }
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:100',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data->update([
             'name' => $request->name
         ]);
-
-        return new ApiFormat(true, 'Data kategori berhasil diubah!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data kategori gagal diubah!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data kategori berhasil diubah!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -119,10 +148,21 @@ class CategoryController extends Controller
     {
         $data = Category::find($category->id);
         if (!$data) {
-            return new ApiFormat(false, 'Data kategori tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data kategori tidak ditemukan!'
+            ], 404);
         }
         $data->delete();
-
-        return new ApiFormat(true, 'Data kategori berhasil dihapus!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data kategori gagal dihapus!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data kategori berhasil dihapus!'
+        ], 200);
     }
 }

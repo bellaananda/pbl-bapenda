@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Suggestion;
-use App\Http\Resources\ApiFormat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
@@ -20,7 +19,11 @@ class SuggestionController extends Controller
     {
         $data = DB::table('suggestions')
                 ->paginate(15);
-        return new ApiFormat(true, 'Data Pengajuan Agenda', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Pengajuan Agenda',
+            'data'    => $data  
+        ], 200);
     }
 
     /**
@@ -57,7 +60,7 @@ class SuggestionController extends Controller
             'attachment' => '',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data = Suggestion::create([
@@ -75,9 +78,16 @@ class SuggestionController extends Controller
             'attachment' => $request->attachment,
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Pengajuan agenda baru gagal ditambahkan!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Pengajuan agenda baru gagal ditambahkan!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Pengajuan agenda baru berhasil ditambahkan!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengajuan agenda baru berhasil ditambahkan!',
+            'data'    => $data
+        ], 201);
     }
 
     /**
@@ -90,9 +100,16 @@ class SuggestionController extends Controller
     {
         $data = Suggestion::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data pengajuan agenda tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengajuan agenda tidak ditemukan!'
+            ], 404);
         }
-        return new ApiFormat(true, 'Berhasil mendapatkan data pengajuan agenda!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data pengajuan agenda!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -117,7 +134,10 @@ class SuggestionController extends Controller
     {
         $data = Suggestion::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data pengajuan agenda tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengajuan agenda tidak ditemukan!'
+            ], 404);
         }
 
         //if
@@ -136,7 +156,7 @@ class SuggestionController extends Controller
             'attachment' => '',
         ]);
         if ($validator->fails()) {
-            return new ApiFormat(false, 'Validasi gagal', $validator->errors()->all());
+            return response()->json($validator->errors(), 400);
         }
 
         $data->update([
@@ -154,9 +174,16 @@ class SuggestionController extends Controller
             'attachment' => $request->attachment,
         ]);
         if (!$data) {
-            return new ApiFormat(true, 'Data pengajuan agenda gagal diubah!', $data);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengajuan agenda gagal diubah!'
+            ], 409);
         }
-        return new ApiFormat(true, 'Data pengajuan agenda berhasil diubah!', $data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Data pengajuan agenda berhasil diubah!',
+            'data'    => $data
+        ], 200);
     }
 
     /**
@@ -169,10 +196,21 @@ class SuggestionController extends Controller
     {
         $data = Suggestion::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data pengajuan agenda tidak ditemukan!', null);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengajuan agenda tidak ditemukan!'
+            ], 404);
         }
         $data->delete();
-
-        return new ApiFormat(true, 'Data pengajuan agenda berhasil dihapus!', $data);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengajuan agenda gagal dihapus!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Data pengajuan agenda berhasil dihapus!'
+        ], 200);
     }
 }
