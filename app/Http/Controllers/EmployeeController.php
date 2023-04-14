@@ -16,9 +16,10 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //field nya
+        $search = $request->search;
         $data = DB::table('users')
                 ->join('positions', 'users.position_id', '=', 'positions.id')
                 ->join('departments', 'users.department_id', '=', 'departments.id')
@@ -35,6 +36,33 @@ class EmployeeController extends Controller
                     DB::raw('departments.name AS department')
                 )
                 ->paginate(15);
+        if ($search != null) {
+            $data = DB::table('users')
+                ->join('positions', 'users.position_id', '=', 'positions.id')
+                ->join('departments', 'users.department_id', '=', 'departments.id')
+                ->select(
+                    'users.id', 
+                    'users.nip', 
+                    'users.name', 
+                    'users.email', 
+                    'users.phone_number', 
+                    'users.address', 
+                    'users.role', 
+                    'users.status', 
+                    DB::raw('positions.name AS position'), 
+                    DB::raw('departments.name AS department')
+                )
+                ->where('users.nip', 'LIKE', '%' . $search .'%')
+                ->orWhere('users.name', 'LIKE', '%' . $search .'%')
+                ->orWhere('users.email', 'LIKE', '%' . $search .'%')
+                ->orWhere('users.phone_number', 'LIKE', '%' . $search .'%')
+                ->orWhere('users.address', 'LIKE', '%' . $search .'%')
+                ->orWhere('users.role', 'LIKE', '%' . $search .'%')
+                ->orWhere('users.status', 'LIKE', '%' . $search .'%')
+                ->orWhere('positions.name', 'LIKE', '%' . $search .'%')
+                ->orWhere('departments.name', 'LIKE', '%' . $search .'%')
+                ->paginate(15);
+        }
         return response()->json([
             'success' => true,
             'message' => 'Daftar Pegawai',
@@ -104,7 +132,22 @@ class EmployeeController extends Controller
      */
     public function show($id)
     {
-        $data = User::find($id);
+        $data = User::find($id)
+                ->join('positions', 'users.position_id', '=', 'positions.id')
+                ->join('departments', 'users.department_id', '=', 'departments.id')
+                ->select(
+                    'users.id', 
+                    'users.nip', 
+                    'users.name', 
+                    'users.email', 
+                    'users.phone_number', 
+                    'users.address', 
+                    'users.role', 
+                    'users.status', 
+                    DB::raw('positions.name AS position'), 
+                    DB::raw('departments.name AS department')
+                )
+                ->get();
         if (!$data) {
             return response()->json([
                 'success' => false,

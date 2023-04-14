@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agenda;
-use App\Http\Resources\ApiFormat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
@@ -16,11 +15,67 @@ class AgendaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         //agendah where date
+        $search = $request->search;
         $data = DB::table('agendas')
-                ->get();
+                ->join('users', 'agendas.person_in_charge', '=', 'users.id')
+                ->join('departments', 'agendas.department_id', '=', 'departments.id')
+                ->join('categories', 'agendas.category_id', '=', 'categories.id')
+                ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
+                ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->select(
+                    'agendas.id', 
+                    'agendas.title', 
+                    'agendas.date', 
+                    'agendas.start_time', 
+                    'agendas.end_time', 
+                    'agendas.location', 
+                    'agendas.contents', 
+                    'agendas.attachment', 
+                    DB::raw('users.name AS person_in_charge'), 
+                    DB::raw('departments.name AS department'),
+                    DB::raw('categories.name AS category'),
+                    DB::raw('rooms.name AS room'),
+                    DB::raw('suggestions.title AS suggestion')
+                )
+                ->paginate(15);
+        if ($search != null) {
+            $data = DB::table('suggestions')
+                    ->join('users', 'agendas.person_in_charge', '=', 'users.id')
+                    ->join('departments', 'agendas.department_id', '=', 'departments.id')
+                    ->join('categories', 'agendas.category_id', '=', 'categories.id')
+                    ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
+                    ->join('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                    ->select(
+                        'agendas.id', 
+                        'agendas.title', 
+                        'agendas.date', 
+                        'agendas.start_time', 
+                        'agendas.end_time', 
+                        'agendas.location', 
+                        'agendas.contents', 
+                        'agendas.attachment', 
+                        DB::raw('users.name AS person_in_charge'), 
+                        DB::raw('departments.name AS department'),
+                        DB::raw('categories.name AS category'),
+                        DB::raw('rooms.name AS room'),
+                        DB::raw('suggestions.title AS suggestion')
+                    )
+                    ->where('agendas.title', 'LIKE', '%' . $search .'%')
+                    ->orWhere('agendas.date', 'LIKE', '%' . $search .'%')
+                    ->orWhere('agendas.start_time', 'LIKE', '%' . $search .'%')
+                    ->orWhere('agendas.end_time', 'LIKE', '%' . $search .'%')
+                    ->orWhere('agendas.location', 'LIKE', '%' . $search .'%')
+                    ->orWhere('agendas.contents', 'LIKE', '%' . $search .'%')
+                    ->orWhere('users.name', 'LIKE', '%' . $search .'%')
+                    ->orWhere('departments.name', 'LIKE', '%' . $search .'%')
+                    ->orWhere('categories.name', 'LIKE', '%' . $search .'%')
+                    ->orWhere('rooms.name', 'LIKE', '%' . $search .'%')
+                    ->orWhere('suggestions.title', 'LIKE', '%' . $search .'%')
+                    ->paginate(15);
+        }
         return response()->json([
             'success' => true,
             'message' => 'Daftar Agenda',
@@ -99,6 +154,7 @@ class AgendaController extends Controller
      */
     public function show($id)
     {
+        //add join
         $data = Agenda::find($id);
         if (!$data) {
             return response()->json([

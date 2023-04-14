@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Position;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -14,13 +15,18 @@ class PositionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->search;
         $data = Position::paginate(15);
+        if ($search != null) {
+            $data = DB::table('positions')
+                    ->where('name', 'LIKE', '%' . $search .'%')->paginate(15);
+        }
         return response()->json([
             'success' => true,
             'message' => 'Daftar Jabatan',
-            'data'    => $data  
+            'data'    => $data
         ], 200);
     }
 

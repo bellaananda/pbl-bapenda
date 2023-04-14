@@ -15,10 +15,65 @@ class SuggestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->search;
         $data = DB::table('suggestions')
+                ->join('users', 'suggestions.user_id', '=', 'users.id')
+                ->join('departments', 'suggestions.department_id', '=', 'departments.id')
+                ->join('categories', 'suggestions.category_id', '=', 'categories.id')
+                ->join('rooms', 'suggestions.room_id', '=', 'rooms.id')
+                ->select(
+                    'suggestions.id', 
+                    'suggestions.title', 
+                    'suggestions.date', 
+                    'suggestions.start_time', 
+                    'suggestions.end_time', 
+                    'suggestions.location', 
+                    'suggestions.contents', 
+                    'suggestions.attachment', 
+                    'suggestions.status', 
+                    DB::raw('users.name AS user'), 
+                    DB::raw('departments.name AS department'),
+                    DB::raw('categories.name AS category'),
+                    DB::raw('rooms.name AS room'),
+                    DB::raw('users.name AS person_in_charge')
+                )
                 ->paginate(15);
+        if ($search != null) {
+            $data = DB::table('suggestions')
+                    ->join('users', 'suggestions.user_id', '=', 'users.id')
+                    ->join('departments', 'suggestions.department_id', '=', 'departments.id')
+                    ->join('categories', 'suggestions.category_id', '=', 'categories.id')
+                    ->join('rooms', 'suggestions.room_id', '=', 'rooms.id')
+                    ->select(
+                        'suggestions.id', 
+                        'suggestions.title', 
+                        'suggestions.date', 
+                        'suggestions.start_time', 
+                        'suggestions.end_time', 
+                        'suggestions.location', 
+                        'suggestions.contents', 
+                        'suggestions.attachment', 
+                        'suggestions.status', 
+                        DB::raw('users.name AS user'), 
+                        DB::raw('departments.name AS department'),
+                        DB::raw('categories.name AS category'),
+                        DB::raw('rooms.name AS room'),
+                        DB::raw('users.name AS person_in_charge')
+                    )
+                    ->where('suggestions.title', 'LIKE', '%' . $search .'%')
+                    ->orWhere('suggestions.date', 'LIKE', '%' . $search .'%')
+                    ->orWhere('suggestions.start_time', 'LIKE', '%' . $search .'%')
+                    ->orWhere('suggestions.end_time', 'LIKE', '%' . $search .'%')
+                    ->orWhere('suggestions.location', 'LIKE', '%' . $search .'%')
+                    ->orWhere('suggestions.contents', 'LIKE', '%' . $search .'%')
+                    ->orWhere('users.name', 'LIKE', '%' . $search .'%')
+                    ->orWhere('departments.name', 'LIKE', '%' . $search .'%')
+                    ->orWhere('categories.name', 'LIKE', '%' . $search .'%')
+                    ->orWhere('rooms.name', 'LIKE', '%' . $search .'%')
+                    ->paginate(15);
+        }
         return response()->json([
             'success' => true,
             'message' => 'Daftar Pengajuan Agenda',
@@ -98,6 +153,7 @@ class SuggestionController extends Controller
      */
     public function show($id)
     {
+        //add join
         $data = Suggestion::find($id);
         if (!$data) {
             return response()->json([

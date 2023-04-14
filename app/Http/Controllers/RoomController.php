@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -14,9 +15,14 @@ class RoomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->search;
         $data = Room::paginate(15);
+        if ($search != null) {
+            $data = DB::table('rooms')
+                    ->where('name', 'LIKE', '%' . $search .'%')->paginate(15);
+        }
         return response()->json([
             'success' => true,
             'message' => 'Daftar Ruangan',

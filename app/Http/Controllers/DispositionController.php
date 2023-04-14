@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Disposition;
-use App\Http\Resources\ApiFormat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
@@ -18,7 +17,6 @@ class DispositionController extends Controller
      */
     public function index()
     {
-        // $page = $request->page == null ? 15 : $request->page;
         $data = DB::table('dispositions')
                 ->paginate(15);
         return response()->json([
@@ -87,7 +85,6 @@ class DispositionController extends Controller
     {
         $data = Disposition::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data disposisi agenda tidak ditemukan!', null);
             return response()->json([
                 'success' => false,
                 'message' => 'Data disposisi agenda tidak ditemukan!'
@@ -169,7 +166,6 @@ class DispositionController extends Controller
     {
         $data = Disposition::find($id);
         if (!$data) {
-            return new ApiFormat(false, 'Data disposisi agenda tidak ditemukan!', null);
             return response()->json([
                 'success' => false,
                 'message' => 'Data disposisi agenda tidak ditemukan!'
