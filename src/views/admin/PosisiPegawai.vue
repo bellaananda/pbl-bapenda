@@ -1,108 +1,130 @@
 <template>
   <div class="content-wrapper">
+    <div class="row">
+      <div class="col-md-12 grid-margin title">
         <div class="row">
-          <div class="col-md-12 grid-margin title">
-            <div class="row">
-              <div class="col-12 align-items-center">
-                <h3 class="font-weight-bold">KELOLA POSISI BAPENDA SURAKARTA</h3>
-              </div>
-            </div>
+          <div class="col-12 align-items-center">
+            <h3 class="font-weight-bold">KELOLA POSISI BAPENDA SURAKARTA</h3>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 grid-margin">
         <div class="row">
-          <div class="col-md-12 grid-margin stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <p class="card-description float-right">
-                  <a href="#" class="btn btn-sm btn-primary btn-icon-text" data-toggle="modal" data-target="#modalCreate">
-                    <i class="mdi mdi-plus btn-icon-prepend"></i>
-                    Tambah
-                  </a>
-                </p>
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>No</th>
-                        <th>Posisi</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="(position, index) in positions.data" :key="position.id">
-                        <td>{{ index + 1}}</td>
-                        <td>{{ position.name }}</td>
+          <div class="col-lg-5">
+            <input type="text" placeholder="Search..." name="cari" id="cari" class="form-control">
+          </div>
+        </div>
+      </div>
+    </div> 
+    <div class="row">
+      <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Data Posisi</h4>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Posisi</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(position, index) in positions.data" v-bind:key="position.id">
+                    <template v-if="editId == position.id">
+                      <td>{{ index + 1}}</td>
+                        <td><input v-model="editPositionData.name" type="text"></td>
                         <td>
-                          <a href="" class="btn btn-sm btn-primary" @click.prevent="editPosition(position)" data-toggle="modal" data-target="#modalUpdate">
-                            <i class="mdi mdi-pencil btn-icon-prepend"></i>
+                          <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="editPosition(position.id)">
+                            <i class="mdi mdi-check btn-icon-prepend"></i>
                           </a>
-                          <a href="" class="btn btn-sm btn-danger" @click.prevent="deletePosition(position.id)">
-                              <i class="mdi mdi-delete btn-icon-prepend"></i>
+                          <a href="" class="btn btn-sm btn-inverse-danger" @click.prevent="onCancel()">
+                            <i class="mdi mdi-close btn-icon-prepend"></i>
                           </a>
                         </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    </template>
+                    <template v-else>
+                      <td>{{ index + 1}}</td>
+                      <td>{{ position.name }}</td>
+                      <td>
+                        <a href="" class="btn btn-sm btn-inverse-warning" @click.prevent="onEdit(position)">
+                          <i class="mdi mdi-pencil btn-icon-prepend"></i>
+                        </a>
+                        <a href="" class="btn btn-sm btn-inverse-danger" @click.prevent="deletePosition(position.id)">
+                          <i class="mdi mdi-delete btn-icon-prepend"></i>
+                        </a>
+                      </td>
+                    </template>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-
-        <div class="modal fade" id="modalCreate" aria-labelledby="modalCreateLabel">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content modal-md">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modalCreateLabel">Form Tambah Posisi Pegawai</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <form class="forms-sample" @submit.prevent="createPosition()">
-                <div class="modal-body">
-                  <div class="form-group">
-                    <label for="inputPositions">Posisi Pegawai</label>
-                      <input type="text" class="form-control" v-model="form.name" :class="{ 'is-invalid': form.errors.has('name') }" id="inputPositions" placeholder="Masukkan Posisi Pegawai">
-                      <has-error :form="form" field="name"></has-error>
-                  </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Form Tambah Posisi Pegawai</h4>
+            <div class="table-responsive">
+              <form class="forms-sample" v-on:submit.prevent="createPosition()">
+                <div class="form-group">
+                  <label for="inputPositions">Posisi Pegawai</label>
+                  <input type="text" class="form-control" v-model="form.name" :class="{ 'is-invalid': form.errors.has('name') }" id="inputPositions" placeholder="Masukkan Posisi Pegawai">
+                  <!-- <has-error :form="form" field="name"></has-error> -->
                 </div>
-                <div class="modal-footer">
-                  <button class="btn btn-light" @click="modalCreate=false">Batalkan</button>
-                  <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
+                <button type="submit" class="btn btn-primary mr-2">Simpan</button>
+                <!-- <button class="btn btn-light">Batalkan</button> -->
               </form>
             </div>
           </div>
         </div>
-
-        <v-dialog v-model="dialogUpdate">
-          <div class="modal fade" id="modalUpdate" aria-labelledby="modalUpdateLabel">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content modal-md">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="modalUpdateLabel">Form Edit Posisi Pegawai</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
-                    <span aria-hidden="true">×</span>
-                  </button>
-                </div>
-                <form class="forms-sample" >
-                  <div class="modal-body">
-                    <div class="form-group">
-                      <label for="inputPositions">Posisi Pegawai</label>
-                      <input type="text" class="form-control" v-model="form.name" :class="{ 'is-invalid': form.errors.has('name') }" id="inputPositions" placeholder="Masukkan Posisi Pegawai">
-                      <has-error :form="form" field="name"></has-error>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button class="btn btn-light" @click="dialogUpdate=false">Batalkan</button>
-                    <button type="submit" class="btn btn-primary" @click="updatePosition()">Update</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </v-dialog>
       </div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="col-6 col-xl-4">
+        <!-- <div id="search_processes" class="center">   <div id="filter_content" class="table pull-left"> -->
+          <table id="table_filters">
+            <tr id="row_special">
+              <td class="exp">
+                <label>Records per Page:</label>
+                <select id="records_comboBox">
+                  <option id="any" value="any">Any</option>
+                  <option id="10" value="10">10</option>
+                  <option id="25" value="25">25</option>
+                  <option id="50" value="50">50</option>
+                </select>
+              </td>
+            </tr>
+          </table>   
+        <!-- </div>    -->
+      </div> 
+    </div>
+  </div>
 </template>
 
 <script>
@@ -114,13 +136,16 @@ export default{
   name: 'PosisiPegawai',
   data() {
         return {
+          editId: '',
           positions: {},
           form: new Form({
             id: '',
             name: ''
           }),
-          modalCreate: false,
-          dialogUpdate: false
+          editPositionData: {
+            id:'',
+            name: ''
+          },
         }
       },
 
@@ -136,7 +161,7 @@ export default{
               page: page
             }
           }).then(data => {
-            this.positions = data.data;
+            this.positions = data.data.data;
           });     
         },
 
@@ -145,7 +170,6 @@ export default{
           // request post
           this.form.post('http://localhost:8000/api/positions', {
           }).then(() => {
-            this.modalCreate = false;
             swal.fire({
               icon: 'success',
               title: 'positions created successfully'
@@ -157,22 +181,29 @@ export default{
           });
         },
 
-        editPosition(position){
-          this.dialogUpdate = false;
-          this.form.reset(); // v form reset inputs
-          this.form.clear(); // v form clear errors
-          this.dialogUpdate = true;
-          this.form.fill(position);
+        onEdit(position){
+          this.editId = position.id
+          this.editPositionData.name = position.name
         },
 
-        updatePosition(){
-          this.form.put('http://localhost:8000/api/positions/' + this.form.id, {
+        onCancel(){
+          this.editId = ''
+          this.editPositionData.name = ''
+    },
+
+        editPosition(id){
+           let name        = this.editPositionData.name
+          this.editId = ''
+          // this.editPositionData.name = ''
+           axios.put('http://localhost:8000/api/positions/' + id, {
+            name: name
           }).then(() => {
             swal.fire({
               icon: 'success',
               title: 'Position updated successfully'
             })
             this.getPosition();
+
           }).catch(() => {
             console.log('transaction fail');
           });
@@ -185,8 +216,8 @@ export default{
             // text: "You won't be able to revert this!",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            confirmButtonColor: '#4747A1',
+            cancelButtonColor: '#fffff',
             confirmButtonText: 'Ya hapus data'
           }).then((result) => {
             // confirm delete?
