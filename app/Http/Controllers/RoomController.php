@@ -17,11 +17,15 @@ class RoomController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->search;
-        $data = Room::paginate(15);
+        $search = $request->input('search', null);
+        $order = $request->input('order', 'id');
+        $sort = $request->input('sort', 'asc');
+        $page = $request->input('page', 15);
+        $data = Room::paginate($page);
         if ($search != null) {
             $data = DB::table('rooms')
-                    ->where('name', 'LIKE', '%' . $search .'%')->paginate(15);
+                    ->where('name', 'LIKE', '%' . $search .'%')
+                    ->orderBy($order, $sort)->paginate($page);
         }
         return response()->json([
             'success' => true,

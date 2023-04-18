@@ -17,7 +17,10 @@ class SuggestionController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->search;
+        $search = $request->input('search', null);
+        $order = $request->input('order', 'id');
+        $sort = $request->input('sort', 'asc');
+        $page = $request->input('page', 15);
         $data = DB::table('suggestions')
                 ->join('users', 'suggestions.user_id', '=', 'users.id')
                 ->join('departments', 'suggestions.department_id', '=', 'departments.id')
@@ -39,7 +42,7 @@ class SuggestionController extends Controller
                     DB::raw('rooms.name AS room'),
                     DB::raw('users.name AS person_in_charge')
                 )
-                ->paginate(15);
+                ->orderBy($order, $sort)->paginate($page);
         if ($search != null) {
             $data = DB::table('suggestions')
                     ->join('users', 'suggestions.user_id', '=', 'users.id')
@@ -72,7 +75,7 @@ class SuggestionController extends Controller
                     ->orWhere('departments.name', 'LIKE', '%' . $search .'%')
                     ->orWhere('categories.name', 'LIKE', '%' . $search .'%')
                     ->orWhere('rooms.name', 'LIKE', '%' . $search .'%')
-                    ->paginate(15);
+                    ->orderBy($order, $sort)->paginate($page);
         }
         return response()->json([
             'success' => true,
@@ -153,8 +156,27 @@ class SuggestionController extends Controller
      */
     public function show($id)
     {
-        //add join
-        $data = Suggestion::find($id);
+        $data = Suggestion::find($id)
+                ->join('users', 'suggestions.user_id', '=', 'users.id')
+                ->join('departments', 'suggestions.department_id', '=', 'departments.id')
+                ->join('categories', 'suggestions.category_id', '=', 'categories.id')
+                ->join('rooms', 'suggestions.room_id', '=', 'rooms.id')
+                ->select(
+                    'suggestions.id', 
+                    'suggestions.title', 
+                    'suggestions.date', 
+                    'suggestions.start_time', 
+                    'suggestions.end_time', 
+                    'suggestions.location', 
+                    'suggestions.contents', 
+                    'suggestions.attachment', 
+                    'suggestions.status', 
+                    DB::raw('users.name AS user'), 
+                    DB::raw('departments.name AS department'),
+                    DB::raw('categories.name AS category'),
+                    DB::raw('rooms.name AS room'),
+                    DB::raw('users.name AS person_in_charge')
+                )->get();
         if (!$data) {
             return response()->json([
                 'success' => false,

@@ -15,10 +15,13 @@ class DispositionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $order = $request->input('order', 'id');
+        $sort = $request->input('sort', 'asc');
+        $page = $request->input('page', 15);
         $data = DB::table('dispositions')
-                ->paginate(15);
+                ->orderBy($order, $sort)->paginate($page);
         return response()->json([
             'success' => true,
             'message' => 'Daftar Disposisi Agenda',

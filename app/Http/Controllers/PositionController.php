@@ -17,11 +17,15 @@ class PositionController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->search;
-        $data = Position::paginate(15);
+        $search = $request->input('search', null);
+        $order = $request->input('order', 'id');
+        $sort = $request->input('sort', 'asc');
+        $page = $request->input('page', 15);
+        $data = Position::paginate($page);
         if ($search != null) {
             $data = DB::table('positions')
-                    ->where('name', 'LIKE', '%' . $search .'%')->paginate(15);
+                    ->where('name', 'LIKE', '%' . $search .'%')
+                    ->orderBy($order, $sort)->paginate($page);
         }
         return response()->json([
             'success' => true,

@@ -17,8 +17,10 @@ class AgendaController extends Controller
      */
     public function index(Request $request)
     {
-        //agendah where date
-        $search = $request->search;
+        $search = $request->input('search', null);
+        $order = $request->input('order', 'id');
+        $sort = $request->input('sort', 'asc');
+        $page = $request->input('page', 15);
         $data = DB::table('agendas')
                 ->join('users', 'agendas.person_in_charge', '=', 'users.id')
                 ->join('departments', 'agendas.department_id', '=', 'departments.id')
@@ -40,9 +42,9 @@ class AgendaController extends Controller
                     DB::raw('rooms.name AS room'),
                     DB::raw('suggestions.title AS suggestion')
                 )
-                ->paginate(15);
+                ->orderBy($order, $sort)->paginate($page);
         if ($search != null) {
-            $data = DB::table('suggestions')
+            $data = DB::table('agendas')
                     ->join('users', 'agendas.person_in_charge', '=', 'users.id')
                     ->join('departments', 'agendas.department_id', '=', 'departments.id')
                     ->join('categories', 'agendas.category_id', '=', 'categories.id')
@@ -74,7 +76,7 @@ class AgendaController extends Controller
                     ->orWhere('categories.name', 'LIKE', '%' . $search .'%')
                     ->orWhere('rooms.name', 'LIKE', '%' . $search .'%')
                     ->orWhere('suggestions.title', 'LIKE', '%' . $search .'%')
-                    ->paginate(15);
+                    ->orderBy($order, $sort)->paginate($page);
         }
         return response()->json([
             'success' => true,
@@ -155,7 +157,27 @@ class AgendaController extends Controller
     public function show($id)
     {
         //add join
-        $data = Agenda::find($id);
+        $data = Agenda::find($id)
+                ->join('users', 'agendas.person_in_charge', '=', 'users.id')
+                ->join('departments', 'agendas.department_id', '=', 'departments.id')
+                ->join('categories', 'agendas.category_id', '=', 'categories.id')
+                ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
+                ->join('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->select(
+                    'agendas.id', 
+                    'agendas.title', 
+                    'agendas.date', 
+                    'agendas.start_time', 
+                    'agendas.end_time', 
+                    'agendas.location', 
+                    'agendas.contents', 
+                    'agendas.attachment', 
+                    DB::raw('users.name AS person_in_charge'), 
+                    DB::raw('departments.name AS department'),
+                    DB::raw('categories.name AS category'),
+                    DB::raw('rooms.name AS room'),
+                    DB::raw('suggestions.title AS suggestion')
+                )->get();
         if (!$data) {
             return response()->json([
                 'success' => false,

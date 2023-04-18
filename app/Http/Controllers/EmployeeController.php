@@ -19,7 +19,10 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         //field nya
-        $search = $request->search;
+        $search = $request->input('search', null);
+        $order = $request->input('order', 'id');
+        $sort = $request->input('sort', 'asc');
+        $page = $request->input('page', 15);
         $data = DB::table('users')
                 ->join('positions', 'users.position_id', '=', 'positions.id')
                 ->join('departments', 'users.department_id', '=', 'departments.id')
@@ -35,7 +38,7 @@ class EmployeeController extends Controller
                     DB::raw('positions.name AS position'), 
                     DB::raw('departments.name AS department')
                 )
-                ->paginate(15);
+                ->orderBy($order, $sort)->paginate($page);
         if ($search != null) {
             $data = DB::table('users')
                 ->join('positions', 'users.position_id', '=', 'positions.id')
@@ -61,7 +64,7 @@ class EmployeeController extends Controller
                 ->orWhere('users.status', 'LIKE', '%' . $search .'%')
                 ->orWhere('positions.name', 'LIKE', '%' . $search .'%')
                 ->orWhere('departments.name', 'LIKE', '%' . $search .'%')
-                ->paginate(15);
+                ->orderBy($order, $sort)->paginate($page);
         }
         return response()->json([
             'success' => true,
