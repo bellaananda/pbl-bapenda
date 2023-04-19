@@ -53,7 +53,7 @@ class RoomController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100|unique',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
@@ -126,7 +126,7 @@ class RoomController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:100',
+            'name' => 'required|string|max:100|unique',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);

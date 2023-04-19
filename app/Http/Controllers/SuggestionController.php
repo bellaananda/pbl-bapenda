@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Suggestion;
+use App\Models\Agenda;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
@@ -32,14 +33,13 @@ class SuggestionController extends Controller
                     'suggestions.date', 
                     'suggestions.start_time', 
                     'suggestions.end_time', 
-                    'suggestions.location', 
+                    DB::raw("(CASE WHEN ISNULL(location) THEN rooms.name ELSE suggestions.location END) AS location"),
                     'suggestions.contents', 
                     'suggestions.attachment', 
                     'suggestions.status', 
                     DB::raw('users.name AS user'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
-                    DB::raw('rooms.name AS room'),
                     DB::raw('users.name AS person_in_charge')
                 )
                 ->orderBy($order, $sort)->paginate($page);
@@ -55,14 +55,13 @@ class SuggestionController extends Controller
                         'suggestions.date', 
                         'suggestions.start_time', 
                         'suggestions.end_time', 
-                        'suggestions.location', 
+                        DB::raw("(CASE WHEN ISNULL(location) THEN rooms.name ELSE suggestions.location END) AS location"),
                         'suggestions.contents', 
                         'suggestions.attachment', 
-                        'suggestions.status', 
+                        DB::raw("(CASE WHEN suggestions.status = 1 THEN 'Diterima' WHEN suggestions.status = 0 THEN 'Diproses' ELSE 'Ditolak' END) AS status"),
                         DB::raw('users.name AS user'), 
                         DB::raw('departments.name AS department'),
                         DB::raw('categories.name AS category'),
-                        DB::raw('rooms.name AS room'),
                         DB::raw('users.name AS person_in_charge')
                     )
                     ->where('suggestions.title', 'LIKE', '%' . $search .'%')
@@ -170,7 +169,8 @@ class SuggestionController extends Controller
                     'suggestions.location', 
                     'suggestions.contents', 
                     'suggestions.attachment', 
-                    'suggestions.status', 
+                    'suggestions.status',
+                    DB::raw("(CASE WHEN suggestions.status = 1 THEN 'Diterima' WHEN suggestions.status = 0 THEN 'Diproses' ELSE 'Ditolak' END) AS status"),
                     DB::raw('users.name AS user'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
@@ -289,6 +289,78 @@ class SuggestionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data pengajuan agenda berhasil dihapus!'
+        ], 200);
+    }
+
+    public function approveAgenda($id) {
+        $data = Suggestion::find($id);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengajuan agenda tidak ditemukan!'
+            ], 404);
+        }
+
+        $data->status = 1;
+        $data->save();
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Status pengajuan agenda gagal disetujui!'
+            ], 409);
+        }
+        $agenda = Agenda::create([
+            'department_id' => $data->department_id,
+            'category_id' => $data->category_id,
+            'room_id' => $data->room_id,
+            'suggestion_id' => $data->id,
+            'person_in_charge' => $data->person_in_charge,
+            'title' => $data->title,
+            'date' => $data->date,
+            'start_time' => $data->start_time,
+            'end_time' => $data->end_time,
+            'location' => $data->location,
+            'contents' => $data->contents,
+            'attachment' => $data->attachment,
+        ]);
+
+        if (!$agenda) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda gagal ditambahkan!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pengajuan agenda berhasil disetujui! Data agenda berhasil ditambahkan!',
+            'data'    => $data
+        ], 200);
+    }
+
+    public function denyAgenda($id) {
+        $data = Suggestion::find($id);
+        if (!$data) {
+
+
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengajuan agenda tidak ditemukan!'
+            ], 404);
+        }
+
+        $data->status = 2;
+        $data->save();
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Status pengajuan agenda gagal ditolak!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pengajuan agenda berhasil ditolak!',
+            'data'    => $data
         ], 200);
     }
 }

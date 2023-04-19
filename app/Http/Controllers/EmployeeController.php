@@ -30,13 +30,10 @@ class EmployeeController extends Controller
                     'users.id', 
                     'users.nip', 
                     'users.name', 
-                    'users.email', 
-                    'users.phone_number', 
-                    'users.address', 
-                    'users.role', 
-                    'users.status', 
                     DB::raw('positions.name AS position'), 
-                    DB::raw('departments.name AS department')
+                    DB::raw('departments.name AS departments'), 
+                    'users.phone_number', 
+                    DB::raw("(CASE WHEN users.status = 1 THEN 'Aktif' ELSE 'Nonaktif' END) AS status"), 
                 )
                 ->orderBy($order, $sort)->paginate($page);
         if ($search != null) {
@@ -47,23 +44,15 @@ class EmployeeController extends Controller
                     'users.id', 
                     'users.nip', 
                     'users.name', 
-                    'users.email', 
+                    DB::raw('positions.name AS position'),
+                    DB::raw('departments.name AS departments'),
                     'users.phone_number', 
-                    'users.address', 
-                    'users.role', 
-                    'users.status', 
-                    DB::raw('positions.name AS position'), 
-                    DB::raw('departments.name AS department')
+                    DB::raw("(CASE WHEN users.status = 1 THEN 'Aktif' ELSE 'Nonaktif' END) AS status"),
                 )
                 ->where('users.nip', 'LIKE', '%' . $search .'%')
                 ->orWhere('users.name', 'LIKE', '%' . $search .'%')
-                ->orWhere('users.email', 'LIKE', '%' . $search .'%')
                 ->orWhere('users.phone_number', 'LIKE', '%' . $search .'%')
-                ->orWhere('users.address', 'LIKE', '%' . $search .'%')
-                ->orWhere('users.role', 'LIKE', '%' . $search .'%')
-                ->orWhere('users.status', 'LIKE', '%' . $search .'%')
                 ->orWhere('positions.name', 'LIKE', '%' . $search .'%')
-                ->orWhere('departments.name', 'LIKE', '%' . $search .'%')
                 ->orderBy($order, $sort)->paginate($page);
         }
         return response()->json([
@@ -139,16 +128,16 @@ class EmployeeController extends Controller
                 ->join('positions', 'users.position_id', '=', 'positions.id')
                 ->join('departments', 'users.department_id', '=', 'departments.id')
                 ->select(
-                    'users.id', 
-                    'users.nip', 
-                    'users.name', 
-                    'users.email', 
-                    'users.phone_number', 
-                    'users.address', 
-                    'users.role', 
-                    'users.status', 
-                    DB::raw('positions.name AS position'), 
-                    DB::raw('departments.name AS department')
+                    'users.id',
+                    'users.nip',
+                    'users.name',
+                    'users.email',
+                    'users.phone_number',
+                    'users.address',
+                    'users.role',
+                    DB::raw('positions.name AS position'),
+                    DB::raw('departments.name AS department'),
+                    DB::raw("(CASE WHEN users.status = 1 THEN 'Aktif' ELSE 'Nonaktif' END) AS status"),
                 )
                 ->get();
         if (!$data) {

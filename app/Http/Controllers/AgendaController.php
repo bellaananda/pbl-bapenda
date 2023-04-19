@@ -17,6 +17,7 @@ class AgendaController extends Controller
      */
     public function index(Request $request)
     {
+        //kurang disposisi
         $search = $request->input('search', null);
         $order = $request->input('order', 'id');
         $sort = $request->input('sort', 'asc');
@@ -33,14 +34,12 @@ class AgendaController extends Controller
                     'agendas.date', 
                     'agendas.start_time', 
                     'agendas.end_time', 
-                    'agendas.location', 
+                    DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
                     'agendas.contents', 
                     'agendas.attachment', 
                     DB::raw('users.name AS person_in_charge'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
-                    DB::raw('rooms.name AS room'),
-                    DB::raw('suggestions.title AS suggestion')
                 )
                 ->orderBy($order, $sort)->paginate($page);
         if ($search != null) {
@@ -56,14 +55,12 @@ class AgendaController extends Controller
                         'agendas.date', 
                         'agendas.start_time', 
                         'agendas.end_time', 
-                        'agendas.location', 
+                        DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
                         'agendas.contents', 
                         'agendas.attachment', 
                         DB::raw('users.name AS person_in_charge'), 
                         DB::raw('departments.name AS department'),
                         DB::raw('categories.name AS category'),
-                        DB::raw('rooms.name AS room'),
-                        DB::raw('suggestions.title AS suggestion')
                     )
                     ->where('agendas.title', 'LIKE', '%' . $search .'%')
                     ->orWhere('agendas.date', 'LIKE', '%' . $search .'%')
@@ -169,14 +166,12 @@ class AgendaController extends Controller
                     'agendas.date', 
                     'agendas.start_time', 
                     'agendas.end_time', 
-                    'agendas.location', 
+                    DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
                     'agendas.contents', 
                     'agendas.attachment', 
                     DB::raw('users.name AS person_in_charge'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
-                    DB::raw('rooms.name AS room'),
-                    DB::raw('suggestions.title AS suggestion')
                 )->get();
         if (!$data) {
             return response()->json([
@@ -288,6 +283,90 @@ class AgendaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data agenda berhasil dihapus!'
+        ], 200);
+    }
+
+    public function showYesterdayAgenda() {
+        $data = DB::table('agendas')
+                ->join('users', 'agendas.person_in_charge', '=', 'users.id')
+                ->join('departments', 'agendas.department_id', '=', 'departments.id')
+                ->join('categories', 'agendas.category_id', '=', 'categories.id')
+                ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
+                ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->select(
+                    'agendas.id', 
+                    'agendas.title', 
+                    'agendas.date', 
+                    'agendas.start_time', 
+                    'agendas.end_time', 
+                    DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
+                    'agendas.contents', 
+                    'agendas.attachment', 
+                    DB::raw('users.name AS person_in_charge'), 
+                    DB::raw('departments.name AS department'),
+                    DB::raw('categories.name AS category'),
+                )
+                ->whereRaw(DB::raw('DATE(agendas.date) = SUBDATE(CURDATE(),1)'))->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Agenda',
+            'data'    => $data  
+        ], 200);
+    }
+
+    public function showTodayAgenda() {
+        $data = DB::table('agendas')
+                ->join('users', 'agendas.person_in_charge', '=', 'users.id')
+                ->join('departments', 'agendas.department_id', '=', 'departments.id')
+                ->join('categories', 'agendas.category_id', '=', 'categories.id')
+                ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
+                ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->select(
+                    'agendas.id', 
+                    'agendas.title', 
+                    'agendas.date', 
+                    'agendas.start_time', 
+                    'agendas.end_time', 
+                    DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
+                    'agendas.contents', 
+                    'agendas.attachment', 
+                    DB::raw('users.name AS person_in_charge'), 
+                    DB::raw('departments.name AS department'),
+                    DB::raw('categories.name AS category'),
+                )
+                ->whereRaw(DB::raw('DATE(agendas.date) = DATE(NOW())'))->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Agenda',
+            'data'    => $data  
+        ], 200);
+    }
+
+    public function showTomorrowAgenda() {
+        $data = DB::table('agendas')
+                ->join('users', 'agendas.person_in_charge', '=', 'users.id')
+                ->join('departments', 'agendas.department_id', '=', 'departments.id')
+                ->join('categories', 'agendas.category_id', '=', 'categories.id')
+                ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
+                ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->select(
+                    'agendas.id', 
+                    'agendas.title', 
+                    'agendas.date', 
+                    'agendas.start_time', 
+                    'agendas.end_time', 
+                    DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
+                    'agendas.contents', 
+                    'agendas.attachment', 
+                    DB::raw('users.name AS person_in_charge'), 
+                    DB::raw('departments.name AS department'),
+                    DB::raw('categories.name AS category'),
+                )
+                ->whereRaw(DB::raw('DATE(agendas.date) = DATE(NOW()) + 1'))->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Agenda',
+            'data'    => $data  
         ], 200);
     }
 }
