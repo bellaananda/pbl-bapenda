@@ -19,8 +19,8 @@ class SuggestionController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search', null);
-        $order = $request->input('order', 'id');
-        $sort = $request->input('sort', 'asc');
+        $order = $request->input('`' . 'order' . '`', 'date');
+        $sort = $request->input('sort', 'desc');
         $page = $request->input('page', 15);
         $data = DB::table('suggestions')
                 ->join('users', 'suggestions.user_id', '=', 'users.id')

@@ -19,7 +19,7 @@ class AgendaController extends Controller
     {
         //kurang disposisi
         $search = $request->input('search', null);
-        $order = $request->input('order', 'id');
+        $order = $request->input('`' . 'order' . '`', 'date');
         $sort = $request->input('sort', 'asc');
         $page = $request->input('page', 15);
         $data = DB::table('agendas')

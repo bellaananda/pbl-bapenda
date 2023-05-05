@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DispositionController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\GenerateController;
 use App\Http\Controllers\PositionController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SuggestionController;
@@ -38,3 +39,5 @@ Route::get('/agendas-yesterday', [AgendaController::class, 'showYesterdayAgenda'
 Route::get('/agendas-today', [AgendaController::class, 'showTodayAgenda']);
 Route::get('/agendas-tomorrow', [AgendaController::class, 'showTomorrowAgenda']);
 Route::resource('/dispositions', DispositionController::class);
+Route::get('/download-suggestions-pdf', [GenerateController::class, 'generateSuggestionsPDF']);
+Route::get('/download-suggestions-excel', [GenerateController::class, 'generateSuggestionsExcel'])->name('suggestions.export');
