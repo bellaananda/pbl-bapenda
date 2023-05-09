@@ -128,130 +128,130 @@
 </template>
 
 <script>
-import { Form } from 'vform'
-import axios from 'axios'
-import swal from 'sweetalert2';
+import { Form } from "vform";
+import axios from "axios";
+import swal from "sweetalert2";
 
 export default{
-  name: 'PosisiPegawai',
-  data() {
-        return {
-          editId: '',
-          positions: {},
-          form: new Form({
-            id: '',
-            name: ''
-          }),
-          editPositionData: {
-            id:'',
-            name: ''
-          },
-        }
-      },
+	name: "PosisiPegawai",
+	data() {
+		return {
+			editId: "",
+			positions: {},
+			form: new Form({
+				id: "",
+				name: ""
+			}),
+			editPositionData: {
+				id:"",
+				name: ""
+			},
+		};
+	},
 
-      methods: {
+	methods: {
 
-        getPosition(page) {
-          if (typeof page === 'undefined') {
-            page = 1;
-          }
+		getPosition(page) {
+			if (typeof page === "undefined") {
+				page = 1;
+			}
   
-          axios.get('http://localhost:8000/api/positions', {
-            params: {
-              page: page
-            }
-          }).then(data => {
-            this.positions = data.data.data;
-          });     
-        },
+			axios.get("https://v3421024.mhs.d3tiuns.com/api/positions", {
+				params: {
+					page: page
+				}
+			}).then(data => {
+				this.positions = data.data.data;
+			});     
+		},
 
 
-        createPosition() {
-          // request post
-          this.form.post('http://localhost:8000/api/positions', {
-          }).then(() => {
-            swal.fire({
-              icon: 'success',
-              title: 'positions created successfully'
+		createPosition() {
+			// request post
+			this.form.post("https://v3421024.mhs.d3tiuns.com/api/positions", {
+			}).then(() => {
+				swal.fire({
+					icon: "success",
+					title: "positions created successfully"
               
-            })
-            this.getPosition();
-          }).catch(() => {
-            console.log('transaction fail');
-          });
-        },
+				});
+				this.getPosition();
+			}).catch(() => {
+				console.log("transaction fail");
+			});
+		},
 
-        onEdit(position){
-          this.editId = position.id
-          this.editPositionData.name = position.name
-        },
+		onEdit(position){
+			this.editId = position.id;
+			this.editPositionData.name = position.name;
+		},
 
-        onCancel(){
-          this.editId = ''
-          this.editPositionData.name = ''
-    },
+		onCancel(){
+			this.editId = "";
+			this.editPositionData.name = "";
+		},
 
-        editPosition(id){
-           let name        = this.editPositionData.name
-          this.editId = ''
-          // this.editPositionData.name = ''
-           axios.put('http://localhost:8000/api/positions/' + id, {
-            name: name
-          }).then(() => {
-            swal.fire({
-              icon: 'success',
-              title: 'Position updated successfully'
-            })
-            this.getPosition();
+		editPosition(id){
+			let name        = this.editPositionData.name;
+			this.editId = "";
+			// this.editPositionData.name = ''
+			axios.put("https://v3421024.mhs.d3tiuns.com/api/positions/" + id, {
+				name: name
+			}).then(() => {
+				swal.fire({
+					icon: "success",
+					title: "Position updated successfully"
+				});
+				this.getPosition();
 
-          }).catch(() => {
-            console.log('transaction fail');
-          });
-        }, 
+			}).catch(() => {
+				console.log("transaction fail");
+			});
+		}, 
 
-        deletePosition(id) {
-          // sweet alert confirmation
-          swal.fire({
-            title: 'Ingin menghapus data?',
-            // text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#4747A1',
-            cancelButtonColor: '#fffff',
-            confirmButtonText: 'Ya hapus data'
-          }).then((result) => {
-            // confirm delete?
-            if (result.value) {
-              // request delete
-              this.form.delete('http://localhost:8000/api/positions/' + id, {
-               }).then(() => {
-                // sweet alert success
-                swal.fire(
-                  'Deleted!',
-                  'Your file has been deleted.',
-                  'success'
-                )   
+		deletePosition(id) {
+			// sweet alert confirmation
+			swal.fire({
+				title: "Ingin menghapus data?",
+				// text: "You won't be able to revert this!",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#4747A1",
+				cancelButtonColor: "#fffff",
+				confirmButtonText: "Ya hapus data"
+			}).then((result) => {
+				// confirm delete?
+				if (result.value) {
+					// request delete
+					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/positions/" + id, {
+					}).then(() => {
+						// sweet alert success
+						swal.fire(
+							"Deleted!",
+							"Your file has been deleted.",
+							"success"
+						);   
   
-                this.getPosition(); 
-              }).catch(() => {
-                // sweet alert fail
-                swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Something went wrong!',
-                  footer: '<a href>Why do I have this issue?</a>'
-                })
-              }); 
-            }
-          })
-        }
-      },
+						this.getPosition(); 
+					}).catch(() => {
+						// sweet alert fail
+						swal.fire({
+							icon: "error",
+							title: "Oops...",
+							text: "Something went wrong!",
+							footer: "<a href>Why do I have this issue?</a>"
+						});
+					}); 
+				}
+			});
+		}
+	},
 
-      created() {
-        this.getPosition();
-      },
-      mounted() {
-        console.log('Component mounted.')
-      }
-}
+	created() {
+		this.getPosition();
+	},
+	mounted() {
+		console.log("Component mounted.");
+	}
+};
 </script>

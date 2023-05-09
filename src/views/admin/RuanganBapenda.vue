@@ -128,128 +128,128 @@
 </template>
 
 <script>
-import { Form } from 'vform'
-import axios from 'axios'
-import swal from 'sweetalert2';
+import { Form } from "vform";
+import axios from "axios";
+import swal from "sweetalert2";
 
-  export default {
-      name: 'RuanganBapenda',
-      data() {
-        return {
-          editId: '',
-          rooms: {},
-          form: new Form({
-            id: '',
-            name: ''
-          }),
-          editRoomData: {
-            name: ''
-          },
-        }
-      },
+export default {
+	name: "RuanganBapenda",
+	data() {
+		return {
+			editId: "",
+			rooms: {},
+			form: new Form({
+				id: "",
+				name: ""
+			}),
+			editRoomData: {
+				name: ""
+			},
+		};
+	},
 
-      methods: {
+	methods: {
 
-        getRoom(page) {
-          if (typeof page === 'undefined') {
-            page = 1;
-          }
+		getRoom(page) {
+			if (typeof page === "undefined") {
+				page = 1;
+			}
   
-          axios.get('https://v3421024.mhs.d3tiuns.com/api/rooms', {
-            params: {
-              page: page
-            }
-          }).then(data => {
-            this.rooms = data.data.data;
-          });     
-        },
+			axios.get("https://v3421024.mhs.d3tiuns.com/api/rooms", {
+				params: {
+					page: page
+				}
+			}).then(data => {
+				this.rooms = data.data.data;
+			});     
+		},
 
 
-        createRoom() {
-          // request post
-          this.form.post('https://v3421024.mhs.d3tiuns.com/api/rooms', {
-          }).then(() => {
-            swal.fire({
-              icon: 'success',
-              title: 'Rooms created successfully'
+		createRoom() {
+			// request post
+			this.form.post("https://v3421024.mhs.d3tiuns.com/api/rooms", {
+			}).then(() => {
+				swal.fire({
+					icon: "success",
+					title: "Rooms created successfully"
               
-            })
-            this.getRoom();
+				});
+				this.getRoom();
             
-          }).catch(() => {
-            console.log('transaction fail');
-          });
-        },
+			}).catch(() => {
+				console.log("transaction fail");
+			});
+		},
 
-        onEdit(room){
-          this.editId = room.id
-          this.editRoomData.name = room.name
-        },
+		onEdit(room){
+			this.editId = room.id;
+			this.editRoomData.name = room.name;
+		},
 
-        onCancel(){
-          this.editId = ''
-          this.editRoomData.name = ''
-        },
+		onCancel(){
+			this.editId = "";
+			this.editRoomData.name = "";
+		},
 
-        editRoom(id){
-          let name        = this.editRoomData.name
-          this.editId = ''
-           axios.put('https://v3421024.mhs.d3tiuns.com/api/rooms/' + id, {
-            name: name
-          }).then(() => {
-            swal.fire({
-              icon: 'success',
-              title: 'Room updated successfully'
-            })
-            this.getRoom();
+		editRoom(id){
+			let name        = this.editRoomData.name;
+			this.editId = "";
+			axios.put("https://v3421024.mhs.d3tiuns.com/api/rooms/" + id, {
+				name: name
+			}).then(() => {
+				swal.fire({
+					icon: "success",
+					title: "Room updated successfully"
+				});
+				this.getRoom();
 
-          }).catch(() => {
-            console.log('transaction fail');
-          });
-        }, 
+			}).catch(() => {
+				console.log("transaction fail");
+			});
+		}, 
 
-        deleteRoom(id) {
-          // sweet alert confirmation
-          swal.fire({
-            title: 'Ingin menghapus data?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya hapus data'
-          }).then((result) => {
-            // confirm delete?
-            if (result.value) {
-              // request delete
-              this.form.delete('https://v3421024.mhs.d3tiuns.com/api/rooms/' + id, {
-               }).then(() => {
-                // sweet alert success
-                swal.fire(
-                  'Deleted!',
-                  'Your file has been deleted.',
-                  'success'
-                )   
+		deleteRoom(id) {
+			// sweet alert confirmation
+			swal.fire({
+				title: "Ingin menghapus data?",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Ya hapus data"
+			}).then((result) => {
+				// confirm delete?
+				if (result.value) {
+					// request delete
+					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/rooms/" + id, {
+					}).then(() => {
+						// sweet alert success
+						swal.fire(
+							"Deleted!",
+							"Your file has been deleted.",
+							"success"
+						);   
   
-                this.getRoom(); 
-              }).catch(() => {
-                // sweet alert fail
-                swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Something went wrong!',
-                  // footer: '<a href>Why do I have this issue?</a>'
-                })
-              }); 
-            }
-          })
-        }
-      },
+						this.getRoom(); 
+					}).catch(() => {
+						// sweet alert fail
+						swal.fire({
+							icon: "error",
+							title: "Oops...",
+							text: "Something went wrong!",
+							// footer: '<a href>Why do I have this issue?</a>'
+						});
+					}); 
+				}
+			});
+		}
+	},
 
-      created() {
-        this.getRoom();
-      },
-      mounted() {
-        console.log('Component mounted.')
-      }
-    }
+	created() {
+		this.getRoom();
+	},
+	mounted() {
+		console.log("Component mounted.");
+	}
+};
 </script>

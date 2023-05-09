@@ -1,31 +1,21 @@
 <template>
-   
-  <div class="container-scroller">
-    <!-- navbar -->
-    <Navbar />
-    <div class="container-fluid page-body-wrapper">
-      <Sidebar />
-      <div class="main-panel">
-        <router-view/>
-        <!-- footer  -->
-        <Footer />
-      </div>
-    </div>   
+  <div id="app">
+    <div class="container-scroller">
+      <router-view name="header" />
+      <div class="container-fluid page-body-wrapper">
+        <router-view name="sidebar" />
+          <router-view/>
+          
+      </div> 
+      <router-view name="footer" />
+    </div>
   </div>
 </template>
 
 <script>
-import Footer from "./components/TheFooter.vue";
-import Navbar from "./components/TheNavbar.vue";
-import Sidebar from "./components/TheSidebar.vue";
 
 export default {
-  name: "App",
-  components: {
-    Footer,
-    Navbar,
-    Sidebar,
-  },
+	name: "App"
 };
 </script>
 

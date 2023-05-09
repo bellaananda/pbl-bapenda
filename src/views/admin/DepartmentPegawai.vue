@@ -128,127 +128,127 @@
 </template>
 
 <script>
-import { Form } from 'vform'
-import axios from 'axios'
-import swal from 'sweetalert2';
+import { Form } from "vform";
+import axios from "axios";
+import swal from "sweetalert2";
 
 export default {
-  name: 'DepartmentPegawai',
-      data() {
-        return {
-          editId: '',
-          departments: {},
-          form: new Form({
-            id: '',
-            name: ''
-          }),
-          editDepartmentData: {
-            name: ''
-          },
-        }
-      },
+	name: "DepartmentPegawai",
+	data() {
+		return {
+			editId: "",
+			departments: {},
+			form: new Form({
+				id: "",
+				name: ""
+			}),
+			editDepartmentData: {
+				name: ""
+			},
+		};
+	},
 
-      methods: {
+	methods: {
 
-        getDepartment(page) {
-          if (typeof page === 'undefined') {
-            page = 1;
-          }
+		getDepartment(page) {
+			if (typeof page === "undefined") {
+				page = 1;
+			}
   
-          axios.get('http://localhost:8000/api/departments', {
-            params: {
-              page: page
-            }
-          }).then(data => {
-            this.departments = data.data.data;
-          });     
-        },
+			axios.get("https://v3421024.mhs.d3tiuns.com/api/departments", {
+				params: {
+					page: page
+				}
+			}).then(data => {
+				this.departments = data.data.data;
+			});     
+		},
 
 
-        createDepartment() {
-          // request post
-          this.form.post('http://localhost:8000/api/departments', {
-          }).then(() => {
-            swal.fire({
-              icon: 'success',
-              title: 'departments created successfully'
-            })
-            this.getDepartment();
-          }).catch(() => {
-            console.log('transaction fail');
-          });
-        },
+		createDepartment() {
+			// request post
+			this.form.post("https://v3421024.mhs.d3tiuns.com/api/departments", {
+			}).then(() => {
+				swal.fire({
+					icon: "success",
+					title: "departments created successfully"
+				});
+				this.getDepartment();
+			}).catch(() => {
+				console.log("transaction fail");
+			});
+		},
 
-        onEdit(department){
-          this.editId = department.id
-          this.editDepartmentData.name = department.name
-        },
+		onEdit(department){
+			this.editId = department.id;
+			this.editDepartmentData.name = department.name;
+		},
 
-        onCancel(){
-          this.editId = ''
-          this.editDepartmentData.name = ''
-    },
+		onCancel(){
+			this.editId = "";
+			this.editDepartmentData.name = "";
+		},
 
-        editDepartment(id){
-           let name        = this.editDepartmentData.name
-          this.editId = ''
-           axios.put('http://localhost:8000/api/departments/' + id, {
-            name: name
-          }).then(() => {
-            swal.fire({
-              icon: 'success',
-              title: 'Department updated successfully'
-            })
-            this.getDepartment();
+		editDepartment(id){
+			let name        = this.editDepartmentData.name;
+			this.editId = "";
+			axios.put("https://v3421024.mhs.d3tiuns.com/api/departments/" + id, {
+				name: name
+			}).then(() => {
+				swal.fire({
+					icon: "success",
+					title: "Department updated successfully"
+				});
+				this.getDepartment();
 
-          }).catch(() => {
-            console.log('transaction fail');
-          });
-        }, 
+			}).catch(() => {
+				console.log("transaction fail");
+			});
+		}, 
 
-        deleteDepartment(id) {
-          // sweet alert confirmation
-          swal.fire({
-            title: 'Ingin menghapus data?',
-            // text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya hapus data'
-          }).then((result) => {
-            // confirm delete?
-            if (result.value) {
-              // request delete
-              this.form.delete('http://localhost:8000/api/departments/' + id, {
-               }).then(() => {
-                // sweet alert success
-                swal.fire(
-                  'Deleted!',
-                  'Your file has been deleted.',
-                  'success'
-                )   
+		deleteDepartment(id) {
+			// sweet alert confirmation
+			swal.fire({
+				title: "Ingin menghapus data?",
+				// text: "You won't be able to revert this!",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Ya hapus data"
+			}).then((result) => {
+				// confirm delete?
+				if (result.value) {
+					// request delete
+					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/departments/" + id, {
+					}).then(() => {
+						// sweet alert success
+						swal.fire(
+							"Deleted!",
+							"Your file has been deleted.",
+							"success"
+						);   
   
-                this.getDepartment(); 
-              }).catch(() => {
-                // sweet alert fail
-                swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Something went wrong!',
-                  footer: '<a href>Why do I have this issue?</a>'
-                })
-              }); 
-            }
-          })
-        }
-      },
+						this.getDepartment(); 
+					}).catch(() => {
+						// sweet alert fail
+						swal.fire({
+							icon: "error",
+							title: "Oops...",
+							text: "Something went wrong!",
+							footer: "<a href>Why do I have this issue?</a>"
+						});
+					}); 
+				}
+			});
+		}
+	},
 
-      created() {
-        this.getDepartment();
-      },
-      mounted() {
-        console.log('Component mounted.')
-      }
-}
+	created() {
+		this.getDepartment();
+	},
+	mounted() {
+		console.log("Component mounted.");
+	}
+};
 </script>

@@ -128,129 +128,129 @@
 </template>
 
 <script>
-import { Form } from 'vform'
-import axios from 'axios'
-import swal from 'sweetalert2';
+import { Form } from "vform";
+import axios from "axios";
+import swal from "sweetalert2";
 
-  export default {
-      name: 'KategoriAgenda',
-      data() {
-        return {
-          editId: '',
-          categories: {},
-          form: new Form({
-            id: '',
-            name: ''
-          }),
-          editCategoryData: {
-            name: ''
-          },
-        }
-      },
+export default {
+	name: "KategoriAgenda",
+	data() {
+		return {
+			editId: "",
+			categories: {},
+			form: new Form({
+				id: "",
+				name: ""
+			}),
+			editCategoryData: {
+				name: ""
+			},
+		};
+	},
 
-      methods: {
+	methods: {
 
-        getCategories(page) {
-          if (typeof page === 'undefined') {
-            page = 1;
-          }
+		getCategories(page) {
+			if (typeof page === "undefined") {
+				page = 1;
+			}
   
-          axios.get('http://localhost:8000/api/categories', {
-            params: {
-              page: page
-            }
-          }).then(data => {
-            this.categories = data.data.data;
-          });     
-        },
+			axios.get("https://v3421024.mhs.d3tiuns.com/api/categories", {
+				params: {
+					page: page
+				}
+			}).then(data => {
+				this.categories = data.data.data;
+			});     
+		},
 
 
-        createCategory() {
-          // request post
-          this.form.post('http://localhost:8000/api/categories', {
-          }).then(() => {
-            // this.modalKategori = false;
-            swal.fire({
-              icon: 'success',
-              title: 'Categories created successfully'
+		createCategory() {
+			// request post
+			this.form.post("https://v3421024.mhs.d3tiuns.com/api/categories", {
+			}).then(() => {
+				// this.modalKategori = false;
+				swal.fire({
+					icon: "success",
+					title: "Categories created successfully"
               
-            })
-            this.getCategories();
+				});
+				this.getCategories();
             
-          }).catch(() => {
-            console.log('transaction fail');
-          });
-        },
+			}).catch(() => {
+				console.log("transaction fail");
+			});
+		},
 
-        onEdit(category){
-          this.editId = category.id
-          this.editCategoryData.name = category.name
-        },
+		onEdit(category){
+			this.editId = category.id;
+			this.editCategoryData.name = category.name;
+		},
 
-        onCancel(){
-          this.editId = ''
-          this.editCategoryData.name = ''
-        },
+		onCancel(){
+			this.editId = "";
+			this.editCategoryData.name = "";
+		},
 
-        editCategory(id){
-          let name        = this.editCategoryData.name
-          this.editId = ''
-           axios.put('http://localhost:8000/api/categories/' + id, {
-            name: name
-          }).then(() => {
-            swal.fire({
-              icon: 'success',
-              title: 'Category updated successfully'
-            })
-            this.getCategories();
+		editCategory(id){
+			let name        = this.editCategoryData.name;
+			this.editId = "";
+			axios.put("https://v3421024.mhs.d3tiuns.com/api/categories/" + id, {
+				name: name
+			}).then(() => {
+				swal.fire({
+					icon: "success",
+					title: "Category updated successfully"
+				});
+				this.getCategories();
 
-          }).catch(() => {
-            console.log('transaction fail');
-          });
-        }, 
+			}).catch(() => {
+				console.log("transaction fail");
+			});
+		}, 
 
-        deleteCategory(id) {
-          // sweet alert confirmation
-          swal.fire({
-            title: 'Ingin menghapus data?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya hapus data'
-          }).then((result) => {
-            // confirm delete?
-            if (result.value) {
-              // request delete
-              this.form.delete('http://localhost:8000/api/categories/' + id, {
-               }).then(() => {
-                // sweet alert success
-                swal.fire(
-                  'Deleted!',
-                  'Your file has been deleted.',
-                  'success'
-                )   
+		deleteCategory(id) {
+			// sweet alert confirmation
+			swal.fire({
+				title: "Ingin menghapus data?",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#3085d6",
+				cancelButtonColor: "#d33",
+				confirmButtonText: "Ya hapus data"
+			}).then((result) => {
+				// confirm delete?
+				if (result.value) {
+					// request delete
+					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/categories/" + id, {
+					}).then(() => {
+						// sweet alert success
+						swal.fire(
+							"Deleted!",
+							"Your file has been deleted.",
+							"success"
+						);   
   
-                this.getCategories(); 
-              }).catch(() => {
-                // sweet alert fail
-                swal.fire({
-                  icon: 'error',
-                  title: 'Oops...',
-                  text: 'Something went wrong!',
-                  footer: '<a href>Why do I have this issue?</a>'
-                })
-              }); 
-            }
-          })
-        }
-      },
+						this.getCategories(); 
+					}).catch(() => {
+						// sweet alert fail
+						swal.fire({
+							icon: "error",
+							title: "Oops...",
+							text: "Something went wrong!",
+							footer: "<a href>Why do I have this issue?</a>"
+						});
+					}); 
+				}
+			});
+		}
+	},
 
-      created() {
-        this.getCategories();
-      },
-      mounted() {
-        console.log('Component mounted.')
-      }
-    }
+	created() {
+		this.getCategories();
+	},
+	mounted() {
+		console.log("Component mounted.");
+	}
+};
 </script>
