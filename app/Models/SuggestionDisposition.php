@@ -9,8 +9,8 @@ class SuggestionDisposition extends Model
 {
     use HasFactory;
 
-    public function agenda() {
-        return $this->belongsTo(Agenda::class);
+    public function suggestion() {
+        return $this->belongsTo(Suggestion::class);
     }
 
     public function user() {

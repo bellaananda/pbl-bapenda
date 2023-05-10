@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agenda;
+use App\Models\AgendaDisposition;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
@@ -17,9 +18,8 @@ class AgendaController extends Controller
      */
     public function index(Request $request)
     {
-        //kurang disposisi
         $search = $request->input('search', null);
-        $order = $request->input('`' . 'order' . '`', 'date');
+        $order = $request->input('order', 'date');
         $sort = $request->input('sort', 'asc');
         $page = $request->input('page', 15);
         $data = DB::table('agendas')
@@ -28,10 +28,12 @@ class AgendaController extends Controller
                 ->join('categories', 'agendas.category_id', '=', 'categories.id')
                 ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
                 ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->leftJoin('agenda_dispositions', 'agendas.id', '=', 'agenda_dispositions.agenda_id')
                 ->select(
                     'agendas.id', 
                     'agendas.title', 
                     'agendas.date', 
+                    DB::raw("DATE_FORMAT(agendas.created_at, \"%Y-%m-%d\") AS agenda_date"),
                     'agendas.start_time', 
                     'agendas.end_time', 
                     DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
@@ -40,6 +42,7 @@ class AgendaController extends Controller
                     DB::raw('users.name AS person_in_charge'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
+                    DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN  agenda_dispositions.is_all IS NOT NULL THEN agenda_dispositions.is_all ELSE agenda_dispositions.description END) AS disposition")
                 )
                 ->orderBy($order, $sort)->paginate($page);
         if ($search != null) {
@@ -48,11 +51,13 @@ class AgendaController extends Controller
                     ->join('departments', 'agendas.department_id', '=', 'departments.id')
                     ->join('categories', 'agendas.category_id', '=', 'categories.id')
                     ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
-                    ->join('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                    ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                    ->leftJoin('agenda_dispositions', 'agendas.id', '=', 'agenda_dispositions.agenda_id')
                     ->select(
                         'agendas.id', 
                         'agendas.title', 
                         'agendas.date', 
+                        DB::raw("DATE_FORMAT(agendas.created_at, \"%Y-%m-%d\") AS agenda_date"),
                         'agendas.start_time', 
                         'agendas.end_time', 
                         DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
@@ -61,6 +66,7 @@ class AgendaController extends Controller
                         DB::raw('users.name AS person_in_charge'), 
                         DB::raw('departments.name AS department'),
                         DB::raw('categories.name AS category'),
+                        DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN  agenda_dispositions.is_all IS NOT NULL THEN agenda_dispositions.is_all ELSE agenda_dispositions.description END) AS disposition")
                     )
                     ->where('agendas.title', 'LIKE', '%' . $search .'%')
                     ->orWhere('agendas.date', 'LIKE', '%' . $search .'%')
@@ -100,19 +106,22 @@ class AgendaController extends Controller
      */
     public function store(Request $request)
     {
-        //if
         $validator = Validator::make($request->all(), [
             'department_id' => 'required',
             'category_id' => 'required',
-            'room_id' => '',
+            'room_id' => 'required',
             'person_in_charge' => 'required',
             'title' => 'required|string',
             'date' => 'required',
             'start_time' => 'required',
-            'end_time' => '',
-            'location' => '',
+            'end_time' => 'required_unless:room_id,1,2',
+            'location' => 'required_if:room_id,1,2',
             'contents' => 'required|string',
             'attachment' => '',
+            'disposition_employee' => 'required_if:disposition_department,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
+            'disposition_department' => 'required_if:disposition_employee,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
+            'disposition_description' => 'required_if:disposition_employee,null|required_if:disposition_department,null|required_if:disposition_is_all,null',
+            'disposition_is_all' => 'required_if:disposition_employee,null|required_if:disposition_department,null|required_if:disposition_description,null',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
@@ -138,6 +147,22 @@ class AgendaController extends Controller
                 'message' => 'Agenda baru gagal ditambahkan!'
             ], 409);
         }
+
+        $agenda = DB::table('agendas')->select('id')->latest('created_at')->first();
+        $data = AgendaDisposition::create([
+            'agenda_id' => $agenda->id,
+            'user_id' => $request->disposition_employee,
+            'department_id' => $request->disposition_department,
+            'description' => $request->disposition_description,
+            'is_all' => $request->disposition_is_all
+        ]);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Disposisi agenda baru gagal ditambahkan!'
+            ], 409);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Agenda baru berhasil ditambahkan!',
@@ -153,17 +178,25 @@ class AgendaController extends Controller
      */
     public function show($id)
     {
-        //add join
-        $data = Agenda::find($id)
+        $data = Agenda::find($id);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda tidak ditemukan!'
+            ], 404);
+        }
+        $data = DB::table('agendas')
                 ->join('users', 'agendas.person_in_charge', '=', 'users.id')
                 ->join('departments', 'agendas.department_id', '=', 'departments.id')
                 ->join('categories', 'agendas.category_id', '=', 'categories.id')
                 ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
-                ->join('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->leftJoin('agenda_dispositions', 'agendas.id', '=', 'agenda_dispositions.agenda_id')
                 ->select(
                     'agendas.id', 
                     'agendas.title', 
                     'agendas.date', 
+                    DB::raw("DATE_FORMAT(agendas.created_at, \"%Y-%m-%d\") AS agenda_date"),
                     'agendas.start_time', 
                     'agendas.end_time', 
                     DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
@@ -172,7 +205,8 @@ class AgendaController extends Controller
                     DB::raw('users.name AS person_in_charge'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
-                )->get();
+                    DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN  agenda_dispositions.is_all IS NOT NULL THEN agenda_dispositions.is_all ELSE agenda_dispositions.description END) AS disposition")
+                )->where('agendas.id', $id)->get();
         if (!$data) {
             return response()->json([
                 'success' => false,
@@ -218,15 +252,19 @@ class AgendaController extends Controller
         $validator = Validator::make($request->all(), [
             'department_id' => 'required',
             'category_id' => 'required',
-            'room_id' => '',
+            'room_id' => 'required',
             'person_in_charge' => 'required',
             'title' => 'required|string',
             'date' => 'required',
             'start_time' => 'required',
-            'end_time' => '',
-            'location' => '',
+            'end_time' => 'required_unless:room_id,1,2',
+            'location' => 'required_if:room_id,1,2',
             'contents' => 'required|string',
             'attachment' => '',
+            'disposition_employee' => 'required_if:disposition_department,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
+            'disposition_department' => 'required_if:disposition_employee,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
+            'disposition_description' => 'required_if:disposition_employee,null|required_if:disposition_department,null|required_if:disposition_is_all,null',
+            'disposition_is_all' => 'required_if:disposition_employee,null|required_if:disposition_department,null|required_if:disposition_description,null',
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
@@ -252,6 +290,21 @@ class AgendaController extends Controller
                 'message' => 'Data agenda gagal diubah!'
             ], 409);
         }
+
+        $data2 = AgendaDisposition::where('agenda_id', $id)->first();
+        $data2->update([
+            'user_id' => $request->disposition_employee,
+            'department_id' => $request->disposition_department,
+            'description' => $request->disposition_description,
+            'is_all' => $request->disposition_is_all
+        ]);
+        if (!$data2) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Disposisi agenda gagal diubah!'
+            ], 409);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Data agenda berhasil diubah!',
@@ -273,8 +326,10 @@ class AgendaController extends Controller
                 'message' => 'Data agenda tidak ditemukan!'
             ], 404);
         }
+        $data2 = AgendaDisposition::where('agenda_id', $id)->first();
+        $data2->delete();
         $data->delete();
-        if (!$data) {
+        if (!$data || !$data2) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data agenda gagal dihapus!'

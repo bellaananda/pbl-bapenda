@@ -39,7 +39,7 @@ class SuggestionController extends Controller
                     DB::raw("(CASE WHEN ISNULL(location) THEN rooms.name ELSE suggestions.location END) AS location"),
                     'suggestions.contents', 
                     'suggestions.attachment', 
-                    'suggestions.status', 
+                    DB::raw("(CASE WHEN suggestions.status = 1 THEN 'Diterima' WHEN suggestions.status = 0 THEN 'Diproses' ELSE 'Ditolak' END) AS status"), 
                     DB::raw('users.name AS user'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
@@ -188,7 +188,7 @@ class SuggestionController extends Controller
                 'message' => 'Data pengajuan agenda tidak ditemukan!'
             ], 404);
         }
-        $data = Suggestion::find($id)
+        $data = DB::table('suggestions')
                 ->join('users', 'suggestions.user_id', '=', 'users.id')
                 ->join('departments', 'suggestions.department_id', '=', 'departments.id')
                 ->join('categories', 'suggestions.category_id', '=', 'categories.id')
@@ -201,7 +201,7 @@ class SuggestionController extends Controller
                     DB::raw("DATE_FORMAT(suggestions.created_at, \"%Y-%m-%d\") AS suggestion_date"),
                     'suggestions.start_time', 
                     'suggestions.end_time', 
-                    'suggestions.location', 
+                    DB::raw("(CASE WHEN ISNULL(suggestions.location) THEN rooms.name ELSE suggestions.location END) AS location"),
                     'suggestions.contents', 
                     'suggestions.attachment', 
                     'suggestions.status',
@@ -212,7 +212,7 @@ class SuggestionController extends Controller
                     DB::raw('rooms.name AS room'),
                     DB::raw('users.name AS person_in_charge'),
                     DB::raw("(CASE WHEN suggestion_dispositions.user_id IS NOT NULL THEN users.name WHEN suggestion_dispositions.department_id IS NOT NULL THEN departments.name WHEN  suggestion_dispositions.is_all IS NOT NULL THEN suggestion_dispositions.is_all ELSE suggestion_dispositions.description END) AS disposition")
-                )->get();
+                )->where('suggestions.id', $id)->get();
         if (!$data) {
             return response()->json([
                 'success' => false,
@@ -307,9 +307,10 @@ class SuggestionController extends Controller
         if (!$data2) {
             return response()->json([
                 'success' => false,
-                'message' => 'Disposisi pengajuan agenda baru gagal diubah!'
+                'message' => 'Disposisi pengajuan agenda gagal diubah!'
             ], 409);
         }
+
         return response()->json([
             'success' => true,
             'message' => 'Data pengajuan agenda berhasil diubah!',

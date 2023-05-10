@@ -25,8 +25,8 @@ class Agenda extends Model
         return $this->belongsTo(Suggestion::class);
     }
     
-    public function disposition() {
-        return $this->hasMany(Disposition::class);
+    public function agendaDisposition() {
+        return $this->hasMany(AgendaDisposition::class);
     }
 
     protected $fillable = [
