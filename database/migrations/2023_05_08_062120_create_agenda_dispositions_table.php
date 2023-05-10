@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateDispositionsTable extends Migration
+class CreateAgendaDispositionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateDispositionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('dispositions', function (Blueprint $table) {
+        Schema::create('agenda_dispositions', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('agenda_id')->unsigned();
             $table->bigInteger('user_id')->unsigned()->nullable();
@@ -34,6 +34,6 @@ class CreateDispositionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dispositions');
+        Schema::dropIfExists('agenda_dispositions');
     }
 }

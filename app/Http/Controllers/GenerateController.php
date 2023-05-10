@@ -6,7 +6,6 @@ use App\Models\Suggestion;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use PDF;
 use App\Exports\SuggestionExport;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -19,7 +18,12 @@ class GenerateController extends Controller
      */
     public function index()
     {
-        //
+        $suggestion_id = DB::table('suggestions')->select('id')->latest('created_at')->first();
+        return response()->json([
+            'success' => true,
+            'message' => 'get data!',
+            'data'    => $suggestion_id->id
+        ], 200);
     }
 
     /**

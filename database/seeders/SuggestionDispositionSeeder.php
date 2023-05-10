@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class DispositionSeeder extends Seeder
+class SuggestionDispositionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
