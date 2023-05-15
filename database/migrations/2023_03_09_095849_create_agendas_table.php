@@ -15,11 +15,11 @@ class CreateAgendasTable extends Migration
     {
         Schema::create('agendas', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('department_id')->unsigned();
-            $table->bigInteger('category_id')->unsigned();
+            $table->bigInteger('department_id')->unsigned()->nullable();
+            $table->bigInteger('category_id')->unsigned()->nullable();
             $table->bigInteger('room_id')->unsigned()->nullable();
             $table->bigInteger('suggestion_id')->unsigned()->nullable();
-            $table->bigInteger('person_in_charge')->unsigned();
+            $table->bigInteger('person_in_charge')->unsigned()->nullable();
             $table->string('title');
             $table->date('date');
             $table->time('start_time');

@@ -121,7 +121,7 @@ class SuggestionController extends Controller
             'end_time' => 'required_unless:room_id,1,2',
             'location' => 'required_if:room_id,1,2',
             'contents' => 'required|string',
-            'attachment' => '',
+            'attachment' => 'file|mimes:xls,xlsx,doc,docx,pdf,zip,jpg,jpeg,png|max:2048',
             'disposition_employee' => 'required_if:disposition_department,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
             'disposition_department' => 'required_if:disposition_employee,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
             'disposition_description' => 'required_if:disposition_employee,null|required_if:disposition_department,null|required_if:disposition_is_all,null',
@@ -131,6 +131,7 @@ class SuggestionController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
+        //if attachment != null ntar upload dulu sama rename terus save ke folder uploads
         $data = Suggestion::create([
             'user_id' => $request->user_id,
             'department_id' => $request->department_id,
@@ -267,7 +268,7 @@ class SuggestionController extends Controller
             'end_time' => 'required_unless:room_id,1,2',
             'location' => 'required_if:room_id,1,2',
             'contents' => 'required|string',
-            'attachment' => '',
+            'attachment' => 'file|mimes:xls,xlsx,doc,docx,pdf,zip,jpg,jpeg,png|max:2048',
             'disposition_employee' => 'required_if:disposition_department,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
             'disposition_department' => 'required_if:disposition_employee,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
             'disposition_description' => 'required_if:disposition_employee,null|required_if:disposition_department,null|required_if:disposition_is_all,null',
@@ -290,6 +291,7 @@ class SuggestionController extends Controller
             'location' => $request->location,
             'contents' => $request->contents,
             'attachment' => $request->attachment,
+            'status' => 0
         ]);
         if (!$data) {
             return response()->json([
@@ -350,6 +352,11 @@ class SuggestionController extends Controller
     }
 
     public function approveAgenda($id) {
+        //status agenda :
+        //proses = 0
+        //diterima = 1
+        //ditolak = 2
+        //revisi = 3
         $data = Suggestion::find($id);
         if (!$data) {
             return response()->json([
@@ -358,7 +365,11 @@ class SuggestionController extends Controller
             ], 404);
         }
 
-        $data->status = 1;
+        if ($data->notes_of_refusal != null) {
+            $data->status = 3;
+        } else {
+            $data->status = 1;
+        }
         $data->save();
         if (!$data) {
             return response()->json([
@@ -394,8 +405,14 @@ class SuggestionController extends Controller
         ], 200);
     }
 
-    public function denyAgenda($id) {
-        $data = Suggestion::find($id);
+    public function denyAgenda(Request $request) {
+        //status agenda :
+        //proses = 0
+        //diterima = 1
+        //ditolak = 2
+        //revisi = 3
+        $notes = $request->input('notes', null);
+        $data = Suggestion::find($request->id);
         if (!$data) {
             return response()->json([
                 'success' => false,
@@ -404,6 +421,7 @@ class SuggestionController extends Controller
         }
 
         $data->status = 2;
+        $data->notes_of_refusal = $notes;
         $data->save();
         if (!$data) {
             return response()->json([
@@ -414,6 +432,47 @@ class SuggestionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Status pengajuan agenda berhasil ditolak!',
+            'data'    => $data
+        ], 200);
+    }
+
+    public function indexUser($id) {
+        //dari sisi user
+        $data = DB::table('suggestions')
+                ->join('users', 'suggestions.user_id', '=', 'users.id')
+                ->join('departments', 'suggestions.department_id', '=', 'departments.id')
+                ->join('categories', 'suggestions.category_id', '=', 'categories.id')
+                ->join('rooms', 'suggestions.room_id', '=', 'rooms.id')
+                ->leftJoin('suggestion_dispositions', 'suggestions.id', '=', 'suggestion_dispositions.suggestion_id')
+                ->select(
+                    'suggestions.id', 
+                    'suggestions.title', 
+                    'suggestions.date', 
+                    DB::raw("DATE_FORMAT(suggestions.created_at, \"%Y-%m-%d\") AS suggestion_date"),
+                    'suggestions.start_time', 
+                    'suggestions.end_time', 
+                    DB::raw("(CASE WHEN ISNULL(suggestions.location) THEN rooms.name ELSE suggestions.location END) AS location"),
+                    'suggestions.contents', 
+                    'suggestions.attachment', 
+                    'suggestions.status',
+                    DB::raw("(CASE WHEN suggestions.status = 1 THEN 'Diterima' WHEN suggestions.status = 0 THEN 'Diproses' ELSE 'Ditolak' END) AS status"),
+                    DB::raw('users.name AS user'), 
+                    DB::raw('departments.name AS department'),
+                    DB::raw('categories.name AS category'),
+                    DB::raw('rooms.name AS room'),
+                    DB::raw('users.name AS person_in_charge'),
+                    DB::raw("(CASE WHEN suggestion_dispositions.user_id IS NOT NULL THEN users.name WHEN suggestion_dispositions.department_id IS NOT NULL THEN departments.name WHEN  suggestion_dispositions.is_all IS NOT NULL THEN suggestion_dispositions.is_all ELSE suggestion_dispositions.description END) AS disposition")
+                )->where('suggestions.user_id', $id)
+                ->orderBy('suggestions.created_at', 'desc')->get();
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengajuan agenda tidak ditemukan!'
+            ], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data pengajuan agenda!',
             'data'    => $data
         ], 200);
     }

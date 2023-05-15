@@ -16,10 +16,10 @@ class CreateSuggestionsTable extends Migration
         Schema::create('suggestions', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->bigInteger('department_id')->unsigned();
-            $table->bigInteger('category_id')->unsigned();
+            $table->bigInteger('department_id')->unsigned()->nullable();
+            $table->bigInteger('category_id')->unsigned()->nullable();
             $table->bigInteger('room_id')->unsigned()->nullable();
-            $table->bigInteger('person_in_charge')->unsigned();
+            $table->bigInteger('person_in_charge')->unsigned()->nullable();
             $table->string('title');
             $table->date('date');
             $table->time('start_time');
@@ -28,6 +28,7 @@ class CreateSuggestionsTable extends Migration
             $table->text('contents');
             $table->text('attachment')->nullable();
             $table->integer('status')->default(0);
+            $table->text('notes_of_refusal')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('department_id')->references('id')->on('departments');
             $table->foreign('category_id')->references('id')->on('categories');

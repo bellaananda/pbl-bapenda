@@ -19,7 +19,7 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search', null);
-        $order = $request->input('order', 'id');
+        $order = $request->input('order', 'name');
         $sort = $request->input('sort', 'asc');
         $page = $request->input('page', 15);
         $data = DB::table('users')
