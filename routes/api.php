@@ -40,4 +40,5 @@ Route::get('/agendas-today', [AgendaController::class, 'showTodayAgenda']);
 Route::get('/agendas-tomorrow', [AgendaController::class, 'showTomorrowAgenda']);
 Route::resource('/dispositions', DispositionController::class);
 Route::resource('/generate', GenerateController::class);
-Route::get('/download-suggestions-excel', [GenerateController::class, 'generateSuggestionsExcel'])->name('suggestions.export');
+Route::get('/download-agenda-excel', [GenerateController::class, 'generateAgendaExcel'])->name('agendas.export');
+Route::get('/generate-text', [GenerateController::class, 'generateAgendaText']);

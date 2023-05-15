@@ -18,7 +18,6 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
-        //field nya
         $search = $request->input('search', null);
         $order = $request->input('order', 'id');
         $sort = $request->input('sort', 'asc');
@@ -245,4 +244,27 @@ class EmployeeController extends Controller
             'message' => 'Data pegawai berhasil dihapus!'
         ], 200);
     }
+
+    public function updatePassword(Request $request) {
+        $data = User::find($request->id);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengguna tidak ditemukan!'
+            ], 404);
+        }
+        $data->password = Hash::make($request->new_password);
+        $data->save();
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Password pengguna gagal diubah!'
+            ], 409);
+        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Password pengguna berhasil diubah!'
+        ], 200);
+    }
+
 }

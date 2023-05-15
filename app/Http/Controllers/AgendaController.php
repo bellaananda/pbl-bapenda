@@ -42,7 +42,7 @@ class AgendaController extends Controller
                     DB::raw('users.name AS person_in_charge'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
-                    DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN  agenda_dispositions.is_all IS NOT NULL THEN agenda_dispositions.is_all ELSE agenda_dispositions.description END) AS disposition")
+                    DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN agenda_dispositions.is_all = 1 THEN 'Seluruh Pegawai' ELSE agenda_dispositions.description END) AS disposition")
                 )
                 ->orderBy($order, $sort)->paginate($page);
         if ($search != null) {
@@ -66,7 +66,7 @@ class AgendaController extends Controller
                         DB::raw('users.name AS person_in_charge'), 
                         DB::raw('departments.name AS department'),
                         DB::raw('categories.name AS category'),
-                        DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN  agenda_dispositions.is_all IS NOT NULL THEN agenda_dispositions.is_all ELSE agenda_dispositions.description END) AS disposition")
+                        DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN agenda_dispositions.is_all = 1 THEN 'Seluruh Pegawai' ELSE agenda_dispositions.description END) AS disposition")
                     )
                     ->where('agendas.title', 'LIKE', '%' . $search .'%')
                     ->orWhere('agendas.date', 'LIKE', '%' . $search .'%')
@@ -205,7 +205,7 @@ class AgendaController extends Controller
                     DB::raw('users.name AS person_in_charge'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
-                    DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN  agenda_dispositions.is_all IS NOT NULL THEN agenda_dispositions.is_all ELSE agenda_dispositions.description END) AS disposition")
+                    DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN  agenda_dispositions.is_all = 1 THEN 'Seluruh Pegawai' ELSE agenda_dispositions.description END) AS disposition")
                 )->where('agendas.id', $id)->get();
         if (!$data) {
             return response()->json([
@@ -348,10 +348,12 @@ class AgendaController extends Controller
                 ->join('categories', 'agendas.category_id', '=', 'categories.id')
                 ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
                 ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->leftJoin('agenda_dispositions', 'agendas.id', '=', 'agenda_dispositions.agenda_id')
                 ->select(
                     'agendas.id', 
                     'agendas.title', 
                     'agendas.date', 
+                    DB::raw("DATE_FORMAT(agendas.created_at, \"%Y-%m-%d\") AS agenda_date"),
                     'agendas.start_time', 
                     'agendas.end_time', 
                     DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
@@ -360,12 +362,19 @@ class AgendaController extends Controller
                     DB::raw('users.name AS person_in_charge'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
+                    DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN agenda_dispositions.is_all = 1 THEN 'Seluruh Pegawai' ELSE agenda_dispositions.description END) AS disposition")
                 )
                 ->whereRaw(DB::raw('DATE(agendas.date) = SUBDATE(CURDATE(),1)'))->get();
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda tidak ditemukan!'
+            ], 404);
+        }
         return response()->json([
             'success' => true,
-            'message' => 'Daftar Agenda',
-            'data'    => $data  
+            'message' => 'Berhasil mendapatkan data agenda!',
+            'data'    => $data
         ], 200);
     }
 
@@ -376,10 +385,12 @@ class AgendaController extends Controller
                 ->join('categories', 'agendas.category_id', '=', 'categories.id')
                 ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
                 ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->leftJoin('agenda_dispositions', 'agendas.id', '=', 'agenda_dispositions.agenda_id')
                 ->select(
                     'agendas.id', 
                     'agendas.title', 
                     'agendas.date', 
+                    DB::raw("DATE_FORMAT(agendas.created_at, \"%Y-%m-%d\") AS agenda_date"),
                     'agendas.start_time', 
                     'agendas.end_time', 
                     DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
@@ -388,12 +399,19 @@ class AgendaController extends Controller
                     DB::raw('users.name AS person_in_charge'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
+                    DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN agenda_dispositions.is_all = 1 THEN 'Seluruh Pegawai' ELSE agenda_dispositions.description END) AS disposition")
                 )
                 ->whereRaw(DB::raw('DATE(agendas.date) = DATE(NOW())'))->get();
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda tidak ditemukan!'
+            ], 404);
+        }
         return response()->json([
             'success' => true,
-            'message' => 'Daftar Agenda',
-            'data'    => $data  
+            'message' => 'Berhasil mendapatkan data agenda!',
+            'data'    => $data
         ], 200);
     }
 
@@ -404,10 +422,12 @@ class AgendaController extends Controller
                 ->join('categories', 'agendas.category_id', '=', 'categories.id')
                 ->join('rooms', 'agendas.room_id', '=', 'rooms.id')
                 ->leftJoin('suggestions', 'agendas.suggestion_id', '=', 'suggestions.id')
+                ->leftJoin('agenda_dispositions', 'agendas.id', '=', 'agenda_dispositions.agenda_id')
                 ->select(
                     'agendas.id', 
                     'agendas.title', 
                     'agendas.date', 
+                    DB::raw("DATE_FORMAT(agendas.created_at, \"%Y-%m-%d\") AS agenda_date"),
                     'agendas.start_time', 
                     'agendas.end_time', 
                     DB::raw("(CASE WHEN ISNULL(agendas.location) THEN rooms.name ELSE agendas.location END) AS location"),
@@ -416,12 +436,19 @@ class AgendaController extends Controller
                     DB::raw('users.name AS person_in_charge'), 
                     DB::raw('departments.name AS department'),
                     DB::raw('categories.name AS category'),
+                    DB::raw("(CASE WHEN agenda_dispositions.user_id IS NOT NULL THEN users.name WHEN agenda_dispositions.department_id IS NOT NULL THEN departments.name WHEN agenda_dispositions.is_all = 1 THEN 'Seluruh Pegawai' ELSE agenda_dispositions.description END) AS disposition")
                 )
                 ->whereRaw(DB::raw('DATE(agendas.date) = DATE(NOW()) + 1'))->get();
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data agenda tidak ditemukan!'
+            ], 404);
+        }
         return response()->json([
             'success' => true,
-            'message' => 'Daftar Agenda',
-            'data'    => $data  
+            'message' => 'Berhasil mendapatkan data agenda!',
+            'data'    => $data
         ], 200);
     }
 }

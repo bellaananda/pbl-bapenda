@@ -19,6 +19,7 @@ class SuggestionController extends Controller
      */
     public function index(Request $request)
     {
+        //dari sisi operator
         $search = $request->input('search', null);
         $order = $request->input('order', 'date');
         $sort = $request->input('sort', 'desc');
