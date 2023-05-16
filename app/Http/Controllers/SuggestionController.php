@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File; 
 
 class SuggestionController extends Controller
 {
@@ -121,7 +123,7 @@ class SuggestionController extends Controller
             'end_time' => 'required_unless:room_id,1,2',
             'location' => 'required_if:room_id,1,2',
             'contents' => 'required|string',
-            'attachment' => 'file|mimes:xls,xlsx,doc,docx,pdf,zip,jpg,jpeg,png|max:2048',
+            'attachment' => 'required|file|mimes:xls,xlsx,doc,docx,pdf,zip,jpg,jpeg,png|max:2048',
             'disposition_employee' => 'required_if:disposition_department,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
             'disposition_department' => 'required_if:disposition_employee,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
             'disposition_description' => 'required_if:disposition_employee,null|required_if:disposition_department,null|required_if:disposition_is_all,null',
@@ -132,6 +134,15 @@ class SuggestionController extends Controller
         }
 
         //if attachment != null ntar upload dulu sama rename terus save ke folder uploads
+        $attachment = $request->file('attachment');
+        $attachment_newname = '';
+        if ($attachment != null) {
+            $path = 'uploads/suggestions_attachments/';
+            $extension = $attachment->getClientOriginalExtension();
+            $attachment_newname = Str::uuid().".".$extension;
+            $attachment->move($path, $attachment_newname);
+        }
+
         $data = Suggestion::create([
             'user_id' => $request->user_id,
             'department_id' => $request->department_id,
@@ -144,7 +155,7 @@ class SuggestionController extends Controller
             'end_time' => $request->end_time,
             'location' => $request->location,
             'contents' => $request->contents,
-            'attachment' => $request->attachment,
+            'attachment' => $attachment_newname,
         ]);
         if (!$data) {
             return response()->json([
@@ -268,7 +279,7 @@ class SuggestionController extends Controller
             'end_time' => 'required_unless:room_id,1,2',
             'location' => 'required_if:room_id,1,2',
             'contents' => 'required|string',
-            'attachment' => 'file|mimes:xls,xlsx,doc,docx,pdf,zip,jpg,jpeg,png|max:2048',
+            'attachment' => 'required|file|mimes:xls,xlsx,doc,docx,pdf,zip,jpg,jpeg,png|max:2048',
             'disposition_employee' => 'required_if:disposition_department,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
             'disposition_department' => 'required_if:disposition_employee,null|required_if:disposition_description,null|required_if:disposition_is_all,null',
             'disposition_description' => 'required_if:disposition_employee,null|required_if:disposition_department,null|required_if:disposition_is_all,null',
@@ -276,6 +287,19 @@ class SuggestionController extends Controller
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 400);
+        }
+
+        $attachment = $request->file('attachment');
+        $path = 'uploads/suggestions_attachments/';
+        $attachment_newname = '';
+        if ($attachment != null) {
+            $extension = $attachment->getClientOriginalExtension();
+            $attachment_newname = Str::uuid().".".$extension;
+            $attachment->move($path, $attachment_newname);
+        }
+        
+        if ($data->attachment != null) {
+            File::delete($path . $data->attachment);
         }
 
         $data->update([
@@ -290,7 +314,7 @@ class SuggestionController extends Controller
             'end_time' => $request->end_time,
             'location' => $request->location,
             'contents' => $request->contents,
-            'attachment' => $request->attachment,
+            'attachment' => $attachment_newname,
             'status' => 0
         ]);
         if (!$data) {
@@ -336,6 +360,10 @@ class SuggestionController extends Controller
                 'message' => 'Data pengajuan agenda tidak ditemukan!'
             ], 404);
         }
+        if ($data->attachment != null) {
+            $path = 'uploads/suggestions_attachments/';
+            File::delete($path . $data->attachment);
+        }
         $data2 = SuggestionDisposition::where('suggestion_id', $id)->first();
         $data2->delete();
         $data->delete();
@@ -377,6 +405,14 @@ class SuggestionController extends Controller
                 'message' => 'Status pengajuan agenda gagal disetujui!'
             ], 409);
         }
+        
+        $attachment = $data->attachment;
+        $old_path = 'uploads/suggestions_attachments/';
+        $new_path = 'uploads/agendas_attachments/';
+        if ($attachment != null) {
+            File::copy($old_path . $attachment, $new_path . $attachment);
+        }
+        
         $agenda = Agenda::create([
             'department_id' => $data->department_id,
             'category_id' => $data->category_id,
