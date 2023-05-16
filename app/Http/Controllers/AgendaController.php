@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File; 
 
 class AgendaController extends Controller
 {
@@ -127,6 +129,16 @@ class AgendaController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
+        //if attachment != null ntar upload dulu sama rename terus save ke folder uploads
+        $attachment = $request->file('attachment');
+        $attachment_newname = '';
+        if ($attachment != null) {
+            $path = 'uploads/agendas_attachments/';
+            $extension = $attachment->getClientOriginalExtension();
+            $attachment_newname = Str::uuid().".".$extension;
+            $attachment->move($path, $attachment_newname);
+        }
+
         $data = Agenda::create([
             'department_id' => $request->department_id,
             'category_id' => $request->category_id,
@@ -139,7 +151,7 @@ class AgendaController extends Controller
             'end_time' => $request->end_time,
             'location' => $request->location,
             'contents' => $request->contents,
-            'attachment' => $request->attachment,
+            'attachment' => $attachment_newname,
         ]);
         if (!$data) {
             return response()->json([
@@ -270,6 +282,19 @@ class AgendaController extends Controller
             return response()->json($validator->errors(), 400);
         }
 
+        $attachment = $request->file('attachment');
+        $path = 'uploads/agendas_attachments/';
+        $attachment_newname = '';
+        if ($attachment != null) {
+            $extension = $attachment->getClientOriginalExtension();
+            $attachment_newname = Str::uuid().".".$extension;
+            $attachment->move($path, $attachment_newname);
+        }
+        
+        if ($data->attachment != null) {
+            File::delete($path . $data->attachment);
+        }
+
         $data->update([
             'department_id' => $request->department_id,
             'category_id' => $request->category_id,
@@ -282,7 +307,7 @@ class AgendaController extends Controller
             'end_time' => $request->end_time,
             'location' => $request->location,
             'contents' => $request->contents,
-            'attachment' => $request->attachment,
+            'attachment' => $attachment_newname,
         ]);
         if (!$data) {
             return response()->json([
@@ -325,6 +350,10 @@ class AgendaController extends Controller
                 'success' => false,
                 'message' => 'Data agenda tidak ditemukan!'
             ], 404);
+        }
+        if ($data->attachment != null) {
+            $path = 'uploads/agendas_attachments/';
+            File::delete($path . $data->attachment);
         }
         $data2 = AgendaDisposition::where('agenda_id', $id)->first();
         $data2->delete();
