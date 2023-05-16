@@ -31,10 +31,10 @@
                       <th>Tanggal</th>
                       <th>Waktu</th>
                       <!-- <th>Lokasi</th> -->
-                      <th>Isi Agenda</th>
+                      <th>Isi Agenda</th> 
                       <!-- <th>Attachment</th> -->
+                      <th>PenanggungJawab</th>
                       <th>Disposisi</th>
-                      <th>Department</th>
                       <th>Kategori</th>
                       <th>Ruangan</th>
                       <!-- <th>Suggestion</th> -->
@@ -59,9 +59,9 @@
                         <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="onEdit(agenda)">
                           <i class="mdi mdi-pencil btn-icon-prepend"></i>
                         </a>
-                        <!-- <a href="#" class="btn btn-sm btn-inverse-warning" data-toggle="modal" data-target="#modalDetail">
+                        <a href="#" class="btn btn-sm btn-inverse-warning" data-toggle="modal" data-target="#exampleModalDetail">
                           <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
-                        </a> -->
+                        </a>
                         <a href="" class="btn btn-sm btn-inverse-danger" @click.prevent="deleteAgenda(agenda.id)">
                           <i class="mdi mdi-delete btn-icon-prepend"></i>
                         </a>
@@ -174,10 +174,27 @@
                 </div>
                 <div class="form-group">
                   <label for="department">Disposisi</label>
-                  <select class="form-control" id="department" v-model="form.department_id">
-                    <option disabled value>Pilih Department </option>
+                  <select class="form-control" id="disposisi" v-model="disposition_is_all">
+                    <option disabled value>Pilih Disposisi</option>
+                    <option value="1">Semua Pegawai</option>
+                    <option value="departments">Department</option>
+                    <option value="employees">Pegawai</option>
+                    <option value="description">Input Pegawai</option>
+                  </select>
+
+                  <select class="form-control" v-if="disposition_is_all === 'departments'" v-model="disposition_department">
+                    <option disabled value>Pilih Department</option>
                     <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
                   </select>
+
+                  <select class="form-control" v-else-if="disposition_is_all === 'employees'" v-model="disposition_employee">
+                    <option disabled value>Pilih Pegawai</option>
+                    <option v-for="user in employees.data" :key="user.id" :value="user.id">{{ user.name }}</option>
+                  </select>
+
+                  <div v-else-if="disposition_is_all === 'description'">
+                    <input type="text" class="form-control" v-model="disposition_description" placeholder="Masukkan Disposisi" />
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="contents">Isi Agenda</label>
@@ -191,14 +208,9 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="attachment">File upload</label>
-                  <div class="input-group col-xs-12">
-                    <input type="file" class="form-control file-upload-info"  v-on:change="upload"  placeholder="Upload file">
-                    <span class="input-group-append">
-                      <button class="file-upload-browse btn btn-primary" type="button"> Upload </button>
-                    </span> 
+                    <label for="attachment">File upload</label>
+                    <input type="file" class="form-control file-upload-info" id="attachment" @change="onFileSelected">
                   </div>
-                </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
@@ -208,6 +220,60 @@
             </form>
           </div>
         </div>
+      </div>
+
+      <div class="modal fade" id="exampleModalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalDetail" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+           <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body table-responsive">
+        <table class="table table-bordered no-margin">
+          <tbody v-for="agenda in agendas.data" :key="agenda.id">
+            <tr>
+              <th>Judul Agenda</th>
+              <td><span id="title">{{ agenda.title }}</span></td>
+            </tr>
+            <tr>
+              <th>Tanggal</th>
+              <td><span id="date">{{ agenda.date }}</span></td>
+            </tr>
+            <tr>
+              <th>Waktu</th>
+              <td><span id="time">{{ agenda.start_time }} - {{ agenda.end_time }}</span></td>
+            </tr>
+            <tr>
+              <th>Isi Agenda</th>
+              <td><span id="contents">{{ agenda.contents }}</span></td>
+            </tr>
+            <tr>
+              <th>Disposisi</th>
+              <td><span id="department">{{ agenda.department }}</span></td>
+            </tr>
+            <tr>
+              <th>PenanggungJawab</th>
+              <td><span id="person_in_charge">{{ agenda.person_in_charge }}</span></td>
+            </tr>
+            <tr>
+              <th>Kategori</th>
+              <td><span id="category">{{ agenda.category }}</span></td>
+            </tr>
+            <tr>
+              <th>Ruangan</th>
+              <td><span id="room">{{ agenda.room }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
       </div>
       
     </div>
@@ -225,6 +291,10 @@ export default {
 		return {
       isGenerateAgenda: true,
 			editId: "",
+      disposition_employee: null,
+      disposition_department: null,
+      disposition_description: null,
+      disposition_is_all: null,
 			agendas: {},
       rooms: {},
       employees: {},
@@ -243,8 +313,8 @@ export default {
         end_time: "",
         contents: "",
         person_in_charge: "",
-        location: "",
-        attachment: "",
+        location: null,
+        attachment: null,
       }),
       isFormCreateAgendaMode: true
 		};
@@ -283,6 +353,14 @@ export default {
 			});     
 		},
 
+    Detail(id){
+      axios.get("https://api.klikagenda.com/api/agendas/" + id ,{
+			}).then(data => {
+				this.agendas = data.data.data;
+			}); 
+         
+    },
+
     showModal() {
 			this.isFormCreateAgendaMode = true;
 			this.form.reset(); // v form reset
@@ -290,43 +368,49 @@ export default {
 		},
 
     getEmployee() {  
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/employees", {
+			axios.get("https://api.klikagenda.com/api/employees", {
 			}).then(data => {
 				this.employees = data.data.data;
 			});     
 		},
 
     getDepartment() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/departments", {
+			axios.get("https://api.klikagenda.com/api/departments", {
 			}).then(data => {
 				this.departments = data.data.data;
 			});     
 		},
 
     getRoom() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/rooms", {
+			axios.get("https://api.klikagenda.com/api/rooms", {
 			}).then(data => {
 				this.rooms = data.data.data;
 			});     
 		},
 
     getCategories() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/categories", {
+			axios.get("https://api.klikagenda.com/api/categories", {
 			}).then(data => {
 				this.categories = data.data.data;
 			});     
 		},
 
     getSuggestion() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/suggestions", {
+			axios.get("https://api.klikagenda.com/api/suggestions", {
 			}).then(data => {
 				this.suggestions = data.data.data;
 			});     
 		},
 
+    onFileSelected(event) {
+        this.form.attachment = event.target.files[0];
+    },
+
     createAgenda() {
+      let formData = new FormData();
+      formData.append("attachment", this.form.attachment);
 			// request post
-			this.form.post("https://v3421024.mhs.d3tiuns.com/api/agendas", {
+			this.form.post("https://api.klikagenda.com/api/agendas", {
 			}).then(() => {
         $("#exampleModalAgenda").modal("hide");
 				swal.fire({
@@ -350,7 +434,7 @@ export default {
 
 		editAgenda(){
 			// request put
-			this.form.put("https://v3421024.mhs.d3tiuns.com/api/agendas/" + this.form.id, {
+			this.form.put("https://api.klikagenda.com/api/agendas/" + this.form.id, {
 			}).then(() => {
 				$("#exampleModalAgenda").modal("hide"); // hide modal
           
@@ -380,7 +464,7 @@ export default {
 				// confirm delete?
 				if (result.value) {
 					// request delete
-					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/agendas/" + id, {
+					this.form.delete("https://api.klikagenda.com/api/agendas/" + id, {
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

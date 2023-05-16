@@ -39,13 +39,13 @@
                         <th>No</th>
                         <th>NIP</th>
                         <th>Nama</th>
-                        <th>Email</th>
+                        <!-- <th>Email</th> -->
                         <th>No. Telp</th>
-                        <th>Alamat</th>
-                        <th>Role</th>
+                        <!-- <th>Alamat</th> -->
+                        <!-- <th>Role</th> -->
                         <th>Status</th>
                         <th>Posisi</th>
-                        <th>Department</th>
+                        <!-- <th>Department</th> -->
                         <th></th>
                       </tr>
                     </thead>
@@ -54,12 +54,12 @@
                           <td>{{ index + 1}}</td>
                           <td>{{ employe.nip }}</td>
                           <td>{{ employe.name }}</td>
-                          <td>{{ employe.email }}</td>
+                          <!-- <td>{{ employe.email }}</td> -->
                           <td>{{ employe.phone_number }}</td>
-                          <td>{{ employe.address }}</td>
-                          <td>
+                          <!-- <td>{{ employe.address }}</td> -->
+                          <!-- <td>
                             {{ employe.role }}
-                          </td>
+                          </td> -->
                           <td>
                             <template v-if="employe.status === 1">
                               <span class="badge badge-success">Aktif</span>
@@ -69,7 +69,7 @@
                             </template>
                           </td>
                           <td>{{ employe.position }}</td>
-                          <td>{{ employe.department }}</td>
+                          <!-- <td>{{ employe.department }}</td> -->
                           <td>
                             <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="onEdit(employe)">
                               <i class="mdi mdi-pencil btn-icon-prepend"></i>
@@ -178,8 +178,9 @@
                   <label for="role">Role</label>
                   <select class="form-control" id="role" v-model="form.role">
                     <option disabled value="">Pilih Role Pegawai</option>
-                    <option value="1" checked>User</option>  
-                    <option value="2">Operator</option>
+                    <option value="user">User</option>  
+                    <option value="operator">Operator</option>
+                    <option value="admin">admin</option>
                   </select>
                   <!-- <has-error :form="form" field="role"></has-error> -->
                 </div>
@@ -261,7 +262,7 @@ export default {
 
 		getEmployee(currentPage) {
       // let offset = (this.currentPage - 1) * this.perPage;
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/employees/?pages= " + currentPage, {
+			axios.get("https://api.klikagenda.com/api/employees " + currentPage, {
 			}).then(data => {
 				this.employees = data.data.data;
 			});     
@@ -282,14 +283,14 @@ export default {
 		},
 
 		getPosition() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/positions", {
+			axios.get("https://api.klikagenda.com/api/positions", {
 			}).then(data => {
 				this.positions = data.data.data;
 			});     
 		},
 
 		getDepartment() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/departments", {
+			axios.get("https://api.klikagenda.com/api/departments", {
 			}).then(data => {
 				this.departments = data.data.data;
 			});     
@@ -297,7 +298,7 @@ export default {
 
 		createEmployee() {
 			// request post
-			this.form.post("https://v3421024.mhs.d3tiuns.com/api/employees", {
+			this.form.post("https://api.klikagenda.com/api/employees", {
 			}).then(() => {
 				$("#exampleModal").modal("hide");
 				swal.fire({
@@ -316,14 +317,14 @@ export default {
 		onEdit(employe){
 			this.isFormCreateEmployeMode = false;
 			this.form.reset(); // v form reset inputs
-			this.form.clear(); // v form clear errors
+			// this.form.clear(); // v form clear errors
 			$("#exampleModal").modal("show"); // show modal
 			this.form.fill(employe);
 		},
 
 		editEmployee(){
 			// request put
-			this.form.put("https://v3421024.mhs.d3tiuns.com/api/employees/" + this.form.id, {
+			this.form.put("https://api.klikagenda.com/api/employees/" + this.form.id, {
 			}).then(() => {
 				$("#exampleModal").modal("hide"); // hide modal
           
@@ -353,7 +354,7 @@ export default {
 				// confirm delete?
 				if (result.value) {
 					// request delete
-					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/employees/" + id, {
+					this.form.delete("https://api.klikagenda.com/api/employees/" + id, {
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

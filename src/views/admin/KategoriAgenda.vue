@@ -150,15 +150,8 @@ export default {
 
 	methods: {
 
-		getCategories(page) {
-			if (typeof page === "undefined") {
-				page = 1;
-			}
-  
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/categories", {
-				params: {
-					page: page
-				}
+		getCategories() {
+			axios.get("https://api.klikagenda.com/api/categories", {
 			}).then(data => {
 				this.categories = data.data.data;
 			});     
@@ -167,7 +160,7 @@ export default {
 
 		createCategory() {
 			// request post
-			this.form.post("https://v3421024.mhs.d3tiuns.com/api/categories", {
+			this.form.post("https://api.klikagenda.com/api/categories", {
 			}).then(() => {
 				// this.modalKategori = false;
 				swal.fire({
@@ -195,7 +188,7 @@ export default {
 		editCategory(id){
 			let name        = this.editCategoryData.name;
 			this.editId = "";
-			axios.put("https://v3421024.mhs.d3tiuns.com/api/categories/" + id, {
+			axios.put("https://api.klikagenda.com/api/categories/" + id, {
 				name: name
 			}).then(() => {
 				swal.fire({
@@ -222,7 +215,7 @@ export default {
 				// confirm delete?
 				if (result.value) {
 					// request delete
-					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/categories/" + id, {
+					this.form.delete("https://api.klikagenda.com/api/categories/" + id, {
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

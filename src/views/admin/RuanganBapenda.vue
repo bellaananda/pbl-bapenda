@@ -150,15 +150,9 @@ export default {
 
 	methods: {
 
-		getRoom(page) {
-			if (typeof page === "undefined") {
-				page = 1;
-			}
+		getRoom() {
   
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/rooms", {
-				params: {
-					page: page
-				}
+			axios.get("https://api.klikagenda.com/api/rooms", {
 			}).then(data => {
 				this.rooms = data.data.data;
 			});     
@@ -167,7 +161,7 @@ export default {
 
 		createRoom() {
 			// request post
-			this.form.post("https://v3421024.mhs.d3tiuns.com/api/rooms", {
+			this.form.post("https://api.klikagenda.com/api/rooms", {
 			}).then(() => {
 				swal.fire({
 					icon: "success",
@@ -194,7 +188,7 @@ export default {
 		editRoom(id){
 			let name        = this.editRoomData.name;
 			this.editId = "";
-			axios.put("https://v3421024.mhs.d3tiuns.com/api/rooms/" + id, {
+			axios.put("https://api.klikagenda.com/api/rooms/" + id, {
 				name: name
 			}).then(() => {
 				swal.fire({
@@ -221,7 +215,7 @@ export default {
 				// confirm delete?
 				if (result.value) {
 					// request delete
-					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/rooms/" + id, {
+					this.form.delete("https://api.klikagenda.com/api/rooms/" + id, {
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

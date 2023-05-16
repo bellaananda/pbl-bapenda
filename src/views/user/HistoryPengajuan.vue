@@ -23,8 +23,9 @@
                       <th>Tanggal</th>
                       <th>Waktu</th>
                       <th>PenanggungJawab</th>
+                      <!-- <th>Disposisi</th> -->
                       <th>Status</th>
-                      <th></th>
+                      <th></th> 
                     </tr>
                   </thead>
                   <tbody>
@@ -34,12 +35,16 @@
                       <td>{{ suggestion.date }}</td>
                       <td>{{ suggestion.start_time }} - {{ suggestion.end_time }}</td>
                       <td>{{ suggestion.person_in_charge }}</td>
+                      <!-- <td>{{ suggestion.suggestion_dispositions }}</td> -->
                       <td>
-                        <template v-if="suggestion.status === 0">
-                          <span class="badge badge-danger">Ditolak</span>
+                        <template v-if="suggestion.status === 'Diterima'">
+                          <span class="badge badge-success">Diterima</span>
+                        </template>
+                        <template v-else-if="suggestion.status === 'Diproses'">
+                          <span class="badge badge-warning">Diproses</span>
                         </template>
                         <template v-else>
-                          <span class="badge badge-success">Diterima</span>
+                          <span class="badge badge-danger">Ditolak</span>
                         </template>
                       </td>
                       <td>
@@ -75,15 +80,9 @@ export default {
 
 	methods: {
 
-		getHistory(page) {
-			if (typeof page === "undefined") {
-				page = 1;
-			}
+		getHistory() {
   
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/suggestions", {
-				params: {
-					page: page
-				}
+			axios.get("https://api.klikagenda.com/api/suggestions", {
 			}).then(data => {
 				this.suggestions = data.data.data;
 			});     

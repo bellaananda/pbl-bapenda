@@ -58,16 +58,72 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-12 grid-margin">
+          <div class="row">
+            <div class="col-3 button-generate">
+              <button type="button" class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#exampleModal">
+                <i class="ti-printer"></i>                      
+                  Report Agenda
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"> 
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 v-show="isGenerateAgenda" class="modal-title" id="exampleModalLabel">Generate Agenda</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="template-demo">
+                <button type="button" class="btn btn-primary btn-icon-text">
+                  <i class="ti-file btn-icon-prepend"></i>
+                    Word
+                </button>
+                <button type="button" class="btn btn-success btn-icon-text" @click="generateSuggestionsExcel">
+                  Excel
+                  <i class="ti-file btn-icon-prepend"></i>                                                    
+                </button>                
+                <button type="button" class="btn btn-danger btn-icon-text"  @click="download()">
+                  <i class="ti-file btn-icon-prepend"></i>                                                    
+                  PDF
+                </button>
+              </div>
+              <div class="template-demo">
+                <button type="button" class="btn btn-warning btn-icon-text">
+                  Text
+                  <i class="ti-file btn-icon-prepend"></i>                                                    
+                </button>
+                <button type="button" class="btn btn-info btn-icon-text">
+                  Print
+                  <i class="ti-printer btn-icon-append"></i>                                                                              
+                </button>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import jspdf from "jspdf";
 export default {
 	name: "HistoryPengajuan",
 	data() {
 		return {
+      isGenerateAgenda: true,
 			editId: "",
 			suggestions: {},
 		};
@@ -80,7 +136,7 @@ export default {
 				page = 1;
 			}
   
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/suggestions", {
+			axios.get("https://api.klikagenda.com/api/suggestions", {
 				params: {
 					page: page
 				}
@@ -88,6 +144,25 @@ export default {
 				this.suggestions = data.data.data;
 			});     
 		},
+
+    download(){
+      const doc = new jspdf();
+
+      const html = this.$refs.content.innerHTML;
+
+      doc.html(html, {
+        callback: function (doc) {
+          doc.save();
+        },
+        x: 10,
+        y: 10
+      });
+    },
+    
+
+    generateSuggestionsExcel(){
+      window.location.href = "https://api.klikagenda.com/api/download-suggestions-excel";
+    },
 
     showModal() {
 			this.isGenerateAgenda = true;

@@ -151,15 +151,8 @@ export default{
 
 	methods: {
 
-		getPosition(page) {
-			if (typeof page === "undefined") {
-				page = 1;
-			}
-  
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/positions", {
-				params: {
-					page: page
-				}
+		getPosition() { 
+			axios.get("https://api.klikagenda.com/api/positions", {
 			}).then(data => {
 				this.positions = data.data.data;
 			});     
@@ -168,7 +161,7 @@ export default{
 
 		createPosition() {
 			// request post
-			this.form.post("https://v3421024.mhs.d3tiuns.com/api/positions", {
+			this.form.post("https://api.klikagenda.com/api/positions", {
 			}).then(() => {
 				swal.fire({
 					icon: "success",
@@ -195,7 +188,7 @@ export default{
 			let name        = this.editPositionData.name;
 			this.editId = "";
 			// this.editPositionData.name = ''
-			axios.put("https://v3421024.mhs.d3tiuns.com/api/positions/" + id, {
+			axios.put("https://api.klikagenda.com/api/positions/" + id, {
 				name: name
 			}).then(() => {
 				swal.fire({
@@ -223,7 +216,7 @@ export default{
 				// confirm delete?
 				if (result.value) {
 					// request delete
-					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/positions/" + id, {
+					this.form.delete("https://api.klikagenda.com/api/positions/" + id, {
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

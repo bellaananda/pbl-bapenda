@@ -150,15 +150,8 @@ export default {
 
 	methods: {
 
-		getDepartment(page) {
-			if (typeof page === "undefined") {
-				page = 1;
-			}
-  
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/departments", {
-				params: {
-					page: page
-				}
+		getDepartment() {  
+			axios.get("https://api.klikagenda.com/api/departments", {
 			}).then(data => {
 				this.departments = data.data.data;
 			});     
@@ -167,7 +160,7 @@ export default {
 
 		createDepartment() {
 			// request post
-			this.form.post("https://v3421024.mhs.d3tiuns.com/api/departments", {
+			this.form.post("https://api.klikagenda.com/api/departments", {
 			}).then(() => {
 				swal.fire({
 					icon: "success",
@@ -192,7 +185,7 @@ export default {
 		editDepartment(id){
 			let name        = this.editDepartmentData.name;
 			this.editId = "";
-			axios.put("https://v3421024.mhs.d3tiuns.com/api/departments/" + id, {
+			axios.put("https://api.klikagenda.com/api/departments/" + id, {
 				name: name
 			}).then(() => {
 				swal.fire({
@@ -220,7 +213,7 @@ export default {
 				// confirm delete?
 				if (result.value) {
 					// request delete
-					this.form.delete("https://v3421024.mhs.d3tiuns.com/api/departments/" + id, {
+					this.form.delete("https://api.klikagenda.com/api/departments/" + id, {
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

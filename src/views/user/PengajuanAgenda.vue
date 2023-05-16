@@ -99,17 +99,50 @@
                             <option v-for="user in employees.data" :key="user.id" :value="user.id">{{ user.name }}</option>
                           </select>
                         </div>
+                      </div> 
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">Department</label>
+                        <div class="col-sm-9">
+                          <select class="form-control" id="department" v-model="form.department_id">
+                            <option disabled value>Pilih Department</option>
+                            <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
+                          </select>
+                        </div> 
                       </div>
                     </div>
                     <div class="col-md-6">
                       <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Disposisi</label>
                         <div class="col-sm-9">
-                          <select class="form-control" id="disposisi" v-model="form.department_id">
+                          <select class="form-control" id="disposisi" v-model="disposition">
                             <option disabled value>Pilih Disposisi</option>
+                            <option value="1">Semua Pegawai</option>
+                            <option value="departments">Department</option>
+                            <option value="employees">Pegawai</option>
+                            <option value="description">Input Pegawai</option>
+                          </select>
+
+                          <select class="form-control" v-if="disposition === 'departments'" v-model="disposition_department">
+                            <option disabled value>Pilih Department</option>
                             <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
                           </select>
-                        </div>
+
+                          <select class="form-control" v-else-if="disposition === 'employees'" v-model="disposition_employee">
+                            <option disabled value>Pilih Pegawai</option>
+                            <option v-for="user in employees.data" :key="user.id" :value="user.id">{{ user.name }}</option>
+                          </select>
+
+                          <!-- <select class="form-control" v-else-if="disposition === 'is_all'" v-model="disposition_is_all">
+                            <option value="1">Semua Pegawai</option>
+                          </select> -->
+
+                          <div v-else-if="disposition === 'description'">
+                            <input type="text" class="form-control" v-model="disposition_description" placeholder="Masukkan Disposisi" />
+                          </div>
+                          
+                        </div> 
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -151,6 +184,12 @@ export default {
       employees: {},
       categories: {},
       departments: {},
+      disposition_employee: null,
+      disposition_department: null,
+      disposition_description: null,
+      disposition_is_all: null,
+      disposition:"",
+      // suggestion_dispositions:"",
       form: new Form({
         id: "",
         user_id: "",
@@ -163,9 +202,10 @@ export default {
         end_time: "",
         contents: "",
         person_in_charge: "",
-        location: "",
-        attachment: "",
+        location: null,
+        attachment: null,
         status: "",
+        
       }),
     };
   },
@@ -177,28 +217,28 @@ export default {
     },
 
     getEmployee() {  
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/employees", {
+			axios.get("https://api.klikagenda.com/api/employees", {
 			}).then(data => {
 				this.employees = data.data.data;
 			});     
 		},
 
     getDepartment() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/departments", {
+			axios.get("https://api.klikagenda.com/api/departments", {
 			}).then(data => {
 				this.departments = data.data.data;
 			});     
 		},
 
     getRoom() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/rooms", {
+			axios.get("https://api.klikagenda.com/api/rooms", {
 			}).then(data => {
 				this.rooms = data.data.data;
 			});     
 		},
 
     getCategories() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/categories", {
+			axios.get("https://api.klikagenda.com/api/categories", {
 			}).then(data => {
 				this.categories = data.data.data;
 			});     
@@ -206,12 +246,12 @@ export default {
 
     createSuggestion() {
 			// request post
-			this.form.post("https://v3421024.mhs.d3tiuns.com/api/suggestions", {
+			this.form.post("https://api.klikagenda.com/api/suggestions", {
 			}).then(() => {
 				swal.fire({
 					icon: "success",
 					title: "Agenda berhasil ditambahkan"
-              
+               
 				});
         this.$router.push("/history-user");
 				// router.push({ path: "/history-user" });
