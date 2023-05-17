@@ -175,4 +175,69 @@ class RoomController extends Controller
             'message' => 'Data ruangan berhasil dihapus!'
         ], 200);
     }
+
+    public function trash(Request $request)
+    {
+        $page = $request->input('page', 15);
+        $data = Room::onlyTrashed()->paginate($page);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Ruangan (Dihapus)',
+            'data'    => $data  
+        ], 200);
+    }
+
+    public function restore($id)
+    {
+        $data = Room::withTrashed()->find($id);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data ruangan tidak ditemukan di sampah!'
+            ], 404);
+        }
+        if($data->trashed()){
+            $data->restore();
+            return response()->json([
+                'success' => true,
+                'message' => 'Data ruangan berhasil dipulihkan!',
+                'data'    => $data  
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data ruangan tidak ditemukan di sampah!',
+            ], 404);
+        }
+    }
+
+    public function deletePermanent($id)
+    {
+        $data = Room::withTrashed()->find($id);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data ruangan tidak ditemukan di sampah!'
+            ], 404);
+        }
+        if(!$data->trashed())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data ruangan tidak ditemukan di sampah!',
+            ], 404);
+        } else {
+            $data->forceDelete();
+            if (!$data) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data ruangan gagal dihapus permanen!'
+                ], 409);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Data ruangan berhasil dihapus permanen!'
+            ], 200);
+        }
+    }
 }

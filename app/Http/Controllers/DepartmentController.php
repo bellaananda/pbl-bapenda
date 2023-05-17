@@ -175,4 +175,69 @@ class DepartmentController extends Controller
             'message' => 'Data bidang berhasil dihapus!'
         ], 200);
     }
+
+    public function trash(Request $request)
+    {
+        $page = $request->input('page', 15);
+        $data = Department::onlyTrashed()->paginate($page);
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar Bidang (Dihapus)',
+            'data'    => $data  
+        ], 200);
+    }
+
+    public function restore($id)
+    {
+        $data = Department::withTrashed()->find($id);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data bidang tidak ditemukan di sampah!'
+            ], 404);
+        }
+        if($data->trashed()){
+            $data->restore();
+            return response()->json([
+                'success' => true,
+                'message' => 'Data bidang berhasil dipulihkan!',
+                'data'    => $data  
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data bidang tidak ditemukan di sampah!',
+            ], 404);
+        }
+    }
+
+    public function deletePermanent($id)
+    {
+        $data = Department::withTrashed()->find($id);
+        if (!$data) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data bidang tidak ditemukan di sampah!'
+            ], 404);
+        }
+        if(!$data->trashed())
+        {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data bidang tidak ditemukan di sampah!',
+            ], 404);
+        } else {
+            $data->forceDelete();
+            if (!$data) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data bidang gagal dihapus permanen!'
+                ], 409);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Data bidang berhasil dihapus permanen!'
+            ], 200);
+        }
+    }
 }
