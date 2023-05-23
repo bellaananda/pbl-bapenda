@@ -8,7 +8,7 @@
                   <form class="form-sample" @submit.prevent="createSuggestion">
                   <!-- <p class="card-description" style="margin-bottom: 60px">
                   </p> -->
-                  <div class="row">
+                  <div class="row"> 
                     <div class="col-md-6">
                       <div class="form-group row">
                         <label for="date" class="col-sm-3 col-form-label">Tanggal</label>
@@ -35,6 +35,14 @@
                             <option disabled value>Pilih Ruangan</option>
                             <option v-for="room in rooms.data" :key="room.id" :value="room.id">{{ room.name }}</option>
                           </select>
+
+                          <div v-if="rooms.id === '1'">
+                            <input type="text" class="form-control" v-model="form.location" placeholder="Masukkan Lokasi Agenda" />
+                          </div>
+                          <div v-else-if="rooms.id === '2'">
+                            <input type="text" class="form-control" v-model="form.location" placeholder="Masukkan Link" />
+                          </div>
+
                         </div>
                       </div>
                     </div>
@@ -117,31 +125,36 @@
                         <label class="col-sm-3 col-form-label">Disposisi</label>
                         <div class="col-sm-9">
                           <select class="form-control" id="disposisi" v-model="disposition">
-                            <option disabled value>Pilih Disposisi</option>
+                            <option disabled value="">Pilih Disposisi</option>
                             <option value="1">Semua Pegawai</option>
                             <option value="departments">Department</option>
                             <option value="employees">Pegawai</option>
                             <option value="description">Input Pegawai</option>
                           </select>
 
-                          <select class="form-control" v-if="disposition === 'departments'" v-model="disposition_department">
-                            <option disabled value>Pilih Department</option>
-                            <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
-                          </select>
+                          <div v-if="disposition === '1'">
+                            <select class="form-control" v-model="form.disposition_is_all">
+                              <option value="1">Semua Pegawai</option>
+                            </select>
+                          </div>
 
-                          <select class="form-control" v-else-if="disposition === 'employees'" v-model="disposition_employee">
-                            <option disabled value>Pilih Pegawai</option>
-                            <option v-for="user in employees.data" :key="user.id" :value="user.id">{{ user.name }}</option>
-                          </select>
+                          <div v-else-if="disposition === 'departments'">
+                            <select class="form-control" v-model="form.disposition_department">
+                              <option disabled value>Pilih Department</option>
+                              <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
+                            </select>
+                          </div>
 
-                          <!-- <select class="form-control" v-else-if="disposition === 'is_all'" v-model="disposition_is_all">
-                            <option value="1">Semua Pegawai</option>
-                          </select> -->
+                          <div v-else-if="disposition === 'employees'">
+                            <select class="form-control" v-model="form.disposition_employee">
+                              <option disabled value>Pilih Pegawai</option>
+                              <option v-for="user in employees.data" :key="user.id" :value="user.id">{{ user.name }}</option>
+                            </select>
+                          </div>
 
                           <div v-else-if="disposition === 'description'">
-                            <input type="text" class="form-control" v-model="disposition_description" placeholder="Masukkan Disposisi" />
+                            <input type="text" class="form-control" v-model="form.disposition_description" placeholder="Masukkan Disposisi" />
                           </div>
-                          
                         </div> 
                       </div>
                     </div>
@@ -149,7 +162,6 @@
                       <div class="form-group row">
                         <label class="col-sm-3 col-form-label">File upload</label>
                         <div class="col-sm-9">
-                          <!-- <input type="file"  name="attachment[]" class="form-control" @change="upload"> -->
                           <div class="input-group col-xs-12">
                             <input type="file" class="form-control file-upload-info"  v-on:change="upload"  placeholder="Upload file">
                             <span class="input-group-append">
@@ -161,7 +173,6 @@
                     </div>
                   </div>
                   <button type="submit" class="btn btn-primary mr-2">Ajukan</button>
-                    <!-- <button class="btn btn-light">Batalkan</button> -->
                 </form> 
                 </div>
               </div>
@@ -184,11 +195,8 @@ export default {
       employees: {},
       categories: {},
       departments: {},
-      disposition_employee: null,
-      disposition_department: null,
-      disposition_description: null,
-      disposition_is_all: null,
-      disposition:"",
+      
+      disposition: null,
       // suggestion_dispositions:"",
       form: new Form({
         id: "",
@@ -205,7 +213,10 @@ export default {
         location: null,
         attachment: null,
         status: "",
-        
+        disposition_employee: null,
+        disposition_department: null,
+        disposition_description: null,
+        disposition_is_all: null,
       }),
     };
   },

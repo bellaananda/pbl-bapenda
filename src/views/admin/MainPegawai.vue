@@ -61,11 +61,11 @@
                             {{ employe.role }}
                           </td> -->
                           <td>
-                            <template v-if="employe.status === 1">
+                            <template v-if="employe.status === 'Aktif'">
                               <span class="badge badge-success">Aktif</span>
                             </template>
-                            <template v-else>
-                              <span class="badge badge-danger">NonAktif</span>
+                            <template v-else-if="employe.status === 'Nonaktif'">
+                              <span class="badge badge-warning">Nonaktif</span>
                             </template>
                           </td>
                           <td>{{ employe.position }}</td>
@@ -152,62 +152,62 @@
                 <div class="form-group">
                   <label for="nip">NIP</label>
                   <input type="text" class="form-control" v-model="form.nip" :class="{ 'is-invalid': form.errors.has('nip') }" id="nip" placeholder="Masukkan NIP Pegawai">
-                  <!-- <has-error :form="form" field="nip"></has-error> -->
+                  <has-error :form="form" field="nip"></has-error>
                 </div>
                 <div class="form-group">
                   <label for="name">Nama Pegawai</label>
                   <input type="text" class="form-control" v-model="form.name" :class="{ 'is-invalid': form.errors.has('name') }" id="name" placeholder="Masukkan Nama Pegawai">
-                  <!-- <has-error :form="form" field="name"></has-error> -->
+                  <has-error :form="form" field="name"></has-error>
                 </div>
                 <div class="form-group">
                   <label for="email">Email</label>
                   <input type="text" class="form-control" v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" id="email" placeholder="Masukkan Email Pegawai">
-                  <!-- <has-error :form="form" field="email"></has-error> -->
+                  <has-error :form="form" field="email"></has-error>
                 </div>
                 <div class="form-group">
                   <label for="phone_number">No. Telepon</label>
                   <input type="text" class="form-control" v-model="form.phone_number" :class="{ 'is-invalid': form.errors.has('phone_number') }" id="phone_number" placeholder="Masukkan Nomor Telepon Pegawai">
-                  <!-- <has-error :form="form" field="phone_number"></has-error> -->
+                  <has-error :form="form" field="phone_number"></has-error>
                 </div>
                 <div class="form-group">
                   <label for="address">Alamat</label>
                   <input type="text" class="form-control" v-model="form.address" :class="{ 'is-invalid': form.errors.has('address') }" id="address" placeholder="Masukkan Alamat Pegawai">
-                  <!-- <has-error :form="form" field="address"></has-error> -->
+                  <has-error :form="form" field="address"></has-error>
                 </div>
                 <div v-show="!isFormCreateEmployeMode" class="form-group">
                   <label for="role">Role</label>
-                  <select class="form-control" id="role" v-model="form.role">
+                  <select class="form-control" id="role" v-model="form.role" :class="{ 'is-invalid': form.errors.has('role') }">
                     <option disabled value="">Pilih Role Pegawai</option>
                     <option value="user">User</option>  
                     <option value="operator">Operator</option>
                     <option value="admin">admin</option>
                   </select>
-                  <!-- <has-error :form="form" field="role"></has-error> -->
+                  <has-error :form="form" field="role"></has-error>
                 </div>
                 <div v-show="!isFormCreateEmployeMode" class="form-group">
                   <label for="status">Status Pegawai</label>
-                  <select class="form-control" id="status" v-model="form.status">
+                  <select class="form-control" id="status" v-model="form.status" :class="{ 'is-invalid': form.errors.has('status') }">
                     <option disabled value="">Pilih Status Pegawai</option>
                     <option value="1" checked>Aktif</option>
                     <option value="2">NonAktif</option>
                   </select>
-                  <!-- <has-error :form="form" field="status"></has-error> -->
+                  <has-error :form="form" field="status"></has-error>
                 </div>
                 <div class="form-group">
                   <label for="position">Posisi Pegawai</label>
-                  <select class="form-control" id="position" v-model="form.position_id">
+                  <select class="form-control" id="position" v-model="form.position_id" :class="{ 'is-invalid': form.errors.has('position_id') }">
                     <option disabled value>Pilih Posisi Pegawai</option>
                     <option v-for="position in positions.data" :key="position.id" :value="position.id">{{ position.name }}</option>
                   </select>
-                  <!-- <has-error :form="form" field="position"></has-error> -->
+                  <has-error :form="form" field="position"></has-error>
                 </div>
                 <div class="form-group">
                   <label for="department">Department Pegawai</label>
-                  <select class="form-control" id="department" v-model="form.department_id">
+                  <select class="form-control" id="department" v-model="form.department_id" :class="{ 'is-invalid': form.errors.has('department_id') }">
                     <option disabled value>Pilih Department Pegawai</option>
                     <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
                   </select>
-                  <!-- <has-error :form="form" field="department"></has-error> -->
+                  <has-error :form="form" field="department_id"></has-error>
                 </div>
               </div>
               <div class="modal-footer">
@@ -260,9 +260,9 @@ export default {
 
 	methods: {
 
-		getEmployee(currentPage) {
+		getEmployee() {
       // let offset = (this.currentPage - 1) * this.perPage;
-			axios.get("https://api.klikagenda.com/api/employees " + currentPage, {
+			axios.get("https://api.klikagenda.com/api/employees ", {
 			}).then(data => {
 				this.employees = data.data.data;
 			});     

@@ -4,6 +4,7 @@ import Navbar from "../components/TheNavbar.vue";
 import LandingPage from "../views/LandingPage.vue";
 import Dashboard from "../views/DashboardPage.vue";
 import Grafik from "../views/GrafikPage.vue";
+import Login from "../views/LoginPage.vue";
 
 //admin
 import ReadAgenda from "../views/admin/AgendaRead.vue";
@@ -34,46 +35,59 @@ const routes = [
 		name: "landing-page",
 		components: {default: LandingPage, header: Navbar, footer: Footer},
 	},
+	{
+		path: "/login",
+		name: "login",
+		component: Login,
+	},
 	//admin
 	{
 		path: "/dashboard-admin",
 		name: "dashboard-admin",
 		components: {default: Dashboard, header: NavbarAdmin, sidebar: SidebarAdmin, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "admin" }
 	},
 	{
 		path: "/agendas-admin",
 		name: "agendas-admin",
 		components: {default: ReadAgenda, header: NavbarAdmin, sidebar: SidebarAdmin, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "admin" }
 	},
 	{
 		path: "/employees-admin",
 		name: "employees-admin",
 		components: {default: MainPegawai, header: NavbarAdmin, sidebar: SidebarAdmin, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "admin" }
 	},
 	{
 		path: "/positions",
 		name: "positions",
 		components: {default: Posisi, header: NavbarAdmin, sidebar: SidebarAdmin, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "admin" }
 	},
 	{
 		path: "/departments",
 		name: "departments",
 		components: {default: Department, header: NavbarAdmin, sidebar: SidebarAdmin, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "admin" }
 	},
 	{
 		path: "/categories",
 		name: "categories",
 		components: {default: Kategori, header: NavbarAdmin, sidebar: SidebarAdmin, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "admin" }
 	},
 	{
 		path: "/rooms",
 		name: "rooms",
 		components: {default: Ruang, header: NavbarAdmin, sidebar: SidebarAdmin, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "admin" }
 	},
 	{
 		path: "/charts-admin",
 		name: "charts-admin",
 		components: {default: Grafik, header: NavbarAdmin, sidebar: SidebarAdmin, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "admin" }
 	},
 
 	//user
@@ -81,19 +95,21 @@ const routes = [
 		path: "/dashboard-user",
 		name: "dashboard-user",
 		components: {default: Dashboard, header: NavbarUser, sidebar: SidebarUser, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "user" }
 		
 	},
 	{
 		path: "/suggestions-user",
 		name: "suggestion-user",
 		components: {default: Pengajuan, header: NavbarUser, sidebar: SidebarUser, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "user" }
 		
 	},
 	{
 		path: "/history-user",
 		name: "history-user",
 		components: {default: History, header: NavbarUser, sidebar: SidebarUser, footer: Footer},
-		
+		meta: { requiresAuth: true, requiredRole: "user" }
 	},
 
 	//operator
@@ -101,30 +117,32 @@ const routes = [
 		path: "/dashboard-operator",
 		name: "dashboard-operator",
 		components: {default: Dashboard, header: NavbarUser, sidebar: SidebarOperator, footer: Footer},
+		meta: { requiresAuth: true, requiredRole: "operator" }
 	},
 	{
 		path: "/agendas-operator",
 		name: "agendas-operator",
 		components: {default: MainAgenda, header: NavbarUser, sidebar: SidebarOperator},
+		meta: { requiresAuth: true, requiredRole: "operator" }
 		
 	},
 	{
 		path: "/pengajuan-operator",
 		name: "pengajuan-operator",
 		components: {default: StatusPengajuan, header: NavbarUser, sidebar: SidebarOperator, footer: Footer},
-		
+		meta: { requiresAuth: true, requiredRole: "operator" }
 	},
 	{
 		path: "/employees-operator",
 		name: "employees-operator",
 		components: {default: ReadPegawai, header: NavbarUser, sidebar: SidebarOperator, footer: Footer},
-		
+		meta: { requiresAuth: true, requiredRole: "operator" }
 	},
 	{
 		path: "/charts-operator",
 		name: "charts-operator",
 		components: {default: Grafik, header: NavbarUser, sidebar: SidebarOperator, footer: Footer},
-		
+		meta: { requiresAuth: true, requiredRole: "operator" }
 	},
 	
 ];
@@ -133,5 +151,18 @@ const router = createRouter({
 	history: createWebHistory(process.env.BASE_URL),
 	routes
 });
+
+// router.beforeEach((to, from, next) => {
+// 	const isAuthenticated = store.getters.isAuthenticated;
+// 	const userRole = store.getters.getUserRole;
+  
+// 	if (to.meta.requiresAuth && !isAuthenticated) {
+// 	  next("/login");
+// 	} else if (to.meta.requiredRole && to.meta.requiredRole !== userRole) {
+// 	  next("/unauthorized"); // Rute untuk pengguna yang tidak memiliki peran yang diperlukan
+// 	} else {
+// 	  next();
+// 	}
+//   });
 
 export default router;

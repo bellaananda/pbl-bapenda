@@ -150,15 +150,8 @@ export default {
       
     },
 
-		getAgenda(page) {
-			if (typeof page === "undefined") {
-				page = 1;
-			}
-  
+		getAgenda() {
 			axios.get("https://v3421024.mhs.d3tiuns.com/api/agendas", {
-				params: {
-					page: page
-				}
 			}).then(data => {
 				this.agendas = data.data.data;
 			});     

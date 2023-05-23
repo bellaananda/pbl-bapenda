@@ -23,7 +23,7 @@
                       <th>Tanggal</th>
                       <th>Waktu</th>
                       <th>PenanggungJawab</th>
-                      <!-- <th>Disposisi</th> -->
+                      <th>Disposisi</th>
                       <th>Status</th>
                       <th></th> 
                     </tr>
@@ -35,7 +35,7 @@
                       <td>{{ suggestion.date }}</td>
                       <td>{{ suggestion.start_time }} - {{ suggestion.end_time }}</td>
                       <td>{{ suggestion.person_in_charge }}</td>
-                      <!-- <td>{{ suggestion.suggestion_dispositions }}</td> -->
+                      <td>{{ suggestion.disposition }}</td>
                       <td>
                         <template v-if="suggestion.status === 'Diterima'">
                           <span class="badge badge-success">Diterima</span>

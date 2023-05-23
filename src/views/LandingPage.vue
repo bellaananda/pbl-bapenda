@@ -27,13 +27,13 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(agenda, index) in agendas.data" :key="agenda.id">
+                    <tr v-for="(agenda, index) in agendas.data" :key="index">
                       <td>{{ index + 1}}</td>
                       <td>{{ agenda.title }}</td>
                       <td>{{ agenda.date }}</td>
                       <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
-                      <td>{{ agenda.room }}</td>
-                      <td>{{ agenda.person_in_charge }}</td>
+                      <td>{{ agenda.location }}</td>
+                      <td>{{ agenda.disposition }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -56,24 +56,24 @@ export default {
 		}; 
 	},
 
-	methods: {
-		getAgenda(page) {
-			if (typeof page === "undefined") {
-				page = 1;
-			}
+	// methods: {
+	// 	getAgenda() {
   
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/agendas", {
-				params: {
-					page: page
-				}
-			}).then(data => {
-				this.agendas = data.data.data;
-			});     
-		},
-	},
+	// 		axios.get("https://api.klikagenda.com/api/agendas-today", {
+	// 		}).then(data => {
+	// 			this.agendas = data.data.data;
+	// 		});     
+	// 	},
+	// },
 
 	created() {
-		this.getAgenda();
+		axios.get("https://api.klikagenda.com/api/agendas-today")
+			.then(data => {
+				this.agendas = data.data.data;
+      })
+    .catch(error => {
+      console.log(error);
+    });
 	},
 	mounted() {
 		console.log("Component mounted.");
