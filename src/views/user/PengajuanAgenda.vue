@@ -162,12 +162,7 @@
                       <div class="form-group row">
                         <label class="col-sm-3 col-form-label">File upload</label>
                         <div class="col-sm-9">
-                          <div class="input-group col-xs-12">
-                            <input type="file" class="form-control file-upload-info"  v-on:change="upload"  placeholder="Upload file">
-                            <span class="input-group-append">
-                              <button class="file-upload-browse btn btn-primary" type="button"> Upload </button>
-                            </span> 
-                          </div>
+                          <input type="file" class="form-control file-upload-info" id="attachment" @change="onFileSelected">
                         </div>
                       </div>
                     </div>
@@ -267,9 +262,16 @@ export default {
 			});     
 		},
 
+    onFileSelected(event) {
+        this.form.attachment = event.target.files[0];
+    },
+
     createSuggestion() {
 			// request post
 			this.form.post("https://api.klikagenda.com/api/suggestions", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(() => {
 				swal.fire({
 					icon: "success",

@@ -90,7 +90,7 @@ export default {
 				this.suggestions = data.data.data;
 			});     
 		},
-
+ 
     showModal() {
 			this.isGenerateAgenda = true;
 			// this.form.reset(); // v form reset

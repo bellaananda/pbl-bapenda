@@ -29,10 +29,15 @@ export default createStore({
 			commit("setToken", access_token);
 		},
 		logout({ commit }) {
-			axios.post("https://api.klikagenda.com/api/logout")
+			axios.post("https://api.klikagenda.com/api/logout", null,{
+				headers: {
+					Authorization: "Bearer " + localStorage.getItem("access_token"),
+				  },
+			})
         	.then(() => {
           		commit("logout");
-				  this.$router.push({name: "landing-page"});
+				localStorage.removeItem("access_token");
+				this.$router.push("/login");
         	})
         	.catch(error => {
           		console.error("Error:", error);

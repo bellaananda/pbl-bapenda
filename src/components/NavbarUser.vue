@@ -73,7 +73,7 @@
                 <i class="ti-user text-primary"></i>
                 Internal Profile
               </a>
-              <button class="dropdown-item" @click="logout()">
+              <button class="dropdown-item" @click.prevent="logout">
                 <i class="ti-power-off text-primary"></i>
                 Logout
               </button>
@@ -89,8 +89,6 @@ export default {
 	methods: {
     logout() {
       this.$store.dispatch("logout");
-      // Redirect atau lakukan tindakan lain setelah logout berhasi
-      // this.router.push("/landing-page");
     },
   },
 
