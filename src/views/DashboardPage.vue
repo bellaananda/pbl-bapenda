@@ -162,15 +162,13 @@ export default {
 	},
 
 	methods: {
-		getAgenda(page) {
-			if (typeof page === "undefined") {
-				page = 1;
-			}
+		getAgenda() {
+      // let conf = { headers: { "Authorization" : "Bearer " + this.access_token } };
   
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/agendas", {
-				params: {
-					page: page
-				}
+			axios.get("https://api.klikagenda.com/api/agendas" , {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.agendas = data.data.data;
 			});     
@@ -178,7 +176,7 @@ export default {
 	},
 
 	created() {
-		this.getAgenda();
+    this.getAgenda();
 	},
 	mounted() {
 		console.log("Component mounted.");

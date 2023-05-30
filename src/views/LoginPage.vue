@@ -8,23 +8,15 @@
               </div>
               <h3>Login</h3>
               <h6 class="font-weight-light">Masukkan email dan password untuk dapat login</h6>
-              <form class="pt-3">
+              <form class="pt-3" @submit.prevent="login">
                 <div class="form-group">
-                  <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" v-model="email" placeholder="Email">
+                  <input type="email" class="form-control form-control-lg" id="email" v-model="email" placeholder="Email" required>
                 </div>
                 <div class="form-group">
-                  <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" v-model="password" placeholder="Password">
+                  <input type="password" class="form-control form-control-lg" id="password" v-model="password" placeholder="Password" required>
                 </div>
                 <div class="mt-3">
-                  <a class="btn btn-block btn-primary btn-lg font-weight-bold auth-form-btn" @click="login">Login</a>
-                </div>
-                <div class="my-2 d-flex justify-content-between align-items-center">
-                  <div class="form-check">
-                    <label class="form-check-label text-muted">
-                      <input type="checkbox" class="form-check-input">
-                      Ingat saya
-                    </label>
-                  </div>
+                  <button type="submit" class="btn btn-primary btn-block my-4">Login</button>
                 </div>
               </form>
             </div>
@@ -34,6 +26,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import router from "../router";
 export default {
   name: "LoginPage",
   data() {
@@ -43,16 +37,21 @@ export default {
     };
   },
 
-  methods: {
-    login() {
-      if(this.email === "" && this.password === "") {
-        this.$store.commit("setAuthenticated", true);
-        this.$store.commit("setUserRole", "admin");
-        this.$router.push("/dashboard");
-      } else {
-        alert("Email atau password salah");
-      }
+  methods:{
+    login() { 
+        axios.post("https://api.klikagenda.com/api/login", {
+          email: this.email,
+          password: this.password,
+        })
+        .then(response => {
+          const access_token = response.data.access_token;
+          localStorage.setItem("access_token", access_token);
+          router.push("/dashboard-user");
+        })
+        .catch(error => {
+          console.error(error);
+        });
     }
-  }
+  },
 };
 </script>

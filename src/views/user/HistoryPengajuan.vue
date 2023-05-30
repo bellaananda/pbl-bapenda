@@ -83,6 +83,9 @@ export default {
 		getHistory() {
   
 			axios.get("https://api.klikagenda.com/api/suggestions", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.suggestions = data.data.data;
 			});     

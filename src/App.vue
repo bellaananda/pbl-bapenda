@@ -12,10 +12,16 @@
   </div>
 </template>
 
-<script>
+<!-- <script>
 
 export default {
-	name: "App"
+	name: "App",
+  computed : {
+        isLoggedIn : function(){ return this.$store.getters.isLoggedIn;},
+        email : function(){ return this.$store.getters.userDetail.email;},
+        role : function(){ return this.$store.getters.userDetail.role;}
+    },
+
 };
-</script>
+</script> -->
 

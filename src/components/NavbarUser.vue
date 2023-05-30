@@ -73,14 +73,26 @@
                 <i class="ti-user text-primary"></i>
                 Internal Profile
               </a>
-              <router-link class="dropdown-item" to="/">
+              <button class="dropdown-item" @click="logout()">
                 <i class="ti-power-off text-primary"></i>
                 Logout
-              </router-link>
+              </button>
             </div>
           </li>
         </ul>
       </div>
-       
     </nav>
 </template>
+<script>
+
+export default {
+	methods: {
+    logout() {
+      this.$store.dispatch("logout");
+      // Redirect atau lakukan tindakan lain setelah logout berhasi
+      // this.router.push("/landing-page");
+    },
+  },
+
+};
+</script>

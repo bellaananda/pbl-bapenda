@@ -1,15 +1,22 @@
-import { createApp } from "vue";
+import  { createApp }  from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-// var Vue = require("vue");
-// const Vue = window.vue;
+// import axios from "axios";
 
-// import "bootstrap/dist/css/bootstrap.css";
 import "jquery/dist/jquery.min";
 import "popper.js/dist/popper.min";
 import "bootstrap/dist/js/bootstrap.min";
-// Vue.component("pagination-bapenda", require("laravel-vue-pagination"));
 
+const app = createApp(App);
+app.config.productionTip = false;
+app.use(router);
+app.use(store);
+app.mount("#app");
 
-createApp(App).use(store).use(store).use(router).use(router).mount("#app");
+// createApp(App).use(store).use(store).use(router).use(router).mount("#app");
+// new Vue({
+//     router,
+//     store,
+//     render: h => h(App)
+// }).$mount("#app");

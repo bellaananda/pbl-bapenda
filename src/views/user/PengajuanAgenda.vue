@@ -229,6 +229,9 @@ export default {
 
     getEmployee() {  
 			axios.get("https://api.klikagenda.com/api/employees", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.employees = data.data.data;
 			});     
@@ -236,6 +239,9 @@ export default {
 
     getDepartment() {
 			axios.get("https://api.klikagenda.com/api/departments", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.departments = data.data.data;
 			});     
@@ -243,6 +249,9 @@ export default {
 
     getRoom() {
 			axios.get("https://api.klikagenda.com/api/rooms", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.rooms = data.data.data;
 			});     
@@ -250,6 +259,9 @@ export default {
 
     getCategories() {
 			axios.get("https://api.klikagenda.com/api/categories", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.categories = data.data.data;
 			});     
