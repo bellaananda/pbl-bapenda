@@ -11,11 +11,11 @@
     </div>
     <div class="row">
       <div class="col-md-12 grid-margin">
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-lg-5">
             <input type="text" placeholder="Search..." name="cari" id="cari" class="form-control">
           </div>
-        </div>
+        </div> -->
       </div>
     </div> 
     <div class="row">
@@ -36,7 +36,7 @@
                   <tr v-for="(position, index) in positions.data" v-bind:key="position.id">
                     <template v-if="editId == position.id">
                       <td>{{ index + 1}}</td>
-                        <td><input v-model="editPositionData.name" type="text"></td>
+                        <td><input v-model="form.name" type="text"></td>
                         <td>
                           <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="editPosition(position.id)">
                             <i class="mdi mdi-check btn-icon-prepend"></i>
@@ -129,7 +129,6 @@
 
 <script>
 import { Form } from "vform";
-import axios from "axios";
 import swal from "sweetalert2";
 
 export default{
@@ -152,8 +151,8 @@ export default{
 	methods: {
 
 		getPosition() { 
-			axios.get("https://api.klikagenda.com/api/positions", {
-			}).then(data => {
+			this.$axios.get("https://api.klikagenda.com/api/positions")
+      .then(data => {
 				this.positions = data.data.data;
 			});     
 		},
@@ -162,6 +161,9 @@ export default{
 		createPosition() {
 			// request post
 			this.form.post("https://api.klikagenda.com/api/positions", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(() => {
 				swal.fire({
 					icon: "success",
@@ -176,19 +178,22 @@ export default{
 
 		onEdit(position){
 			this.editId = position.id;
-			this.editPositionData.name = position.name;
+			this.form.name = position.name;
 		},
 
 		onCancel(){
 			this.editId = "";
-			this.editPositionData.name = "";
+			this.form.name = "";
 		},
 
 		editPosition(id){
-			let name        = this.editPositionData.name;
+			let name        = this.form.name;
 			this.editId = "";
 			// this.editPositionData.name = ''
-			axios.put("https://api.klikagenda.com/api/positions/" + id, {
+			this.form.put("https://api.klikagenda.com/api/positions/" + id, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 				name: name
 			}).then(() => {
 				swal.fire({
@@ -217,6 +222,9 @@ export default{
 				if (result.value) {
 					// request delete
 					this.form.delete("https://api.klikagenda.com/api/positions/" + id, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("access_token"),
+            },
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

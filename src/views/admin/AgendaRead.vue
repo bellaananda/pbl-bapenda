@@ -22,14 +22,8 @@
                       <th>Judul Agenda</th>
                       <th>Tanggal</th>
                       <th>Waktu</th>
-                      <!-- <th>Lokasi</th> -->
-                      <th>Isi Agenda</th>
-                      <!-- <th>Attachment</th> -->
                       <th>Disposisi</th>
-                      <th>Department</th>
-                      <th>Kategori</th>
                       <th>Ruangan</th>
-                      <!-- <th>Suggestion</th> -->
                       <th></th>
                     </tr>
                   </thead>
@@ -39,22 +33,69 @@
                       <td>{{ agenda.title }}</td>
                       <td>{{ agenda.date }}</td>
                       <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
-                      <!-- <td>{{ agenda.location }}</td> -->
-                      <td>{{ agenda.contents }}</td>
-                      <!-- <td>{{ agenda.attachment }}</td> -->
                       <td>{{ agenda.person_in_charge }}</td>
-                      <td>{{ agenda.department }}</td>
-                      <td>{{ agenda.category }}</td>
-                      <td>{{ agenda.room }}</td>
-                      <!-- <td>{{ agenda.suggestion }}</td> -->
-                      <!-- <td>
-                        <a href="#" class="btn btn-sm" data-toggle="modal" data-target="#modalDetail">
+                      <td>{{ agenda.location }}</td>
+                      <td>
+                        <button @click="openModal(agenda.id)" class="btn btn-sm btn-inverse-warning" data-toggle="modal" :data-target="'#exampleModalDetail' + agenda.id">
                           <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
-                        </a>
-                      </td> -->
+                        </button>
+                      </td>
                     </tr>
                   </tbody>
-                </table>
+                  <div v-if="agendas && agendas.id" class="modal fade" :id="'exampleModalDetail' + agendas.id" tabindex="-1" role="dialog" :aria-labelledby="'exampleModalDetail' + agendas.id" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLongTitle">Detail Data</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body table-responsive">
+                          <table class="table table-bordered no-margin">
+                            <tbody>
+                              <tr>
+                                <th>Judul Agenda</th>
+                                <td><span :id="'title' + agendas.id">{{ agendas.title }}</span></td>
+                              </tr>
+                              <tr>
+                                <th>Tanggal</th>
+                                <td><span :id="'date' + agendas.id">{{ agendas.date }}</span></td>
+                              </tr>
+                              <tr>
+                                <th>Waktu</th>
+                                <td><span :id="'time' + agendas.id">{{ agendas.start_time }} - {{ agendas.end_time }}</span></td>
+                              </tr>
+                              <tr>
+                                <th>Isi Agenda</th>
+                                <td><span :id="'contents' + agendas.id">{{ agendas.contents }}</span></td>
+                              </tr>
+                              <tr>
+                                <th>Disposisi</th>
+                                <td><span :id="'department' + agendas.id">{{ agendas.department }}</span></td>
+                              </tr>
+                              <tr>
+                                <th>PenanggungJawab</th>
+                                <td><span :id="'person_in_charge' + agendas.id">{{ agendas.person_in_charge }}</span></td>
+                              </tr>
+                              <tr>
+                                <th>Kategori</th>
+                                <td><span :id="'category' + agendas.id">{{ agendas.category }}</span></td>
+                              </tr>
+                              <tr>
+                                <th>Ruangan</th>
+                                <td><span :id="'room' + agendas.id">{{ agendas.room }}</span></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" @click="closeModal(agendas.id)" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </table> 
               </div>
             </div>
           </div>
@@ -84,27 +125,17 @@
             </div>
             <div class="modal-body">
               <div class="template-demo">
-                <button type="button" class="btn btn-primary btn-icon-text">
-                  <i class="ti-file btn-icon-prepend"></i>
-                    Word
-                </button>
-                <button type="button" class="btn btn-success btn-icon-text">
+                <button type="button" class="btn btn-success btn-icon-text" @click="generateAgendaExcel">
                   Excel
                   <i class="ti-file btn-icon-prepend"></i>                                                    
                 </button>                
-                <button type="button" class="btn btn-danger btn-icon-text"  @click="download()">
+                <button type="button" class="btn btn-danger btn-icon-text"  @click="generateAgendaPDF">
                   <i class="ti-file btn-icon-prepend"></i>                                                    
                   PDF
                 </button>
-              </div>
-              <div class="template-demo">
-                <button type="button" class="btn btn-warning btn-icon-text">
+                <button type="button" class="btn btn-warning btn-icon-text" @click="generateAgendaText">
                   Text
                   <i class="ti-file btn-icon-prepend"></i>                                                    
-                </button>
-                <button type="button" class="btn btn-info btn-icon-text">
-                  Print
-                  <i class="ti-printer btn-icon-append"></i>                                                                              
                 </button>
               </div>
             </div>
@@ -114,26 +145,26 @@
           </div>
         </div>
       </div>
+
+
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 import jspdf from "jspdf";
 export default {
 	name: "AgendaBapenda",
 	data() {
 		return {
       isGenerateAgenda: true,
-			editId: "",
 			agendas: {},
 		};
 	},
 
 	methods: {
 
-    download(){
+    generateAgendaPDF(){
       const doc = new jspdf();
 
       const html = this.$refs.content.innerHTML;
@@ -145,21 +176,72 @@ export default {
         x: 10,
         y: 10
       });
+    },
 
-      // doc.save("agenda.pdf");
-      
+    generateAgendaExcel(){
+      this.$axios.get("https://api.klikagenda.com/api/download-agenda-excel", { 
+        responseType: "blob" 
+      })
+        .then(response => {
+          const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "export.xlsx";
+          link.style.display = "none";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+          console.error("Failed to export Excel", error);
+        });
+    },
+
+    generateAgendaText(){
+      this.$axios.get("https://api.klikagenda.com/api/generate-agenda-text")
+        .then(response  => {
+          const textData = response.data;
+          const link = document.createElement("a");
+          link.href = "data:text/plain;charset=utf-8," + encodeURIComponent(textData);
+          link.download = "export.txt";
+          link.style.display = "none";
+
+          // Menambahkan elemen <a> ke DOM dan mengkliknya untuk memulai unduhan
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch(error => {
+          // Tangani kesalahan jika ada
+          console.error("Failed to copy agenda", error);
+        });
     },
 
 		getAgenda() {
-			axios.get("https://v3421024.mhs.d3tiuns.com/api/agendas", {
-			}).then(data => {
-				this.agendas = data.data.data;
+			this.$axios.get("https://api.klikagenda.com/api/agendas")
+      .then(response => {
+				this.agendas = response.data.data;
 			});     
 		},
 
+    openModal(id) {
+      this.$axios.get("https://api.klikagenda.com/api/agendas/" + id)
+        .then(response => {
+          this.agendas = response.data;
+          $("#exampleModalDetail" + id).modal("show");
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    closeModal(id) {
+      $("#exampleModalDetail" + id).modal("hide");
+    },
+
     showModal() {
 			this.isGenerateAgenda = true;
-			// this.form.reset(); // v form reset
 			$("#exampleModal").modal("show"); // show modal
 		},
 	},

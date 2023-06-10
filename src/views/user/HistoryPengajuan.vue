@@ -15,7 +15,7 @@
           <div class="card">
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table" ref="content">
+                <table class="table">
                   <thead>
                     <tr>
                       <th>No</th>
@@ -24,16 +24,15 @@
                       <th>Waktu</th>
                       <th>PenanggungJawab</th>
                       <th>Disposisi</th>
-                      <th>Status</th>
-                      <th></th> 
+                      <th>Status</th> 
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(suggestion, index) in suggestions.data" :key="suggestion.id">
                       <td>{{ index + 1}}</td>
                       <td>{{ suggestion.title }}</td>
-                      <td>{{ suggestion.date }}</td>
-                      <td>{{ suggestion.start_time }} - {{ suggestion.end_time }}</td>
+                      <td>{{ formatTanggal(suggestion.date) }}</td>
+                      <td>{{ formatWaktu(suggestion.start_time) }} - {{ formatWaktu(suggestion.end_time) }}</td>
                       <td>{{ suggestion.person_in_charge }}</td>
                       <td>{{ suggestion.disposition }}</td>
                       <td>
@@ -48,61 +47,180 @@
                         </template>
                       </td>
                       <td>
-                        <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="onEdit(employe)">
-                          <i class="mdi mdi-pencil btn-icon-prepend"></i>
-                        </a>
-                        <!-- <a href="#" class="btn btn-sm btn-inverse-warning" data-toggle="modal" data-target="#modalDetail">
-                          <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
-                        </a> -->
-                      </td>
+                          <button class="btn btn-sm btn-inverse-warning" @click.prevent="getSuggestionDetails(suggestion)">
+                            <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
+                          </button>
+                        </td>
+                      <template v-if="suggestion.status === 'Ditolak'">
+                        <td>
+                          <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="onEdit(suggestion)">
+                            <i class="mdi mdi-pencil btn-icon-prepend"></i>
+                          </a>
+                        </td>
+                      </template>
                     </tr>
                   </tbody>
                 </table>
+
+                <div class="modal fade" id="exampleModalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalDetailLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalDetailLabel">Detail Agenda</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                      <div class="modal-body">
+                        <h5>Nama Agenda: {{ form.title }}</h5>
+                        <p>Tanggal: {{ formatTanggal(form.date) }}</p>
+                        <p>Waktu: {{ formatWaktu(form.start_time) }} - {{ formatWaktu(form.end_time) }}</p>
+                        <p>Penanggung Jawab: {{ form.person_in_charge }}</p>
+                        <p>Isi Agenda: {{ form.contents }}</p>
+                        <p>Lokasi: {{ form.location }}</p>
+                        <p>Disposisi: {{ form.disposition_employee }} {{ form.disposition_department }} {{ form.disposition_description }} {{ form.disposition_is_all }} {{ disposition }}</p>
+                        <p>Attachment: {{ form.attachment }}</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <Footer/>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import Footer from "../../components/TheFooter.vue";
+import moment from "moment";
+import { Form } from "vform";
 export default {
 	name: "HistoryPengajuan",
+  components: {
+    Footer
+  },
 	data() {
 		return {
 			editId: "",
-			suggestions: {},
+			suggestions: [],
+      rooms: {},
+      employees: {},
+      categories: {},
+      departments: {},
+      disposition: null,
+      form: new Form({
+        id: "",
+        user_id: 3,
+        department_id: "",
+        category_id: "",
+        room_id: "",
+        title: "",
+        date: "",
+        start_time: "",
+        end_time: "",
+        contents: "",
+        person_in_charge: 3,
+        location: null,
+        attachment: null,
+        status: "",
+        disposition_employee: null,
+        disposition_department: null,
+        disposition_description: null,
+        disposition_is_all: null,
+        
+      }),
 		};
+	},
+
+  mounted() {
+		this.getHistory();
+    this.getRoom();
+    this.getEmployee();
+    this.getCategories();
+    this.getDepartment();
 	},
 
 	methods: {
 
+    formatTanggal(date) {
+      moment.locale("id");
+      return moment(date).format("DD MMMM YYYY");
+    },
+
+    formatWaktu(time) {
+      return moment(time, "HH:mm").format("HH:mm");
+    },
+
 		getHistory() {
-  
-			axios.get("https://api.klikagenda.com/api/suggestions", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.suggestions = data.data.data;
-			});     
+			this.$axios.get("/suggestions")
+      .then(response => {
+				this.suggestions = response.data.data;
+			})
+      .catch(error => {
+        console.error(error);
+      });    
+		}, 
+
+    getEmployee() {  
+			this.$axios.get("/employees")
+      .then(data => {
+				this.employees = data.data.data;
+			})
+      .catch(error => {
+        console.error(error);
+      });      
 		},
- 
-    showModal() {
-			this.isGenerateAgenda = true;
-			// this.form.reset(); // v form reset
-			$("#exampleModal").modal("show"); // show modal
+
+    getDepartment() {
+			this.$axios.get("/departments")
+      .then(data => {
+				this.departments = data.data.data;
+			})
+      .catch(error => {
+        console.error(error);
+      });      
 		},
+
+    getRoom() {
+			this.$axios.get("/rooms")
+      .then(data => {
+				this.rooms = data.data.data;
+			})
+      .catch(error => {
+        console.error(error);
+      });      
+		},
+
+    getCategories() {
+			this.$axios.get("/categories")
+      .then(data => {
+				this.categories = data.data.data;
+			})
+      .catch(error => {
+        console.error(error);
+      });     
+		},
+
+    getSuggestionDetails(suggestion) {
+      const suggestionId = suggestion.id;
+      this.$axios.get(`/suggestions/${suggestionId}`)
+        .then(() => {
+          // const suggestionDetails = response.data;
+          this.form.fill(suggestion);
+          $("#exampleModalDetail").modal("show");
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
 	},
 
-	created() {
-		this.getHistory();
-	},
-	mounted() {
-		console.log("Component mounted.");
-	}
 };
 </script>

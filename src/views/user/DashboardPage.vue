@@ -39,12 +39,12 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr v-for="(agenda, index) in agendas.data" :key="agenda.id">
+                                  <tr v-for="(agenda, index) in todayAgendas.data" :key="agenda.id">
                                     <td>{{ index + 1}}</td>
                                     <td>{{ agenda.title }}</td>
-                                    <td>{{ agenda.date }}</td>
-                                    <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
-                                    <td>{{ agenda.room }}</td>
+                                    <td>{{ formatTanggal(agenda.date) }}</td>
+                                    <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
+                                    <td>{{ agenda.location }}</td>
                                     <td>{{ agenda.person_in_charge }}</td>
                                   </tr>
                                 </tbody>
@@ -78,12 +78,12 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr v-for="(agenda, index) in agendas.data" :key="agenda.id">
+                                  <tr v-for="(agenda, index) in tomorrowAgendas.data" :key="agenda.id">
                                     <td>{{ index + 1}}</td>
                                     <td>{{ agenda.title }}</td>
-                                    <td>{{ agenda.date }}</td>
-                                    <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
-                                    <td>{{ agenda.room }}</td>
+                                    <td>{{ formatTanggal(agenda.date) }}</td>
+                                    <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
+                                    <td>{{ agenda.location }}</td>
                                     <td>{{ agenda.person_in_charge }}</td>
                                   </tr>
                                 </tbody>
@@ -117,12 +117,12 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <tr v-for="(agenda, index) in agendas.data" :key="agenda.id">
+                                  <tr v-for="(agenda, index) in yesterdayAgendas.data" :key="agenda.id">
                                     <td>{{ index + 1}}</td>
                                     <td>{{ agenda.title }}</td>
-                                    <td>{{ agenda.date }}</td>
-                                    <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
-                                    <td>{{ agenda.room }}</td>
+                                    <td>{{ formatTanggal(agenda.date) }}</td>
+                                    <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
+                                    <td>{{ agenda.location }}</td>
                                     <td>{{ agenda.person_in_charge }}</td>
                                   </tr>
                                 </tbody>
@@ -148,44 +148,73 @@
         </div>
       </div>
     </div>
+    <Footer/>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+import moment from "moment";
+import Footer from "../../components/TheFooter.vue";
 export default {
 	name: "LandingPage",
+  components: {
+    Footer
+  },
 	data() {
 		return {
-			agendas: {},
+			todayAgendas: [],
+      tomorrowAgendas: [],
+      yesterdayAgendas: []
 		};
 	},
 
-  computed: {
-    currentUser() {
-      return this.$store.state.currentUser;
-    },
-  },
+  mounted() {
+		this.getAgendaToday();
+    this.getAgendaTomorrow();
+    this.getAgendaYesterday();
+	},
 
 	methods: {
-		getAgenda() {
-      // let conf = { headers: { "Authorization" : "Bearer " + this.access_token } };
-  
-			axios.get("https://api.klikagenda.com/api/agendas" , {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        }, 
-			}).then(data => {
-				this.agendas = data.data.data;
-			});     
+    formatTanggal(date) {
+      // console.log("Formatting date:", date);
+      return moment(date).format("DD MMMM YYYY");
+    },
+
+    formatWaktu(time) {
+      return moment(time, "HH:mm").format("HH:mm");
+    },
+
+		getAgendaToday() {
+			this.$axios.get("/agendas-today", {
+			}).then(response  => {
+				this.todayAgendas = response.data;
+			})
+      .catch(error => {
+          console.error(error);
+        });     
+		},
+
+    getAgendaTomorrow() {
+			this.$axios.get("/agendas-tomorrow", {
+			}).then(response  => {
+				this.tomorrowAgendas  = response.data;
+			})
+      .catch(error => {
+          console.error(error);
+        });   
+		},
+
+    getAgendaYesterday() {
+			this.$axios.get("/agendas-yesterday", {
+			}).then(response  => {
+				this.yesterdayAgendas = response.data;
+			})
+      .catch(error => {
+          console.error(error);
+        });    
 		},
 	},
 
-	created() {
-    this.getAgenda();
-	},
-	mounted() {
-		console.log("Component mounted.");
-	}
+	
 };
 </script>

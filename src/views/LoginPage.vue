@@ -26,8 +26,6 @@
 </template>
 
 <script> 
-import axios from "axios";
-import router from "../router";
 export default {
   name: "LoginPage",
   data() {
@@ -39,19 +37,29 @@ export default {
 
   methods:{
     login() { 
-        axios.post("https://api.klikagenda.com/api/login", {
+      this.$axios.post("/login", {
           email: this.email,
           password: this.password,
         })
         .then(response => {
-          const access_token = response.data.access_token;
+          const access_token = response.data.access_token; // Token autentikasi yang diterima dari server.
           localStorage.setItem("access_token", access_token);
-          router.push("/dashboard-user");
+          if (this.email === "admin@gmail.com") {
+            this.$router.push("/dashboard-admin");
+          } else if (this.email === "danil@gamail.com") {
+            this.$router.push("/dashboard-operator");
+          } else {
+            this.$router.push("/dashboard-user");
+          } 
         })
         .catch(error => {
           console.error(error);
         });
     }
+
+
+  
+
   },
 };
 </script>

@@ -9,57 +9,6 @@
           <span class="icon-menu"></span>
         </button>
         <ul class="navbar-nav navbar-nav-right">
-          <li class="nav-item dropdown">
-            <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
-              <i class="icon-bell mx-0"></i>
-              <span class="count"></span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-              <p class="mb-0 font-weight-bold float-left dropdown-header">Notifications</p>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-warning">
-                    <i class="ti-info-alt mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <div>
-                    <p class="text-info mb-1">Ajuan Agenda</p>
-                    <p class="mb-0">Operator menyetujui ajuan agenda ...</p>
-                    <small>9:30 am</small>
-                  </div>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-warning">
-                    <i class="ti-info-alt mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <div>
-                    <p class="text-info mb-1">Ajuan Agenda</p>
-                    <p class="mb-0">Operator menyetujui ajuan agenda ...</p>
-                    <small>10:30 am</small>
-                  </div>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-warning">
-                    <i class="ti-info-alt mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <div>
-                    <p class="text-info mb-1">Ajuan Agenda</p>
-                    <p class="mb-0">Operator menyetujui ajuan agenda ...</p>
-                    <small>10:30 am</small>
-                  </div>
-                </div>
-              </a>
-            </div>
-          </li>
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
               <img src="asset/images/faces/face28.jpg" alt="profile"/>
@@ -73,13 +22,25 @@
                 <i class="ti-user text-primary"></i>
                 Internal Profile
               </a>
-              <router-link to="/" class="dropdown-item">
+              <button class="dropdown-item" @click.prevent="logout">
                 <i class="ti-power-off text-primary"></i>
                 Logout
-              </router-link>
+              </button>
             </div>
           </li>
         </ul>
       </div>
     </nav>
 </template>
+
+<script>
+
+export default {
+	methods: {
+    logout() {
+      this.$store.dispatch("logout");
+    },
+  },
+
+};
+</script>

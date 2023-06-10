@@ -46,12 +46,12 @@
                         </template>
                       </td>
                       <td>
-                        <a href="" class="btn btn-sm btn-inverse-success" @click="approveAgenda(suggestion.id)">
+                        <button class="btn btn-sm btn-inverse-success" @click="approveAgenda(suggestion.id)">
                           <i class="mdi mdi-checkbox-marked-outline btn-icon-prepend"></i>
-                        </a>
-                        <a href="" class="btn btn-sm btn-inverse-danger" @click="denyAgenda(suggestion.id)">
+                        </button>
+                        <button href="" class="btn btn-sm btn-inverse-danger" @click="denyAgenda(suggestion.id)">
                           <i class="mdi mdi-close-box-outline btn-icon-prepend"></i>
-                        </a>
+                        </button>
                       </td>
                     </tr>
                   </tbody>
@@ -67,7 +67,7 @@
 
 <script>
 import axios from "axios";
-import swal from "sweetalert2";
+// import swal from "sweetalert2";
 export default {
 	name: "HistoryPengajuan",
 	data() {
@@ -82,19 +82,21 @@ export default {
 		getHistory() {
   
 			axios.get("https://api.klikagenda.com/api/suggestions", {
-			}).then(data => {
-				this.suggestions = data.data.data;
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+			}).then(response => {
+				this.suggestions = response.data.data;
 			});     
 		},
 
     approveAgenda(id) {
-			axios.post("https://api.klikagenda.com/api/suggestions-approve/" + id, {
+			axios.post("https://api.klikagenda.com/api/suggestions-approve/" + id, {}, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(() => {
-				swal.fire({
-					icon: "success",
-					title: "Suggestion berhasil ditambahkan ke agenda"
-              
-				});
+        alert("Suggestion berhasil ditambahkan ke agenda");
         this.getHistory();
 			}).catch((error) => {
 				console.log(error.response); 
@@ -102,13 +104,13 @@ export default {
     },
 
     denyAgenda(id) {
+      // alert("ditolak");
       axios.post("https://api.klikagenda.com/api/suggestions-deny/" + id, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(() => {
-				swal.fire({
-					icon: "success",
-					title: "Suggestion telah ditolak"
-              
-				});
+        alert("Suggestion telah ditolak"); // ganti alert input 
         this.getHistory();
 			}).catch((error) => {
 				console.log(error.response); 

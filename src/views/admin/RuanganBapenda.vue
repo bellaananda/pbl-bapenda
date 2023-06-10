@@ -9,7 +9,7 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-md-12 grid-margin">
             <div class="row">
               <div class="col-lg-5">
@@ -17,7 +17,7 @@
               </div>
             </div>
           </div>
-        </div> 
+        </div>  -->
         <div class="row">
           <div class="col-lg-6 grid-margin stretch-card">
             <div class="card">
@@ -36,7 +36,7 @@
                       <tr v-for="(room, index) in rooms.data" :key="room.id">
                         <template v-if="editId == room.id">
                           <td>{{ index + 1}}</td>
-                          <td><input v-model="editRoomData.name" type="text"></td>
+                          <td><input v-model="form.name" type="text"></td>
                           <td>
                             <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="editRoom(room.id)">
                               <i class="mdi mdi-check btn-icon-prepend"></i>
@@ -129,7 +129,6 @@
 
 <script>
 import { Form } from "vform";
-import axios from "axios";
 import swal from "sweetalert2";
 
 export default {
@@ -152,8 +151,8 @@ export default {
 
 		getRoom() {
   
-			axios.get("https://api.klikagenda.com/api/rooms", {
-			}).then(data => {
+			this.$axios.get("https://api.klikagenda.com/api/rooms")
+      .then(data => {
 				this.rooms = data.data.data;
 			});     
 		},
@@ -162,6 +161,9 @@ export default {
 		createRoom() {
 			// request post
 			this.form.post("https://api.klikagenda.com/api/rooms", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(() => {
 				swal.fire({
 					icon: "success",
@@ -177,18 +179,18 @@ export default {
 
 		onEdit(room){
 			this.editId = room.id;
-			this.editRoomData.name = room.name;
+			this.form.name = room.name;
 		},
 
 		onCancel(){
 			this.editId = "";
-			this.editRoomData.name = "";
+			this.form.name = "";
 		},
 
 		editRoom(id){
-			let name        = this.editRoomData.name;
+			let name        = this.form.name;
 			this.editId = "";
-			axios.put("https://api.klikagenda.com/api/rooms/" + id, {
+			this.$axios.put("https://api.klikagenda.com/api/rooms/" + id, {
 				name: name
 			}).then(() => {
 				swal.fire({
@@ -216,6 +218,9 @@ export default {
 				if (result.value) {
 					// request delete
 					this.form.delete("https://api.klikagenda.com/api/rooms/" + id, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("access_token"),
+            },
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

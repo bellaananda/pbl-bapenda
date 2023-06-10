@@ -95,20 +95,18 @@
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
               </button>
-            </div>
+            </div> 
             <div class="modal-body">
               <div class="template-demo">
-                <button type="button" class="btn btn-success btn-icon-text" @click="generateSuggestionsExcel">
+                <button type="button" class="btn btn-success btn-icon-text" @click="generateAgendaExcel">
                   Excel
                   <i class="ti-file btn-icon-prepend"></i>                                                    
-                </button>                
-                <button type="button" class="btn btn-danger btn-icon-text"  @click="download()">
+                </button>                 
+                <button type="button" class="btn btn-danger btn-icon-text"  @click="generateAgendaPDF">
                   <i class="ti-file btn-icon-prepend"></i>                                                    
                   PDF
                 </button>
-              </div>
-              <div class="template-demo">
-                <button type="button" class="btn btn-warning btn-icon-text">
+                <button type="button" class="btn btn-warning btn-icon-text" @click="generateAgendaText">
                   Text
                   <i class="ti-file btn-icon-prepend"></i>                                                    
                 </button>
@@ -233,7 +231,7 @@
 
       <div class="modal fade" id="exampleModalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalDetail" aria-hidden="true">
         <div class="modal-dialog" role="document">
-           <div class="modal-content">
+          <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLongTitle">Detail Data</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -333,7 +331,7 @@
 
 <script>
 import { Form } from "vform";
-import axios from "axios";
+// import axios from "axios";
 import swal from "sweetalert2";
 import jspdf from "jspdf";
 export default {
@@ -351,7 +349,7 @@ export default {
       form: new Form({
         id: "",
         department_id: "",
-        category_id: "",
+        category_id: 3,
         room_id: "",
         suggestion_id: "",
         title: "",
@@ -373,7 +371,7 @@ export default {
 
 	methods: {
 
-    download(){
+    generateAgendaPDF(){
       const doc = new jspdf();
 
       const html = this.$refs.content.innerHTML;
@@ -385,38 +383,62 @@ export default {
         x: 10,
         y: 10
       });
-
-      // doc.save("agenda.pdf");
-      
     },
 
-    generateSuggestionsExcel(){
-      window.location.href = "https://api.klikagenda.com/api/download-agenda-excel";
+    generateAgendaExcel(){
+      this.$axios.get("/download-agenda-excel", { 
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+        responseType: "blob" 
+      })
+        .then(response => {
+          const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = "agenda.xlsx";
+          link.style.display = "none";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+          console.error("Failed to export Excel", error);
+        });
     },
 
-    generateSuggestionsText(){
-      window.location.href = "https://api.klikagenda.com/api/generate-agenda-text";
+    generateAgendaText(){
+      this.$axios.get("/generate-agenda-text", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+      })
+        .then(response  => {
+          const textData = response.data;
+          const link = document.createElement("a");
+          link.href = "data:text/plain;charset=utf-8," + encodeURIComponent(textData);
+          link.download = "agenda.txt";
+          link.style.display = "none";
+
+          // Menambahkan elemen <a> ke DOM dan mengkliknya untuk memulai unduhan
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        })
+        .catch(error => {
+          // Tangani kesalahan jika ada
+          console.error("Failed to copy agenda", error);
+        });
     },
-
-
-
-		// getAgenda(page) {
-		// 	if (typeof page === "undefined") {
-		// 		page = 1;
-		// 	}
-  
-		// 	axios.get("https://v3421024.mhs.d3tiuns.com/api/agendas", {
-		// 		params: {
-		// 			page: page
-		// 		}
-		// 	}).then(data => {
-		// 		this.agendas = data.data.data;
-		// 	});     
-		// },
 
     getAgenda() {
   
-			axios.get("https://api.klikagenda.com/api/agendas", {
+			this.$axios.get("/agendas", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 
 			}).then(data => {
 				this.agendas = data.data.data;
@@ -424,11 +446,13 @@ export default {
 		},
 
     Detail(id){
-      axios.get("https://api.klikagenda.com/api/agendas/" + id ,{
+      this.$axios.get("/agendas/" + id ,{
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.title = data.data.data.agendas[0].title;
 			}); 
-         
     },
 
     showModal() {
@@ -438,35 +462,49 @@ export default {
 		},
 
     getEmployee() {  
-			axios.get("https://api.klikagenda.com/api/employees", {
+			this.$axios.get("/employees", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.employees = data.data.data;
 			});     
 		},
 
     getDepartment() {
-			axios.get("https://api.klikagenda.com/api/departments", {
+			this.$axios.get("/departments", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.departments = data.data.data;
 			});     
 		},
 
     getRoom() {
-			axios.get("https://api.klikagenda.com/api/rooms", {
+			this.$axios.get("/rooms", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.rooms = data.data.data;
 			});     
-		},
-
-    getCategories() {
-			axios.get("https://api.klikagenda.com/api/categories", {
+		}, 
+    getCategories() { 
+			this.$axios.get("/categories", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.categories = data.data.data;
 			});     
 		},
 
     getSuggestion() {
-			axios.get("https://api.klikagenda.com/api/suggestions", {
+			this.$axios.get("/suggestions", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.suggestions = data.data.data;
 			});     
@@ -480,7 +518,10 @@ export default {
       let formData = new FormData();
       formData.append("attachment", this.form.attachment);
 			// request post
-			this.form.post("https://api.klikagenda.com/api/agendas", {
+			this.form.post("/agendas", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(() => {
         $("#exampleModalAgenda").modal("hide");
 				swal.fire({
@@ -499,12 +540,19 @@ export default {
 			this.form.reset(); // v form reset inputs
 			this.form.clear(); // v form clear errors
 			$("#exampleModalAgenda").modal("show"); // show modal
+      // agenda.category_id = 3;
 			this.form.fill(agenda);
+      console.log("form: ", this.form);
+      // console.log("categories: ", this.categories);
+      console.log("agenda: ", agenda);
 		},
 
 		editAgenda(){
 			// request put
-			this.form.put("https://api.klikagenda.com/api/agendas/" + this.form.id, {
+			this.form.put("/agendas/" + this.form.id, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(() => {
 				$("#exampleModalAgenda").modal("hide"); // hide modal
           
@@ -534,7 +582,10 @@ export default {
 				// confirm delete?
 				if (result.value) {
 					// request delete
-					this.form.delete("https://api.klikagenda.com/api/agendas/" + id, {
+					this.form.delete("/agendas/" + id, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("access_token"),
+            },
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

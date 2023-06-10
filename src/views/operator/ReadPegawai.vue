@@ -16,31 +16,54 @@
                   <div class="table-responsive">
                     <table class="table">
                       <thead>
-                        <tr>
-                          <th>No</th>
-                          <th>NIP</th>
-                          <th>Nama</th>
-                          <th>Jabatan</th>
-                          <th>No. Telp</th>
-                          <th>Status</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>23447390282580</td>
-                          <td>Agustina Marga</td>
-                          <td>Sekretaris</td>
-                          <td>081263787903</td>
-                          <td><label class="badge badge-success">Aktif</label></td>
+                      <tr>
+                        <th>No</th>
+                        <th>NIP</th>
+                        <th>Nama</th>
+                        <!-- <th>Email</th> -->
+                        <th>No. Telp</th>
+                        <!-- <th>Alamat</th> -->
+                        <!-- <th>Role</th> -->
+                        <th>Status</th>
+                        <th>Posisi</th>
+                        <!-- <th>Department</th> -->
+                        <!-- <th></th> -->
+                      </tr>
+                    </thead> 
+                    <tbody>
+                      <tr v-for="(employe, index) in employees.data" :key="employe.id">
+                          <td>{{ index + 1}}</td>
+                          <td>{{ employe.nip }}</td>
+                          <td>{{ employe.name }}</td>
+                          <!-- <td>{{ employe.email }}</td> -->
+                          <td>{{ employe.phone_number }}</td>
+                          <!-- <td>{{ employe.address }}</td> -->
+                          <!-- <td>
+                            {{ employe.role }}
+                          </td> -->
                           <td>
-                            <a href="#" class="btn btn-sm" data-toggle="modal" data-target="#modalDetail">
-                                <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
-                            </a>
+                            <template v-if="employe.status === 'Aktif'">
+                              <span class="badge badge-success">Aktif</span>
+                            </template>
+                            <template v-else-if="employe.status === 'Nonaktif'">
+                              <span class="badge badge-warning">Nonaktif</span>
+                            </template>
                           </td>
-                        </tr>
-                      </tbody>
+                          <td>{{ employe.position }}</td>
+                          <!-- <td>{{ employe.department }}</td> -->
+                          <!-- <td>
+                            <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="onEdit(employe)">
+                              <i class="mdi mdi-pencil btn-icon-prepend"></i>
+                            </a> -->
+                            <!-- <a href="#" class="btn btn-sm btn-inverse-warning" data-toggle="modal" data-target="#modalDetail">
+                              <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
+                            </a> -->
+                            <!-- <a href="" class="btn btn-sm btn-inverse-danger" @click.prevent="deleteEmploye(employe.id)">
+                              <i class="mdi mdi-delete btn-icon-prepend"></i>
+                            </a>
+                          </td> -->
+                      </tr>
+                    </tbody>
                     </table>
                   </div>
                 </div>
@@ -49,3 +72,39 @@
           </div>
         </div>
 </template>
+
+<script>
+import axios from "axios";
+
+export default {
+	name: "PegawaiBapenda", 
+	data() {
+		return {
+			employees: {},
+		};
+	},
+
+	methods: {
+
+		getEmployee() {
+      // let offset = (this.currentPage - 1) * this.perPage;
+			axios.get("https://api.klikagenda.com/api/employees ", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+			}).then(data => {
+				this.employees = data.data.data;
+			});     
+		},
+
+	},
+
+	created() {
+		this.getEmployee();
+
+	},
+	mounted() {
+		console.log("Component mounted.");
+	}
+};
+</script>

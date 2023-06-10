@@ -16,45 +16,17 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
               <p class="mb-0 font-weight-bold float-left dropdown-header">Notifications</p>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
+              <a class="dropdown-item preview-item" >
+                <!-- <div class="preview-thumbnail">
                   <div class="preview-icon bg-warning">
                     <i class="ti-info-alt mx-0"></i>
                   </div>
-                </div>
+                </div>  -->
                 <div class="preview-item-content">
                   <div>
-                    <p class="text-info mb-1">Ajuan Agenda</p>
-                    <p class="mb-0">Operator menyetujui ajuan agenda ...</p>
-                    <small>9:30 am</small>
-                  </div>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-warning">
-                    <i class="ti-info-alt mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <div>
-                    <p class="text-info mb-1">Ajuan Agenda</p>
-                    <p class="mb-0">Operator menyetujui ajuan agenda ...</p>
-                    <small>10:30 am</small>
-                  </div>
-                </div>
-              </a>
-              <a class="dropdown-item preview-item">
-                <div class="preview-thumbnail">
-                  <div class="preview-icon bg-warning">
-                    <i class="ti-info-alt mx-0"></i>
-                  </div>
-                </div>
-                <div class="preview-item-content">
-                  <div>
-                    <p class="text-info mb-1">Ajuan Agenda</p>
-                    <p class="mb-0">Operator menyetujui ajuan agenda ...</p>
-                    <small>10:30 am</small>
+                    <!-- <p class="text-info mb-1">Ajuan Agenda</p> -->
+                    <p class="mb-0">{{ suggestions.notes_of_refusal }}</p>
+                    <small>{{suggestions.updated_at}}</small>
                   </div>
                 </div>
               </a>
@@ -62,21 +34,22 @@
           </li>
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-              <img src="asset/images/faces/face28.jpg" alt="profile"/>
+              <img src="asset/images/profilefix3.png" alt="profile"/>
             </a>
+            <span>user</span>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
               <a class="dropdown-item">
                 <i class="ti-user text-primary"></i>
-                Armidham Azhaf R.
+                user
               </a>
-              <a class="dropdown-item" href="#">
+              <router-link class="dropdown-item" to="/profile-user">
                 <i class="ti-user text-primary"></i>
                 Internal Profile
-              </a>
+              </router-link>
               <button class="dropdown-item" @click.prevent="logout">
                 <i class="ti-power-off text-primary"></i>
                 Logout
-              </button>
+              </button> 
             </div>
           </li>
         </ul>
@@ -86,10 +59,29 @@
 <script>
 
 export default {
+  name: "NavbarUser",
+  data() {
+    return {
+      suggestions: [], // Menyimpan data notifikasi pengajuan agenda
+    };
+  },
+  computed: {
+    isLoggedIn : function(){ return this.$store.getters.isLoggedIn;},
+    name : function(){ return this.$store.getters.employeDetail.name;},
+  },
 	methods: {
     logout() {
       this.$store.dispatch("logout");
     },
+
+    async notification(){
+      try {
+        const response = await this.$axios.get("/notify"); // Ganti URL dengan endpoint API Anda
+        this.suggestions = response.data;
+      } catch (error) {
+        console.log(error);
+      }
+    }
   },
 
 };

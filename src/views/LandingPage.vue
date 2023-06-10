@@ -23,7 +23,7 @@
                       <th>Tanggal</th>
                       <th>Waktu</th>
                       <th>Lokasi</th>
-                      <th>Disposisi</th>
+                      <!-- <th>Disposisi</th> -->
                     </tr>
                   </thead>
                   <tbody>
@@ -33,7 +33,7 @@
                       <td>{{ agenda.date }}</td>
                       <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
                       <td>{{ agenda.location }}</td>
-                      <td>{{ agenda.disposition }}</td>
+                      <!-- <td>{{ agenda.disposition }}</td> -->
                     </tr>
                   </tbody>
                 </table>
@@ -43,40 +43,35 @@
         </div>
       </div>
     </div>
-  </div>  
+    <Footer/>
+  </div>
+  
 </template>
 
 <script>
-import axios from "axios";
+import Footer from "../components/TheFooter.vue";
 export default {
 	name: "LandingPage",
+  components: {
+    Footer
+  },
 	data() {
 		return {
-			agendas: {},
+			agendas: [],
 		}; 
 	},
 
-	// methods: {
-	// 	getAgenda() {
-  
-	// 		axios.get("https://api.klikagenda.com/api/agendas-today", {
-	// 		}).then(data => {
-	// 			this.agendas = data.data.data;
-	// 		});     
-	// 	},
-	// },
+  mounted() {
+    this.getAgenda();
+  },
 
-	created() {
-		axios.get("https://api.klikagenda.com/api/agendas-today")
-			.then(data => {
-				this.agendas = data.data.data;
-      })
-    .catch(error => {
-      console.log(error);
-    });
+	methods: {
+    getAgenda(){
+		  this.$axios.get("/agendas-today", {
+			  }).then(response => {
+				  this.agendas = response.data;
+			  });     
+		},
 	},
-	mounted() {
-		console.log("Component mounted.");
-	}
 };
 </script>

@@ -36,7 +36,7 @@
                       <tr v-for="(category, index) in categories.data" :key="category.id">
                         <template v-if="editId == category.id">
                           <td>{{ index + 1}}</td>
-                          <td><input v-model="editCategoryData.name" type="text"></td>
+                          <td><input v-model="form.name" type="text"></td>
                           <td>
                             <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="editCategory(category.id)">
                               <i class="mdi mdi-check btn-icon-prepend"></i>
@@ -125,11 +125,10 @@
             </div> 
         </div>
       </div>
-</template>
+</template> 
 
 <script>
 import { Form } from "vform";
-import axios from "axios";
 import swal from "sweetalert2";
 
 export default {
@@ -151,7 +150,10 @@ export default {
 	methods: {
 
 		getCategories() {
-			axios.get("https://api.klikagenda.com/api/categories", {
+			this.$axios.get("https://api.klikagenda.com/api/categories", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(data => {
 				this.categories = data.data.data;
 			});     
@@ -161,6 +163,9 @@ export default {
 		createCategory() {
 			// request post
 			this.form.post("https://api.klikagenda.com/api/categories", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 			}).then(() => {
 				// this.modalKategori = false;
 				swal.fire({
@@ -177,18 +182,21 @@ export default {
 
 		onEdit(category){
 			this.editId = category.id;
-			this.editCategoryData.name = category.name;
+			this.form.name = category.name;
 		},
 
 		onCancel(){
 			this.editId = "";
-			this.editCategoryData.name = "";
+			this.form.name = "";
 		},
 
 		editCategory(id){
-			let name        = this.editCategoryData.name;
+			let name        = this.form.name;
 			this.editId = "";
-			axios.put("https://api.klikagenda.com/api/categories/" + id, {
+			this.form.put("https://api.klikagenda.com/api/categories/" + id, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
 				name: name
 			}).then(() => {
 				swal.fire({
@@ -216,6 +224,9 @@ export default {
 				if (result.value) {
 					// request delete
 					this.form.delete("https://api.klikagenda.com/api/categories/" + id, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("access_token"),
+            },
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

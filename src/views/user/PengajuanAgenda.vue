@@ -1,13 +1,11 @@
 <template>
-        <div class="content-wrapper">
-          <div class="row">
-            <div class="col-12 grid-margin">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Form Ajukan Agenda</h4>
-                  <form class="form-sample" @submit.prevent="createSuggestion">
-                  <!-- <p class="card-description" style="margin-bottom: 60px">
-                  </p> -->
+  <div class="content-wrapper">
+    <div class="row">
+      <div class="col-12 grid-margin">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Form Ajukan Agenda</h4>
+              <form class="form-sample" @submit.prevent="createSuggestion">
                   <div class="row"> 
                     <div class="col-md-6">
                       <div class="form-group row">
@@ -36,10 +34,10 @@
                             <option v-for="room in rooms.data" :key="room.id" :value="room.id">{{ room.name }}</option>
                           </select>
 
-                          <div v-if="rooms.id === '1'">
+                          <div v-if="form.room_id === 2">
                             <input type="text" class="form-control" v-model="form.location" placeholder="Masukkan Lokasi Agenda" />
                           </div>
-                          <div v-else-if="rooms.id === '2'">
+                          <div v-else-if="form.room_id === 1">
                             <input type="text" class="form-control" v-model="form.location" placeholder="Masukkan Link" />
                           </div>
 
@@ -81,7 +79,7 @@
                       <div class="form-group row">
                         <label class="col-sm-3 col-form-label" for="contents">Isi Agenda</label>
                         <div class="col-sm-9">
-                          <input type="text" class="form-control" v-model="form.contents" :class="{ 'is-invalid': form.errors.has('contents') }" id="contents" placeholder="Isi Agenda" />
+                          <textarea type="text" class="form-control" v-model="form.contents" :class="{ 'is-invalid': form.errors.has('contents') }" id="contents" placeholder="Isi Agenda"></textarea>
                         </div>
                       </div>
                     </div>
@@ -100,21 +98,10 @@
                   <div class="row">
                     <div class="col-md-6">
                       <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">User Login</label>
-                        <div class="col-sm-9">
-                          <select class="form-control" id="disposisi" v-model="form.user_id">
-                            <option disabled value>pilih user</option>
-                            <option v-for="user in employees.data" :key="user.id" :value="user.id">{{ user.name }}</option>
-                          </select>
-                        </div>
-                      </div> 
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-group row">
-                        <label class="col-sm-3 col-form-label">Department</label>
+                        <label class="col-sm-3 col-form-label">Bidang</label>
                         <div class="col-sm-9">
                           <select class="form-control" id="department" v-model="form.department_id">
-                            <option disabled value>Pilih Department</option>
+                            <option disabled value>Pilih Bidang</option>
                             <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
                           </select>
                         </div> 
@@ -124,23 +111,23 @@
                       <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Disposisi</label>
                         <div class="col-sm-9">
-                          <select class="form-control" id="disposisi" v-model="disposition">
-                            <option disabled value="">Pilih Disposisi</option>
+                          <select class="form-control" id="disposition" v-model="disposition">
+                            <option disabled value>Pilih Disposisi</option>
                             <option value="1">Semua Pegawai</option>
-                            <option value="departments">Department</option>
+                            <option value="departments">Bidang</option>
                             <option value="employees">Pegawai</option>
-                            <option value="description">Input Pegawai</option>
+                            <option value="description">Input Peserta</option>
                           </select>
 
                           <div v-if="disposition === '1'">
                             <select class="form-control" v-model="form.disposition_is_all">
-                              <option value="1">Semua Pegawai</option>
+                              <option value="Semua Pegawai">Semua Pegawai</option>
                             </select>
                           </div>
 
                           <div v-else-if="disposition === 'departments'">
                             <select class="form-control" v-model="form.disposition_department">
-                              <option disabled value>Pilih Department</option>
+                              <option disabled value>Pilih Bidang</option>
                               <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
                             </select>
                           </div>
@@ -153,7 +140,7 @@
                           </div>
 
                           <div v-else-if="disposition === 'description'">
-                            <input type="text" class="form-control" v-model="form.disposition_description" placeholder="Masukkan Disposisi" />
+                            <textarea type="text" class="form-control" v-model="form.disposition_description" placeholder="Masukkan Disposisi"></textarea>
                           </div>
                         </div> 
                       </div>
@@ -163,6 +150,7 @@
                         <label class="col-sm-3 col-form-label">File upload</label>
                         <div class="col-sm-9">
                           <input type="file" class="form-control file-upload-info" id="attachment" @change="onFileSelected">
+                          <label class="form-label" style="color: darkgray;">.docs/pdf/jpg</label>
                         </div>
                       </div>
                     </div>
@@ -173,6 +161,7 @@
               </div>
             </div>
           </div>
+          <Footer/>
         </div>
         <!-- content-wrapper ends --> 
 </template>
@@ -181,21 +170,24 @@
 import { Form } from "vform";
 import axios from "axios";
 import swal from "sweetalert2";
+import Footer from "../../components/TheFooter.vue";
 
 export default {
   name: "PengajuanAgenda",
+  components: {
+    Footer
+  },
   data() {
     return {
       rooms: {},
       employees: {},
       categories: {},
       departments: {},
-      
-      disposition: null,
+      disposition:                                                                                                   null,
       // suggestion_dispositions:"",
       form: new Form({
         id: "",
-        user_id: "",
+        user_id: 3,
         department_id: "",
         category_id: "",
         room_id: "",
@@ -204,7 +196,7 @@ export default {
         start_time: "",
         end_time: "",
         contents: "",
-        person_in_charge: "",
+        person_in_charge: 3,
         location: null,
         attachment: null,
         status: "",
@@ -212,6 +204,7 @@ export default {
         disposition_department: null,
         disposition_description: null,
         disposition_is_all: null,
+        // disposition: null,
       }),
     };
   },
@@ -276,7 +269,6 @@ export default {
 				swal.fire({
 					icon: "success",
 					title: "Agenda berhasil ditambahkan"
-               
 				});
         this.$router.push("/history-user");
 				// router.push({ path: "/history-user" });

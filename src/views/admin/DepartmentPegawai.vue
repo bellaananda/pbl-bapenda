@@ -36,7 +36,7 @@
                       <tr v-for="(department, index) in departments.data" :key="department.id">                      
                         <template v-if="editId == department.id">
                           <td>{{ index + 1}}</td>
-                          <td><input v-model="editDepartmentData.name" type="text"></td>
+                          <td><input v-model="form.name" type="text"></td>
                           <td>
                             <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="editDepartment(department.id)">
                               <i class="mdi mdi-check btn-icon-prepend"></i>
@@ -129,7 +129,6 @@
 
 <script>
 import { Form } from "vform";
-import axios from "axios";
 import swal from "sweetalert2";
 
 export default {
@@ -142,26 +141,22 @@ export default {
 				id: "",
 				name: ""
 			}),
-			editDepartmentData: {
-				name: ""
-			},
 		};
 	},
 
 	methods: {
 
 		getDepartment() {  
-			axios.get("https://api.klikagenda.com/api/departments", {
-			}).then(data => {
+			this.$axios.get("https://api.klikagenda.com/api/departments")
+      .then(data => {
 				this.departments = data.data.data;
 			});     
 		},
 
-
 		createDepartment() {
 			// request post
-			this.form.post("https://api.klikagenda.com/api/departments", {
-			}).then(() => {
+			this.form.post("https://api.klikagenda.com/api/departments")
+      .then(() => {
 				swal.fire({
 					icon: "success",
 					title: "departments created successfully"
@@ -172,21 +167,25 @@ export default {
 			});
 		},
 
-		onEdit(department){
-			this.editId = department.id;
-			this.editDepartmentData.name = department.name;
-		},
+		
 
 		onCancel(){
 			this.editId = "";
-			this.editDepartmentData.name = "";
+			this.form.name = "";
+		},
+
+    onEdit(department){ 
+			this.editId = department.id;
+			this.form.name = department.name;
 		},
 
 		editDepartment(id){
-			let name        = this.editDepartmentData.name;
 			this.editId = "";
-			axios.put("https://api.klikagenda.com/api/departments/" + id, {
-				name: name
+			this.form.put("https://api.klikagenda.com/api/departments/" + id, {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("access_token"),
+        },
+				// name: name,
 			}).then(() => {
 				swal.fire({
 					icon: "success",
@@ -214,6 +213,9 @@ export default {
 				if (result.value) {
 					// request delete
 					this.form.delete("https://api.klikagenda.com/api/departments/" + id, {
+            headers: {
+              Authorization: "Bearer " + localStorage.getItem("access_token"),
+            },
 					}).then(() => {
 						// sweet alert success
 						swal.fire(

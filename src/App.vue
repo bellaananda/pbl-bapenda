@@ -7,21 +7,9 @@
           <router-view/>
           
       </div> 
-      <router-view name="footer" />
+      <!-- <router-view name="footer" /> -->
     </div>
   </div>
 </template>
 
-<!-- <script>
-
-export default {
-	name: "App",
-  computed : {
-        isLoggedIn : function(){ return this.$store.getters.isLoggedIn;},
-        email : function(){ return this.$store.getters.userDetail.email;},
-        role : function(){ return this.$store.getters.userDetail.role;}
-    },
-
-};
-</script> -->
 
