@@ -176,6 +176,7 @@ export default {
 
 	methods: {
     formatTanggal(date) {
+      moment.locale("id");
       // console.log("Formatting date:", date);
       return moment(date).format("DD MMMM YYYY");
     },

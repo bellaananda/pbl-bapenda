@@ -42,8 +42,8 @@
                                   <tr v-for="(agenda, index) in todayAgendas.data" :key="agenda.id">
                                     <td>{{ index + 1}}</td>
                                     <td>{{ agenda.title }}</td>
-                                    <td>{{ agenda.date }}</td>
-                                    <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
+                                    <td>{{ formatTanggal(agenda.date) }}</td>
+                                    <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
                                     <td>{{ agenda.location }}</td>
                                     <td>{{ agenda.person_in_charge }}</td>
                                   </tr>
@@ -81,8 +81,8 @@
                                   <tr v-for="(agenda, index) in tomorrowAgendas.data" :key="agenda.id">
                                     <td>{{ index + 1}}</td>
                                     <td>{{ agenda.title }}</td>
-                                    <td>{{ agenda.date }}</td>
-                                    <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
+                                    <td>{{ formatTanggal(agenda.date) }}</td>
+                                    <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
                                     <td>{{ agenda.location }}</td>
                                     <td>{{ agenda.person_in_charge }}</td>
                                   </tr>
@@ -120,8 +120,8 @@
                                   <tr v-for="(agenda, index) in yesterdayAgendas.data" :key="agenda.id">
                                     <td>{{ index + 1}}</td>
                                     <td>{{ agenda.title }}</td>
-                                    <td>{{ agenda.date }}</td>
-                                    <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
+                                    <td>{{ formatTanggal(agenda.date) }}</td>
+                                    <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
                                     <td>{{ agenda.location }}</td>
                                     <td>{{ agenda.person_in_charge }}</td>
                                   </tr>
@@ -148,12 +148,18 @@
         </div>
       </div>
     </div>
+    <Footer/>
   </div>
 </template>
 
 <script>
+import moment from "moment";
+import Footer from "../../components/TheFooter.vue";
 export default {
 	name: "LandingPage",
+  components: {
+    Footer
+  },
 	data() {
 		return {
 			todayAgendas: [],
@@ -169,6 +175,15 @@ export default {
 	},
 
 	methods: {
+    formatTanggal(date) {
+      moment.locale("id");
+      return moment(date).format("DD MMMM YYYY");
+    },
+
+    formatWaktu(time) {
+      return moment(time, "HH:mm").format("HH:mm");
+    },
+
 		getAgendaToday() {
 			this.$axios.get("/agendas-today", {
 			}).then(response  => {

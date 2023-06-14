@@ -11,14 +11,17 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12 grid-margin">
-          <div class="row">
-            <!-- <div class="col-lg-5">
-              <input type="text" placeholder="Search..." name="search" id="search" class="form-control">
-            </div> -->
+        <div class="col-md-6">
+          <div class="form-group">
+            <input type="text" class="form-control" v-model="search" placeholder="Cari agenda...">
           </div>
         </div>
-      </div> 
+        <div class="col-md-6">
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" @click="searchAgenda">Cari</button>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="col-lg-12 grid-margin stretch-card">
           <div class="card">
@@ -39,56 +42,66 @@
                         <th>NIP</th>
                         <th>Nama</th>
                         <th>No. Telp</th>
-                        <!-- <th>Role</th> -->
+                        <th>Role</th>
                         <th>Status</th>
-                        <th>Posisi</th>
                         <th></th>
                       </tr>
                     </thead> 
                     <tbody>
                       <tr v-for="(employe, index) in employees.data" :key="employe.id">
-                          <td>{{ index + 1}}</td>
-                          <td>{{ employe.nip }}</td>
-                          <td>{{ employe.name }}</td>
-                          <td>{{ employe.phone_number }}</td>
-                          <!-- <td>
-                            {{ employe.role }}
-                          </td> -->
-                          <td>
-                            <template v-if="employe.status === 'Aktif'">
-                              <span class="badge badge-success">Aktif</span>
-                            </template>
-                            <template v-else-if="employe.status === 'Nonaktif'">
-                              <span class="badge badge-warning">Nonaktif</span>
-                            </template>
-                          </td>
-                          <td>{{ employe.position }}</td>
-                          <td>
-                            <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="onEdit(employe)">
-                              <i class="mdi mdi-pencil btn-icon-prepend"></i>
-                            </a>
-                            <a @click.prevent="openModal(employe.id)" class="btn btn-sm btn-inverse-warning" data-toggle="modal" :data-target="'#exampleModalDetail' + employees.id">
-                              <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
-                            </a>
-                          </td>
+                        <td>{{ index + 1}}</td>
+                        <td>{{ employe.nip }}</td>
+                        <td>{{ employe.name }}</td>
+                        <td>{{ employe.phone_number }}</td>
+                        <td>
+                          {{ employe.role }}
+                        </td>
+                        <td>
+                          <template v-if="employe.status === 'Aktif'">
+                            <span class="badge badge-success">Aktif</span>
+                          </template>
+                          <template v-else-if="employe.status === 'Nonaktif'">
+                            <span class="badge badge-warning">Nonaktif</span>
+                          </template>
+                        </td>
+                        <td>
+                          <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="editModal(employe)">
+                            <i class="mdi mdi-pencil btn-icon-prepend"></i>
+                          </a>
+                          <a class="btn btn-sm btn-inverse-warning" @click.prevent="showDetailModal(employe)">
+                            <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
+                          </a>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
-                  <!-- <b-pagination
-                        v-model="currentPage"
-                        :per-page="perPage"
-                        :total-rows="rows"
-                        align="center"
-                        v-on:input="pagination">
-                        </b-pagination> -->
                 </div>
+                <div class="template-demo">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  :disabled="current_page === 1"
+                  @click="getEmployee(current_page - 1)"
+                >
+                  Previous
+                </button>
+                <span>Page {{ current_page }} of {{ last_page }}</span>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  
+                  @click="getEmployee(current_page + 1)"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"> 
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-centered" role="document">
           <div class="modal-content">
             <div class="modal-header">
               <!-- Show/hide headings dynamically based on /isFormCreateUserMode value (true/false) -->
@@ -113,7 +126,7 @@
                 </div>
                 <div class="form-group">
                   <label for="email">Email</label>
-                  <input type="text" class="form-control" v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" id="email" placeholder="Masukkan Email Pegawai">
+                  <input type="email" class="form-control" v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" id="email" placeholder="Masukkan Email Pegawai">
                   <has-error :form="form" field="email"></has-error>
                 </div>
                 <div class="form-group">
@@ -136,14 +149,24 @@
                   </select>
                   <has-error :form="form" field="role"></has-error>
                 </div>
-                <div v-show="!isFormCreateEmployeMode" class="form-group">
-                  <label for="status">Status Pegawai</label>
-                  <select class="form-control" id="status" v-model="form.status" :class="{ 'is-invalid': form.errors.has('status') }">
-                    <option disabled value="">Pilih Status Pegawai</option>
-                    <option value="1" checked>Aktif</option>
-                    <option value="2">NonAktif</option>
-                  </select>
-                  <has-error :form="form" field="status"></has-error>
+                <div v-show="!isFormCreateEmployeMode" class="form-group row">
+                  <label class="col-sm-3 col-form-label">Status</label>
+                    <div class="col-sm-4">
+                      <div class="form-check">
+                        <input type="radio" class="form-check-input" name="status" id="status" value="Aktif" v-model="form.status" checked>
+                        <label class="form-check-label" for="Aktif">
+                          Aktif
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-sm-5">
+                      <div class="form-check">
+                        <input type="radio" class="form-check-input" name="status" id="status" value="Nonaktif" v-model="form.status">
+                        <label class="form-check-label" for="Nonaktif">
+                            Nonaktif
+                        </label>
+                      </div>
+                    </div>
                 </div>
                 <div class="form-group">
                   <label for="position">Posisi Pegawai</label>
@@ -165,70 +188,41 @@
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
                 <button type="submit" class="btn btn-primary" v-show="isFormCreateEmployeMode">Simpan</button>
-                <button type="submit" class="btn btn-primary" v-show="!isFormCreateEmployeMode">Update</button>
+                <button type="submit" class="btn btn-primary" v-show="!isFormCreateEmployeMode">Edit</button>
               </div>
             </form>
           </div>
         </div>
       </div>
 
-      <div v-if="employees && employees.id" class="modal fade" :id="'exampleModalDetail' + employees.id" tabindex="-1" role="dialog" :aria-labelledby="'exampleModalDetail' + employees.id" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLongTitle">Detail Data</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
-                        </div>
-                        <div class="modal-body table-responsive">
-                          <table class="table table-bordered no-margin">
-                            <tbody>
-                              <tr>
-                                <th>NIP</th>
-                                <td><span :id="'nip' + employees.id">{{ employees.nip }}</span></td>
-                              </tr>
-                              <tr>
-                                <th>Nama Pegawai</th>
-                                <td><span :id="'name' + employees.id">{{ employees.name }}</span></td>
-                              </tr>
-                              <tr>
-                                <th>Email</th>
-                                <td><span :id="'email' + employees.id">{{ employees.email }}</span></td>
-                              </tr>
-                              <tr>
-                                <th>No. Telp</th>
-                                <td><span :id="'phone_number' + employees.id">{{ employees.phone_number }}</span></td>
-                              </tr>
-                              <tr>
-                                <th>Alamat</th>
-                                <td><span :id="'address' + employees.id">{{ employees.address }}</span></td>
-                              </tr>
-                              <tr>
-                                <th>Role</th>
-                                <td><span :id="'role' + employees.id">{{ employees.role }}</span></td>
-                              </tr>
-                              <tr>
-                                <th>Status</th>
-                                <td><span :id="'status' + employees.id">{{ employees.status }}</span></td>
-                              </tr>
-                              <tr>
-                                <th>Posisi</th>
-                                <td><span :id="'position' + employees.id">{{ employees.position }}</span></td>
-                              </tr>
-                              <tr>
-                                <th>Department</th>
-                                <td><span :id="'department' + employees.id">{{ employees.department }}</span></td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" @click="closeModal(employees.id)" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+      <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="detailModalLabel">Detail Pegawai</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Tampilkan informasi detail pegawai di sini -->
+              <p>NIP: {{ form.nip }}</p>
+              <p>Nama: {{ form.name }}</p>
+              <p>Email: {{ form.email }}</p>
+              <p>No. Telepon: {{ form.phone_number }}</p>
+              <p>Alamat: {{ form.address }}</p>
+              <p>Role: {{ form.role }}</p>
+              <p>Status: {{ form.status }}</p>
+              <p>Posisi Pegawai: {{ getPositionNameById(form.position_id) }}</p>
+              <p>Department Pegawai: {{ getDepartmentNameById(form.department_id) }}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -246,10 +240,11 @@ export default {
 			employees: {},
 			positions:{},
 			departments:{},
+      current_page: 1,
+      per_page: 15,
+      last_page: 0,
+      totalItems: 0,
       search: "",
-      currentPage: 1,
-      rows: 0,
-      perPage: 15,
 			form: new Form({
 				id: "",
 				nip: "",
@@ -268,13 +263,27 @@ export default {
 	},
 
 	methods: {
+    searchAgenda() {
+      this.current_page = 1; // Reset halaman saat melakukan pencarian
+      this.getEmployee();
+    },
 
-		getEmployee() {
-      // let offset = (this.currentPage - 1) * this.perPage;
-			this.$axios.get("https://api.klikagenda.com/api/employees")
-      .then(data => {
-				this.employees = data.data.data;
-			});     
+		getEmployee(page = 1) {  
+			this.$axios.get("/employees", {
+        params: {
+        page: page,
+        search: this.search,
+      },
+      })
+      .then(response => {
+				this.employees = response.data.data;
+        this.current_page = response.data.data.current_page;
+        this.last_page = response.data.data.last_page;
+        this.totalItems = response.data.data.total;
+			})
+      .catch(error => {
+        console.error(error);
+      });      
 		},
 
 		showModal() {
@@ -284,18 +293,33 @@ export default {
 		},
 
 		getPosition() {
-			this.$axios.get("https://api.klikagenda.com/api/positions")
-      .then(data => {
-				this.positions = data.data.data;
-			});     
+			this.$axios.get("/positions")
+      .then(response => {
+				this.positions = response.data.data;
+			})
+      .catch(error => {
+          console.error(error);
+        });    
 		},
 
 		getDepartment() {
-			this.$axios.get("https://api.klikagenda.com/api/departments")
-      .then(data => {
-				this.departments = data.data.data;
-			});     
+			this.$axios.get("/departments")
+      .then(response => {
+				this.departments = response.data.data;
+			})
+      .catch(error => {
+          console.error(error);
+        });     
 		},
+
+    getPositionNameById(positionId) {
+    const position = this.positions.data.find(position => position.id === positionId);
+    return position ? position.name : "";
+  },
+  getDepartmentNameById(departmentId) {
+    const department = this.departments.data.find(department => department.id === departmentId);
+    return department ? department.name : "";
+  },
 
 		createEmployee() {
 			// request post
@@ -311,54 +335,48 @@ export default {
               
 				});
 				this.getEmployee();
-			}).catch(() => {
-				console.log("transaction fail"); 
-			});
+			}).catch(error => {
+          console.error(error);
+        });
 		},
 
-    openModal(id) {
-      this.$axios.get("https://api.klikagenda.com/api/employees/" + id)
-        .then(response => {
-          this.employees = response.data;
-          $("#exampleModalDetail" + id).modal("show");
+    showDetailModal(employe) {
+    const employeId = employe.id;
+      this.$axios.get(`/employees/${employeId}`)
+        .then(() => {
+          this.form.fill(employe);
+          $("#detailModal").modal("show");
         })
         .catch(error => {
           console.error(error);
         });
-    },
-    closeModal(id) {
-      $("#exampleModalDetail" + id).modal("hide");
+  },
+
+    editModal(employe) {
+      this.isFormCreateEmployeMode = false;
+      this.form.fill(employe);
+      $("#exampleModal").modal("show");
     },
 
-    onEdit(employe){
-			this.isFormCreateEmployeMode = false;
-			this.form.reset(); // v form reset inputs
-			$("#exampleModal").modal("show"); // show modal
-			this.form.fill(employe);
-		},
-
-		editEmployee(id){
-			// request put
-			this.form.put("https://api.klikagenda.com/api/employees/" + id, {
+    editEmployee() {
+      const url = `https://api.klikagenda.com/api/employees/${this.form.id}`;
+      this.form.put(url, {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("access_token"),
         },
-			}).then(() => {
-        this.isFormCreateEmployeMode = false;
-				$("#exampleModal").modal("hide"); // hide modal
-          
-				// sweet alert 2
-				swal.fire({
-					icon: "success",
-					title: "Pegawai berhasil diubah"
-				});
-
-				this.getEmployee();
-
-			}).catch(() => {
-				console.log("transaction fail");
-			});
-		},
+      })
+      .then(() => {
+        $("#exampleModal").modal("hide"); // Sembunyikan modal setelah berhasil memperbarui
+          swal.fire({
+            icon: "success",
+            title: "Pegawai berhasil diperbarui",
+          });
+          this.getEmployee(); // Perbarui daftar pegawai
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
 	},
 
 	created() {

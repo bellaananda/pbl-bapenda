@@ -11,6 +11,18 @@
         </div>
       </div>
       <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <input type="text" class="form-control" v-model="search" placeholder="Cari agenda...">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" @click="searchAgenda">Cari</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
@@ -72,7 +84,7 @@
                           </button>
                       </div>
                       <div class="modal-body">
-                        <h5>Nama Agenda: {{ form.title }}</h5>
+                        <h5>Judul Agenda: {{ form.title }}</h5>
                         <p>Tanggal: {{ formatTanggal(form.date) }}</p>
                         <p>Waktu: {{ formatWaktu(form.start_time) }} - {{ formatWaktu(form.end_time) }}</p>
                         <p>Penanggung Jawab: {{ form.person_in_charge }}</p>
@@ -87,6 +99,26 @@
                     </div>
                   </div>
                 </div>
+
+              </div>
+              <div class="template-demo">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  :disabled="current_page === 1"
+                  @click="getHistory(current_page - 1)"
+                >
+                  Previous
+                </button>
+                <span>Page {{ current_page }} of {{ last_page }}</span>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  
+                  @click="getHistory(current_page + 1)"
+                >
+                  Next
+                </button>
               </div>
             </div>
           </div>
@@ -109,6 +141,11 @@ export default {
 	data() {
 		return {
 			editId: "",
+      current_page: 1,
+      per_page: 15,
+      last_page: 0,
+      totalItems: 0,
+      search: "",
 			suggestions: [],
       rooms: {},
       employees: {},
@@ -148,6 +185,10 @@ export default {
 	},
 
 	methods: {
+    searchAgenda() {
+      this.current_page = 1; // Reset halaman saat melakukan pencarian
+      this.getHistory();
+    },
 
     formatTanggal(date) {
       moment.locale("id");
@@ -158,10 +199,18 @@ export default {
       return moment(time, "HH:mm").format("HH:mm");
     },
 
-		getHistory() {
-			this.$axios.get("/suggestions")
+		getHistory(page = 1) {
+			this.$axios.get("/suggestions", {
+        params: {
+        page: page,
+        search: this.search,
+      },
+      })
       .then(response => {
 				this.suggestions = response.data.data;
+        this.current_page = response.data.data.current_page;
+        this.last_page = response.data.data.last_page;
+        this.totalItems = response.data.data.total;
 			})
       .catch(error => {
         console.error(error);

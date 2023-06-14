@@ -46,7 +46,7 @@ export default {
           localStorage.setItem("access_token", access_token);
           if (this.email === "admin@gmail.com") {
             this.$router.push("/dashboard-admin");
-          } else if (this.email === "danil@gamail.com") {
+          } else if (this.email === "operator@gmail.com") {
             this.$router.push("/dashboard-operator");
           } else {
             this.$router.push("/dashboard-user");

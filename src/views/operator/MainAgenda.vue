@@ -11,13 +11,34 @@
         </div>
       </div>
       <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <input type="text" class="form-control" v-model="search" placeholder="Cari agenda...">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" @click="searchAgenda">Cari</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
+              <div class="template-demo">
+                <button type="button" class="btn btn-success btn-icon-text" @click="generateAgendaExcel">
+                  Excel
+                  <i class="btn-icon-prepend"></i>                                                    
+                </button>                
+                <button type="button" class="btn btn-warning btn-icon-text" @click="generateAgendaText">
+                  Text
+                  <i class="btn-icon-prepend"></i>                                                    
+                </button>
+              </div>
               <div class="card-tools float-right">
                 <div class="input-group input-group-sm">
                   <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalAgenda" @click.prevent="showModal">
-                      <!-- <i class="mdi mdi-plus btn-icon-prepend"></i> -->
                       Tambah
                   </button>
                 </div> 
@@ -30,14 +51,11 @@
                       <th>Judul Agenda</th>
                       <th>Tanggal</th>
                       <th>Waktu</th>
-                      <!-- <th>Lokasi</th> -->
+                      <th>Lokasi</th>
                       <th>Isi Agenda</th> 
-                      <!-- <th>Attachment</th> -->
                       <th>PenanggungJawab</th>
                       <th>Disposisi</th>
                       <th>Kategori</th>
-                      <!-- <th>Ruangan</th> -->
-                      <!-- <th>Suggestion</th> -->
                       <th></th>
                     </tr>
                   </thead>
@@ -45,75 +63,41 @@
                     <tr v-for="(agenda, index) in agendas.data" :key="agenda.id">
                       <td>{{ index + 1}}</td>
                       <td>{{ agenda.title }}</td>
-                      <td>{{ agenda.date }}</td>
-                      <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
-                      <!-- <td>{{ agenda.location }}</td> -->
+                      <td>{{ formatTanggal(agenda.date) }}</td>
+                      <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
+                      <td>{{ agenda.location }}</td>
                       <td>{{ agenda.contents }}</td>
-                      <!-- <td>{{ agenda.attachment }}</td> -->
                       <td>{{ agenda.person_in_charge }}</td>
                       <td>{{ agenda.disposition }}</td>
                       <td>{{ agenda.category }}</td>
-                      <!-- <td>{{ agenda.room }}</td> -->
-                      <!-- <td>{{ agenda.suggestion }}</td> -->
                       <td>
-                        <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="onEdit(agenda)">
-                          <i class="mdi mdi-pencil btn-icon-prepend"></i>
-                        </a>
-                        <a href="#" class="btn btn-sm btn-inverse-warning" data-toggle="modal" data-target="#exampleModalDetail">
+                        <button class="btn btn-sm btn-inverse-warning" @click.prevent="getAgendaDetails(agenda)">
                           <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
-                        </a>
-                        <a href="" class="btn btn-sm btn-inverse-danger" @click.prevent="deleteAgenda(agenda.id)">
-                          <i class="mdi mdi-delete btn-icon-prepend"></i>
-                        </a>
+                        </button>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 grid-margin">
-          <div class="row">
-            <div class="col-3 button-generate">
-              <button type="button" class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#exampleModal">
-                <i class="ti-printer"></i>                      
-                  Report Agenda
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"> 
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 v-show="isGenerateAgenda" class="modal-title" id="exampleModalLabel">Generate Agenda</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div> 
-            <div class="modal-body">
               <div class="template-demo">
-                <button type="button" class="btn btn-success btn-icon-text" @click="generateAgendaExcel">
-                  Excel
-                  <i class="ti-file btn-icon-prepend"></i>                                                    
-                </button>                 
-                <button type="button" class="btn btn-danger btn-icon-text"  @click="generateAgendaPDF">
-                  <i class="ti-file btn-icon-prepend"></i>                                                    
-                  PDF
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  :disabled="current_page === 1"
+                  @click="getAgenda(current_page - 1)"
+                >
+                  Previous
                 </button>
-                <button type="button" class="btn btn-warning btn-icon-text" @click="generateAgendaText">
-                  Text
-                  <i class="ti-file btn-icon-prepend"></i>                                                    
+                <span>Page {{ current_page }} of {{ last_page }}</span>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  
+                  @click="getAgenda(current_page + 1)"
+                >
+                  Next
                 </button>
               </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
             </div>
           </div>
         </div>
@@ -229,101 +213,31 @@
         </div>
       </div>
 
-      <div class="modal fade" id="exampleModalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalDetail" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLongTitle">Detail Data</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body table-responsive">
-        <form ref="form">
-                <div class="form-group">
-                  <label for="date" class="form-control-label">Tanggal</label>
-                  <input readonly type="date" class="form-control" v-model="date"  id="date"/>
-                </div>
-                <div class="form-group" >
-                  <label for="start_time" class="form-control-label">Waktu Mulai</label>
-                  <input type="time" readonly class="form-control" v-model="start_time" id="start_time"/>
-                </div>
-                <div class="form-group">
-                  <label for="end_time" class="form-control-label">Waktu Selesai</label>
-                  <input type="time" readonly class="form-control"  v-model="end_time" id="end_time"/>
-                </div>
-                <div class="form-group">
-                  <label for="title" class="form-control-label">Nama Agenda</label>
-                  <input type="text" readonly class="form-control" v-model="title" id="title"/>
-                </div>
-                <div class="form-group">
-                  <label for="category" class="form-control-label">Kategori</label>
-                  <select disabled class="form-control" id="category" v-model="category_id">
-                    <!-- <option disabled value>Pilih Kategori</option> -->
-                    <option disabled v-for="category in categories.data" :key="category.id" :value="category.id">{{ category.name }}</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="room" class="form-control-label">Lokasi</label>
-                    <select disabled class="form-control" id="room" v-model="room_id">
-                      <!-- <option disabled value>Pilih Ruangan</option> -->
-                      <option disabled v-for="room in rooms.data" :key="room.id" :value="room.id">{{ room.name }}</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                  <label for="department">Disposisi</label>
-                  <select disabled class="form-control" id="disposisi" v-model="disposition_is_all">
-                    <option disabled value>Pilih Disposisi</option>
-                    <option value="1">Semua Pegawai</option>
-                    <option value="departments">Department</option>
-                    <option value="employees">Pegawai</option>
-                    <option value="description">Input Pegawai</option>
-                  </select>
-
-                  <select class="form-control" v-if="disposition_is_all === 'departments'" v-model="disposition_department">
-                    <option disabled value>Pilih Department</option>
-                    <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
-                  </select>
-
-                  <select class="form-control" v-else-if="disposition_is_all === 'employees'" v-model="disposition_employee">
-                    <option disabled value>Pilih Pegawai</option>
-                    <option v-for="user in employees.data" :key="user.id" :value="user.id">{{ user.name }}</option>
-                  </select>
-
-                  <div v-else-if="disposition_is_all === 'description'">
-                    <input type="text" class="form-control" v-model="disposition_description" placeholder="Masukkan Disposisi" />
+      <div class="modal fade" id="exampleModalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalDetailLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalDetailLabel">Detail Agenda</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                      </div>
+                      <div class="modal-body">
+                        <h5>Judul Agenda: {{ form.title }}</h5>
+                        <p>Tanggal: {{ formatTanggal(form.date) }}</p>
+                        <p>Waktu: {{ formatWaktu(form.start_time) }} - {{ formatWaktu(form.end_time) }}</p>
+                        <p>Penanggung Jawab: {{ form.person_in_charge }}</p>
+                        <p>Isi Agenda: {{ form.contents }}</p>
+                        <p>Lokasi: {{ form.location }}</p>
+                        <p>Disposisi: {{ form.disposition_employee }} {{ form.disposition_department }} {{ form.disposition_description }} {{ form.disposition_is_all }} {{ disposition }}</p>
+                        <p>Attachment: {{ form.attachment }}</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label for="contents" class="form-control-label">Isi Agenda</label>
-                  <input type="text" readonly class="form-control" v-model="contents" id="contents"/>
-                </div>
-                <div class="form-group">
-                  <label for="person_in_charge" class="form-control-label">Penanggung Jawab</label>
-                  <select disabled class="form-control" id="person_in_charge" v-model="person_in_charge">
-                    <!-- <option disabled value>Pilih PenanggungJawab</option> -->
-                    <option disabled v-for="employe in employees.data" :key="employe.id" :value="employe.id">{{ employe.name }}</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="departments" class="form-control-label">Department</label>
-                  <select disabled class="form-control" id="departments" v-model="department_id">
-                    <!-- <option disabled value>Pilih Department</option> -->
-                    <option disabled v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                    <label for="attachment">File upload</label>
-                    <input type="file" readonly class="form-control file-upload-info" id="attachment" @change="onFileSelected">
-                  </div>
-            </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-      </div>
       
     </div>
   </div>
@@ -331,15 +245,19 @@
 
 <script>
 import { Form } from "vform";
-// import axios from "axios";
+import moment from "moment";
 import swal from "sweetalert2";
-import jspdf from "jspdf";
 export default {
 	name: "AgendaBapenda",
 	data() {
 		return {
       isGenerateAgenda: true,
 			editId: "",
+      current_page: 1,
+      per_page: 15,
+      last_page: 0,
+      totalItems: 0,
+      search: "",
 			agendas: {},
       rooms: {},
       employees: {},
@@ -371,18 +289,18 @@ export default {
 
 	methods: {
 
-    generateAgendaPDF(){
-      const doc = new jspdf();
+    searchAgenda() {
+      this.current_page = 1; // Reset halaman saat melakukan pencarian
+      this.getAgenda();
+    },
 
-      const html = this.$refs.content.innerHTML;
+    formatTanggal(date) {
+      moment.locale("id");
+      return moment(date).format("DD MMMM YYYY");
+    },
 
-      doc.html(html, {
-        callback: function (doc) {
-          doc.save();
-        },
-        x: 10,
-        y: 10
-      });
+    formatWaktu(time) {
+      return moment(time, "HH:mm").format("HH:mm");
     },
 
     generateAgendaExcel(){
@@ -433,26 +351,36 @@ export default {
         });
     },
 
-    getAgenda() {
-  
-			this.$axios.get("/agendas", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-
-			}).then(data => {
-				this.agendas = data.data.data;
-			});     
+    getAgenda(page = 1) {
+			this.$axios.get("https://api.klikagenda.com/api/agendas", {
+        params: {
+        page: page,
+        search: this.search,
+      },
+      })
+      .then(response => {
+				this.agendas = response.data.data;
+        this.current_page = response.data.data.current_page;
+        // console.log(response);
+        this.last_page = response.data.data.last_page;
+        this.totalItems = response.data.data.total;
+			})
+      .catch((error) => {
+        console.error("Failed to fetch agendas", error);
+      });     
 		},
 
-    Detail(id){
-      this.$axios.get("/agendas/" + id ,{
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.title = data.data.data.agendas[0].title;
-			}); 
+    getAgendaDetails(agenda) {
+      const agendaId = agenda.id;
+      this.$axios.get(`/agendas/${agendaId}`)
+        .then(() => {
+          // const suggestionDetails = response.data;
+          this.form.fill(agenda);
+          $("#exampleModalDetail").modal("show");
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     showModal() {

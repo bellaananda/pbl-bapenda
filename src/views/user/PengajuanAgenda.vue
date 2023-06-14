@@ -183,7 +183,7 @@ export default {
       employees: {},
       categories: {},
       departments: {},
-      disposition:                                                                                                   null,
+      disposition: null,
       // suggestion_dispositions:"",
       form: new Form({
         id: "",

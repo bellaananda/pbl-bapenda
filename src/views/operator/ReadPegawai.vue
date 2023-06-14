@@ -1,107 +1,265 @@
 <template>
+  <div class="main-panel">
     <div class="content-wrapper">
+      <div class="row">
+        <div class="col-md-12 grid-margin title">
           <div class="row">
-            <div class="col-md-12 grid-margin title">
-              <div class="row">
-                <div class="col-12 align-items-center">
-                  <h3 class="font-weight-bold">PEGAWAI BAPENDA SURAKARTA</h3>
-                </div>
-              </div>
+            <div class="col-12 align-items-center">
+              <h3 class="font-weight-bold">KELOLA PEGAWAI BAPENDA SURAKARTA</h3>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-12 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <input type="text" class="form-control" v-model="search" placeholder="Cari agenda...">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" @click="searchAgenda">Cari</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <h4 class="card-title">Data Pegawai</h4>
+                <div class="card-tools float-right">
+                  <div class="input-group input-group-sm">
+                    <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" @click.prevent="showModal">
+                      Tambah
+                    </button>
+                  </div> 
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
                       <tr>
                         <th>No</th>
                         <th>NIP</th>
                         <th>Nama</th>
-                        <!-- <th>Email</th> -->
                         <th>No. Telp</th>
-                        <!-- <th>Alamat</th> -->
-                        <!-- <th>Role</th> -->
+                        <th>Role</th>
                         <th>Status</th>
-                        <th>Posisi</th>
-                        <!-- <th>Department</th> -->
-                        <!-- <th></th> -->
+                        <th></th>
                       </tr>
                     </thead> 
                     <tbody>
                       <tr v-for="(employe, index) in employees.data" :key="employe.id">
-                          <td>{{ index + 1}}</td>
-                          <td>{{ employe.nip }}</td>
-                          <td>{{ employe.name }}</td>
-                          <!-- <td>{{ employe.email }}</td> -->
-                          <td>{{ employe.phone_number }}</td>
-                          <!-- <td>{{ employe.address }}</td> -->
-                          <!-- <td>
-                            {{ employe.role }}
-                          </td> -->
-                          <td>
-                            <template v-if="employe.status === 'Aktif'">
-                              <span class="badge badge-success">Aktif</span>
-                            </template>
-                            <template v-else-if="employe.status === 'Nonaktif'">
-                              <span class="badge badge-warning">Nonaktif</span>
-                            </template>
-                          </td>
-                          <td>{{ employe.position }}</td>
-                          <!-- <td>{{ employe.department }}</td> -->
-                          <!-- <td>
-                            <a href="" class="btn btn-sm btn-inverse-success" @click.prevent="onEdit(employe)">
-                              <i class="mdi mdi-pencil btn-icon-prepend"></i>
-                            </a> -->
-                            <!-- <a href="#" class="btn btn-sm btn-inverse-warning" data-toggle="modal" data-target="#modalDetail">
-                              <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
-                            </a> -->
-                            <!-- <a href="" class="btn btn-sm btn-inverse-danger" @click.prevent="deleteEmploye(employe.id)">
-                              <i class="mdi mdi-delete btn-icon-prepend"></i>
-                            </a>
-                          </td> -->
+                        <td>{{ index + 1}}</td>
+                        <td>{{ employe.nip }}</td>
+                        <td>{{ employe.name }}</td>
+                        <td>{{ employe.phone_number }}</td>
+                        <td>
+                          {{ employe.role }}
+                        </td>
+                        <td>
+                          <template v-if="employe.status === 'Aktif'">
+                            <span class="badge badge-success">Aktif</span>
+                          </template>
+                          <template v-else-if="employe.status === 'Nonaktif'">
+                            <span class="badge badge-warning">Nonaktif</span>
+                          </template>
+                        </td>
+                        <td>
+                          <a class="btn btn-sm btn-inverse-warning" @click.prevent="showDetailModal(employe)">
+                            <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
+                          </a>
+                        </td>
                       </tr>
                     </tbody>
-                    </table>
-                  </div>
+                  </table>
                 </div>
+                <div class="template-demo">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  :disabled="current_page === 1"
+                  @click="getEmployee(current_page - 1)"
+                >
+                  Previous
+                </button>
+                <span>Page {{ current_page }} of {{ last_page }}</span>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  
+                  @click="getEmployee(current_page + 1)"
+                >
+                  Next
+                </button>
               </div>
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="detailModalLabel">Detail Pegawai</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <!-- Tampilkan informasi detail pegawai di sini -->
+              <p>NIP: {{ form.nip }}</p>
+              <p>Nama: {{ form.name }}</p>
+              <p>Email: {{ form.email }}</p>
+              <p>No. Telepon: {{ form.phone_number }}</p>
+              <p>Alamat: {{ form.address }}</p>
+              <p>Role: {{ form.role }}</p>
+              <p>Status: {{ form.status }}</p>
+              <p>Posisi Pegawai: {{ getPositionNameById(form.position_id) }}</p>
+              <p>Department Pegawai: {{ getDepartmentNameById(form.department_id) }}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </template>
 
+
+
 <script>
-import axios from "axios";
+import { Form } from "vform";
+import swal from "sweetalert2";
 
 export default {
 	name: "PegawaiBapenda", 
 	data() {
 		return {
 			employees: {},
+			positions:{},
+			departments:{},
+      current_page: 1,
+      per_page: 15,
+      last_page: 0,
+      totalItems: 0,
+      search: "",
+			form: new Form({
+				id: "",
+				nip: "",
+				name: "",
+				email: "",
+        password:"",
+				phone_number: "",
+				address: "",
+				role:"",
+				status:"",
+				position_id: "",
+				department_id:"",
+			}),
+			isFormCreateEmployeMode: true
 		};
 	},
 
 	methods: {
+    searchAgenda() {
+      this.current_page = 1; // Reset halaman saat melakukan pencarian
+      this.getEmployee();
+    },
 
-		getEmployee() {
-      // let offset = (this.currentPage - 1) * this.perPage;
-			axios.get("https://api.klikagenda.com/api/employees ", {
+		getEmployee(page = 1) {  
+			this.$axios.get("/employees", {
+        params: {
+        page: page,
+        search: this.search,
+      },
+      })
+      .then(response => {
+				this.employees = response.data.data;
+        this.current_page = response.data.data.current_page;
+        this.last_page = response.data.data.last_page;
+        this.totalItems = response.data.data.total;
+			})
+      .catch(error => {
+        console.error(error);
+      });      
+		},
+
+		showModal() {
+			this.isFormCreateEmployeMode = true;
+			this.form.reset(); // v form reset
+			$("#exampleModal").modal("show"); // show modal
+		},
+
+		getPosition() {
+			this.$axios.get("/positions")
+      .then(response => {
+				this.positions = response.data.data;
+			})
+      .catch(error => {
+          console.error(error);
+        });    
+		},
+
+		getDepartment() {
+			this.$axios.get("/departments")
+      .then(response => {
+				this.departments = response.data.data;
+			})
+      .catch(error => {
+          console.error(error);
+        });     
+		},
+
+    getPositionNameById(positionId) {
+    const position = this.positions.data.find(position => position.id === positionId);
+    return position ? position.name : "";
+  },
+  getDepartmentNameById(departmentId) {
+    const department = this.departments.data.find(department => department.id === departmentId);
+    return department ? department.name : "";
+  },
+
+		createEmployee() {
+			// request post
+			this.form.post("https://api.klikagenda.com/api/employees", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("access_token"),
         },
-			}).then(data => {
-				this.employees = data.data.data;
-			});     
+			}).then(() => {
+				$("#exampleModal").modal("hide");
+				swal.fire({
+					icon: "success",
+					title: "Pegawai berhasil ditambahkan"
+              
+				});
+				this.getEmployee();
+			}).catch(error => {
+          console.error(error);
+        });
 		},
+
+    showDetailModal(employe) {
+    const employeId = employe.id;
+      this.$axios.get(`/employees/${employeId}`)
+        .then(() => {
+          this.form.fill(employe);
+          $("#detailModal").modal("show");
+        })
+        .catch(error => {
+          console.error(error);
+        });
+  },
 
 	},
 
 	created() {
 		this.getEmployee();
-
+		this.getPosition();
+		this.getDepartment();
 	},
 	mounted() {
 		console.log("Component mounted.");
