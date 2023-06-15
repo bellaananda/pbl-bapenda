@@ -9,7 +9,7 @@
 @section('main')
     <div class="main-panel">
         <div class="content-wrapper">
-            <h3 class="font-weight-bold">KELOLA DATA BIDANG</h3>
+            <h3 class="font-weight-bold">KELOLA DATA RUANGAN</h3>
             <div class="row pt-3">
                 <div class="col-md-6">
                     <div class="card-body">
@@ -20,13 +20,13 @@
                 <div class="col-lg-6 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Data Bidang</h4>
+                            <h4 class="card-title">Data Ruangan</h4>
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Bidang</th>
+                                            <th>Ruang</th>
                                             <th></th>
                                         </tr>
                                     </thead> 
@@ -39,7 +39,7 @@
                                                     <a href="" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editModal{{$loop->index}}">
                                                         <i class="mdi mdi-pencil btn-icon-prepend"></i>
                                                     </a>
-                                                    <form action="/bidang/{{$item['id']}}" method="POST" id="deleteForm{{ $item['id'] }}" style="display: inline">
+                                                    <form action="/ruangan/{{$item['id']}}" method="POST" id="deleteForm{{ $item['id'] }}" style="display: inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-danger" onclick="event.preventDefault(); confirmDelete('{{ $item['id'] }}')">
@@ -52,18 +52,18 @@
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title display-5" id="editModalLabel">Edit Bidang</h5>
+                                                            <h5 class="modal-title display-5" id="editModalLabel">Edit Ruangan</h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
-                                                        <form action="/bidang/{{$item['id']}}" method="POST" enctype="multipart/form-data" id="updateForm{{ $item['id'] }}">
+                                                        <form action="/ruangan/{{$item['id']}}" method="POST" enctype="multipart/form-data" id="updateForm{{ $item['id'] }}">
                                                             @csrf
                                                             @method('PUT')
                                                             <div class="modal-body">
                                                                 <div class="form-group">
                                                                     <label for="name" class="font-weight-bold">Nama</label>
-                                                                    <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Bidang" value="{{ old('name', $item['name']) }}" required>
+                                                                    <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Ruangan" value="{{ old('name', $item['name']) }}" required>
                                                                     @error('name')
                                                                         <span class="invalid-feedback" role="alert">
                                                                             <strong>{{ $message }}</strong>
@@ -90,12 +90,12 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-title">
-                                <h4 class="card-title">Tambah Bidang</h4>
-                                <form action="/bidang" method="post" id="createForm">
+                                <h4 class="card-title">Tambah Ruangan</h4>
+                                <form action="/ruangan" method="post" id="createForm">
                                     @csrf
                                     <div class="form-group">
-                                        <label for="name">Nama Bidang</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Bidang" value="{{ old('name') }}" required>
+                                        <label for="name">Nama Ruangan</label>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Ruangan" value="{{ old('name') }}" required>
                                         @error('name')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>

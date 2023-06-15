@@ -42,27 +42,36 @@ class AuthController extends Controller
 
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
-        $response = $client->post("{$base_uri}/login", [
-            'form_params' => [
-                'email' => $request->input('email'),
-                'password' => $request->input('password'),
-            ],
-            'verify' => false
-        ]);
-
-        $data = json_decode($response->getBody(), true);
-        $user = $data['id'];
-        $token = $data['access_token'];
-
-        if (isset($data['access_token'])) {
-            session(['user' => $user]);
-            session(['access_token' => $token]);
-            $details = $this->getUserDetails();
-            session(['details' => $details]);
-            return redirect('/')->with('success_message', 'Login berhasil!');
-        } else {
+        try {
+            $response = $client->post("{$base_uri}/login", [
+                'headers' => [
+                    'Accept' => 'application/json',
+                ],
+                'form_params' => [
+                    'email' => $request->input('email'),
+                    'password' => $request->input('password')
+                ],
+                'verify' => false
+            ]);
+    
+            $data = json_decode($response->getBody(), true);
+    
+            if ($response->getStatusCode() == 200 && $data['success']) {
+                $user = $data['id'];
+                $token = $data['access_token'];
+    
+                session(['user' => $user]);
+                session(['access_token' => $token]);
+                $details = $this->getUserDetails();
+                session(['details' => $details]);
+    
+                return redirect('/')->with('success_message', 'Login berhasil!');
+            }
+        } catch (\Exception $e) {
+            // API request failed or response error
             return back()->with('error_message', 'Login gagal! Silakan cek email atau password.');
         }
+        return back()->with('error_message', 'Login gagal! Silakan cek email atau password.');
     }
 
     /**

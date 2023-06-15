@@ -27,7 +27,7 @@
     <div class="container-scroller">
         @extends('layouts.admin.navbar')
         <div class="container-fluid page-body-wrapper">
-            @include('layouts.admin.sidebar')
+            @include('layouts.operator.sidebar')
             @yield('main')
         </div>
         @extends('layouts.footer')

@@ -15,14 +15,16 @@ class HomeController extends Controller
     public function index()
     {   
         $token = Session::get('access_token');
+        setlocale (LC_TIME, 'id_ID');
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/agendas-today", ['verify' => false]);
         $body = $response->getBody();
         $result = json_decode($body, true);
         $data =  $result['data'];
+        $fileUrl = "https://api.klikagenda.com/public/uploads/agendas_attachments/";
         if ($token == null) {
-            return view('landing', compact('data'));
+            return view('landing', compact('data', 'fileUrl'));
         }
         $client_yesterday = new Client;
         $response_yesterday = $client_yesterday->request('GET', "{$base_uri}/agendas-yesterday", [
@@ -48,7 +50,7 @@ class HomeController extends Controller
         $data_tomorrow =  $result_tomorrow['data'];
         $role = Session::get('details')['role'];
         $page = 'dashboard';
-        return view($role.'.dashboard', compact('data', 'data_yesterday', 'data_tomorrow', 'page'));
+        return view($role.'.dashboard', compact('data', 'fileUrl', 'data_yesterday', 'data_tomorrow', 'page'));
     }
 
     /**

@@ -13,10 +13,26 @@
             </li>
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                    <img src="asset/images/profile.png" alt="profile"/>
+                    <img src="asset/images/profile.png" alt="profil"/>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                     <a class="dropdown-item" href="#">
+                        <table>
+                            <tr>
+                                <td>
+                                    <h6>{{ Session::get('details')['name'] }}</h6>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h6 class="text-primary">
+                                        {{ Str::title(Session::get('details')['role']) }}
+                                    </h6>
+                                </td>
+                            </tr>
+                        </table>
+                    </a>
+                    <a class="dropdown-item" href="/profil">
                         <i class="ti-user text-primary"></i>
                         Profil
                     </a>
