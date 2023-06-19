@@ -13,12 +13,19 @@
       <div class="row">
         <div class="col-md-6">
           <div class="form-group">
-            <input type="text" class="form-control" v-model="search" placeholder="Cari agenda...">
+            <input
+              type="text"
+              class="form-control"
+              v-model="search"
+              placeholder="Cari agenda..."
+            />
           </div>
         </div>
         <div class="col-md-6">
           <div class="form-group">
-            <button type="button" class="btn btn-primary" @click="searchAgenda">Cari</button>
+            <button type="button" class="btn btn-primary" @click="searchAgenda">
+              Cari
+            </button>
           </div>
         </div>
       </div>
@@ -27,13 +34,21 @@
           <div class="card">
             <div class="card-body">
               <div class="template-demo">
-                <button type="button" class="btn btn-success btn-icon-text" @click="generateAgendaExcel">
+                <button
+                  type="button"
+                  class="btn btn-success btn-icon-text"
+                  @click="generateAgendaExcel"
+                >
                   Excel
-                  <i class="btn-icon-prepend"></i>                                                    
-                </button>                
-                <button type="button" class="btn btn-warning btn-icon-text" @click="generateAgendaText">
+                  <i class="btn-icon-prepend"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-warning btn-icon-text"
+                  @click="generateAgendaText"
+                >
                   Text
-                  <i class="btn-icon-prepend"></i>                                                    
+                  <i class="btn-icon-prepend"></i>
                 </button>
               </div>
               <div class="table-responsive">
@@ -45,79 +60,148 @@
                       <th>Tanggal</th>
                       <th>Waktu</th>
                       <th>Disposisi</th>
-                      <th>Ruangan</th>
+                      <th>Penanggungjawab</th>
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(agenda, index) in agendas.data" :key="agenda.id">
-                      <td>{{ index + 1}}</td>
+                    <tr v-for="(agenda, index) in agendas" :key="agenda.id">
+                      <td>{{ (current_page - 1) * per_page + index + 1 }}</td>
                       <td>{{ agenda.title }}</td>
                       <td>{{ formatTanggal(agenda.date) }}</td>
-                      <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
-                      <td>{{ agenda.person_in_charge }}</td>
-                      <td>{{ agenda.location }}</td>
                       <td>
-                        <button class="btn btn-sm btn-inverse-warning" @click.prevent="getAgendaDetails(agenda)">
-                          <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
+                        {{ formatWaktu(agenda.start_time) }} -
+                        {{ formatWaktu(agenda.end_time) }}
+                      </td>
+                      <td>{{ agenda.disposition }}</td>
+                      <td>{{ agenda.person_in_charge }}</td>
+                      <td>
+                        <button
+                          class="btn btn-sm btn-inverse-warning"
+                          @click.prevent="getAgendaDetails(agenda)"
+                        >
+                          <i
+                            class="mdi mdi-file-document-box-outline btn-icon-prepend"
+                          ></i>
                         </button>
                       </td>
                     </tr>
                   </tbody>
-                </table> 
+                </table>
 
-                <div class="modal fade" id="exampleModalDetail" tabindex="-1" role="dialog" aria-labelledby="exampleModalDetailLabel" aria-hidden="true">
+                <div
+                  class="modal fade"
+                  id="exampleModalDetail"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="exampleModalDetailLabel"
+                  aria-hidden="true"
+                >
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalDetailLabel">Detail Agenda</h5>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                          </button>
+                        <h5 class="modal-title" id="exampleModalDetailLabel">
+                          Detail Agenda
+                        </h5>
+                        <button
+                          type="button"
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
                       </div>
                       <div class="modal-body">
                         <h5>Judul Agenda: {{ form.title }}</h5>
                         <p>Tanggal: {{ formatTanggal(form.date) }}</p>
-                        <p>Waktu: {{ formatWaktu(form.start_time) }} - {{ formatWaktu(form.end_time) }}</p>
+                        <p>
+                          Waktu: {{ formatWaktu(form.start_time) }} -
+                          {{ formatWaktu(form.end_time) }}
+                        </p>
                         <p>Penanggung Jawab: {{ form.person_in_charge }}</p>
                         <p>Isi Agenda: {{ form.contents }}</p>
                         <p>Lokasi: {{ form.location }}</p>
-                        <p>Disposisi: {{ form.disposition_employee }} {{ form.disposition_department }} {{ form.disposition_description }} {{ form.disposition_is_all }} {{ disposition }}</p>
+                        <p>Disposisi: {{ form.disposition_description }}</p>
                         <p>Attachment: {{ form.attachment }}</p>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-dismiss="modal"
+                        >
+                          Tutup
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
-              <div class="template-demo">
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  :disabled="current_page === 1"
-                  @click="getAgenda(current_page - 1)"
-                >
-                  Previous
-                </button>
-                <span>Page {{ current_page }} of {{ last_page }}</span>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  
-                  @click="getAgenda(current_page + 1)"
-                >
-                  Next
-                </button>
+              <div class="row">
+                <div class="col-6">
+                  <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                      <li
+                        :class="{ disabled: current_page === 1 }"
+                        @click="previousPage()"
+                      >
+                        <a class="page-link" href="#" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                          <span class="sr-only">Previous</span>
+                        </a>
+                      </li>
+                      <span>
+                        page {{ current_page }} of {{ totalPages }}
+                      </span>
+                      <!-- <li
+                        v-for="pageNumber in totalPages"
+                        :key="pageNumber"
+                        :class="{ active: current_page === pageNumber }"
+                        @click="changePage(pageNumber)"
+                      >
+                        <a class="page-link" href="#">{{ pageNumber }}</a>
+                      </li> -->
+                      <li
+                        :class="{ disabled: current_page === totalPages }"
+                        @click="nextPage()"
+                      >
+                        <a class="page-link" href="#" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                          <span class="sr-only">Next</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+                <div class="col-6 col-xl-4">
+                  <!-- <div id="search_processes" class="center">   <div id="filter_content" class="table pull-left"> -->
+                  <table id="table_filters">
+                    <tr id="row_special">
+                      <td class="exp">
+                        <label>Records per Page:</label>
+                        <select
+                          id="records_comboBox"
+                          v-model="per_page"
+                          @change="changePerPage"
+                        >
+                          <option id="any" value="any">Any</option>
+                          <option id="10" value="10">10</option>
+                          <option id="25" value="25">25</option>
+                          <option id="50" value="50">50</option>
+                        </select>
+                      </td>
+                    </tr>
+                  </table>
+                  <!-- </div>    -->
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <Footer/>
+    <Footer />
   </div>
 </template>
 
@@ -134,14 +218,13 @@ export default {
 		return {
       isGenerateAgenda: true,
 			agendas: {},
+      search: "",
       current_page: 1,
       per_page: 15,
-      last_page: 0,
       totalItems: 0,
-      search: "",
+      totalPages: 0,
       form: new Form({
         id: "",
-        // user_id: 3,
         department_id: "",
         category_id: "",
         room_id: "",
@@ -154,11 +237,7 @@ export default {
         location: null,
         attachment: null,
         status: "",
-        disposition_employee: null,
-        disposition_department: null,
-        disposition_description: null,
-        disposition_is_all: null,
-        
+        disposition_description: "",
       }),
 		};
 	},
@@ -179,8 +258,8 @@ export default {
     },
 
     generateAgendaExcel(){
-      this.$axios.get("https://api.klikagenda.com/api/download-agenda-excel", { 
-        responseType: "blob" 
+      this.$axios.get("/download-agenda-excel", {
+        responseType: "blob"
       })
         .then(response => {
           const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
@@ -200,7 +279,7 @@ export default {
     },
 
     generateAgendaText(){
-      this.$axios.get("https://api.klikagenda.com/api/generate-agenda-text")
+      this.$axios.post("/generate-agenda-text")
         .then(response  => {
           const textData = response.data;
           const link = document.createElement("a");
@@ -219,24 +298,55 @@ export default {
         });
     },
 
+    previousPage() {
+    if (this.current_page > 1) {
+      this.current_page--;
+      this.getAgenda();
+    }
+  },
+  nextPage() {
+    if (this.current_page < this.totalPages) {
+      this.current_page++;
+      this.getAgenda();
+    }
+  },
+
 		getAgenda(page = 1) {
-			this.$axios.get("https://api.klikagenda.com/api/agendas", {
+      this.$axios.get("/agendas", {
         params: {
-        page: page,
-        search: this.search,
-      },
+          page: page,
+          per_page: this.per_page,
+          search: this.search,
+        },
       })
       .then(response => {
-				this.agendas = response.data.data;
-        this.current_page = response.data.data.current_page;
-        // console.log(response);
-        this.last_page = response.data.data.last_page;
-        this.totalItems = response.data.data.total;
-			})
+        console.log(response.data);
+        // this.agendas = response.data.data;
+        this.agendas = this.getItemsOnCurrentPage(response.data.data);
+        this.totalItems = response.data.data.length;
+        this.totalPages = Math.ceil(this.totalItems / this.per_page);
+        // this.current_page = response.data;
+      })
       .catch((error) => {
         console.error("Failed to fetch agendas", error);
-      });     
-		},
+      });
+    },
+
+    getItemsOnCurrentPage(items) {
+      const startIndex = (this.current_page - 1) * this.per_page;
+      const endIndex = startIndex + this.per_page;
+      return items.slice(startIndex, endIndex);
+    },
+
+    changePage(pageNumber) {
+      this.current_page = pageNumber;
+      this.getAgenda(pageNumber);
+    },
+    changePerPage() {
+    this.current_page = 1; // Reset halaman saat per_page berubah
+    this.per_page = parseInt(this.per_page);
+    this.getAgenda();
+  },
 
     getAgendaDetails(agenda) {
       const agendaId = agenda.id;
@@ -251,6 +361,12 @@ export default {
         });
     },
 	},
+
+  // computed: {
+  //   totalPages() {
+  //     return Math.ceil(this.totalItems / this.per_page);
+  //   }
+  // },
 
 	created() {
 		this.getAgenda();

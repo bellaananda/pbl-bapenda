@@ -51,11 +51,8 @@
                       <th>Judul Agenda</th>
                       <th>Tanggal</th>
                       <th>Waktu</th>
-                      <th>Lokasi</th>
-                      <th>Isi Agenda</th> 
                       <th>PenanggungJawab</th>
                       <th>Disposisi</th>
-                      <th>Kategori</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -65,11 +62,8 @@
                       <td>{{ agenda.title }}</td>
                       <td>{{ formatTanggal(agenda.date) }}</td>
                       <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
-                      <td>{{ agenda.location }}</td>
-                      <td>{{ agenda.contents }}</td>
                       <td>{{ agenda.person_in_charge }}</td>
                       <td>{{ agenda.disposition }}</td>
-                      <td>{{ agenda.category }}</td>
                       <td>
                         <button class="btn btn-sm btn-inverse-warning" @click.prevent="getAgendaDetails(agenda)">
                           <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
@@ -92,7 +86,6 @@
                 <button
                   type="button"
                   class="btn btn-primary"
-                  
                   @click="getAgenda(current_page + 1)"
                 >
                   Next
@@ -229,7 +222,7 @@
                         <p>Penanggung Jawab: {{ form.person_in_charge }}</p>
                         <p>Isi Agenda: {{ form.contents }}</p>
                         <p>Lokasi: {{ form.location }}</p>
-                        <p>Disposisi: {{ form.disposition_employee }} {{ form.disposition_department }} {{ form.disposition_description }} {{ form.disposition_is_all }} {{ disposition }}</p>
+                        <p>Disposisi: {{ form.disposition_description }}</p>
                         <p>Attachment: {{ form.attachment }}</p>
                       </div>
                       <div class="modal-footer">
@@ -304,12 +297,7 @@ export default {
     },
 
     generateAgendaExcel(){
-      this.$axios.get("/download-agenda-excel", { 
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-        responseType: "blob" 
-      })
+      this.$axios.get("/download-agenda-excel")
         .then(response => {
           const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
           const url = URL.createObjectURL(blob);
@@ -328,11 +316,7 @@ export default {
     },
 
     generateAgendaText(){
-      this.$axios.get("/generate-agenda-text", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-      })
+      this.$axios.post("/generate-agenda-text")
         .then(response  => {
           const textData = response.data;
           const link = document.createElement("a");
@@ -352,14 +336,14 @@ export default {
     },
 
     getAgenda(page = 1) {
-			this.$axios.get("https://api.klikagenda.com/api/agendas", {
+			this.$axios.get("/agendas", {
         params: {
         page: page,
         search: this.search,
       },
       })
       .then(response => {
-				this.agendas = response.data.data;
+				this.agendas = response.data;
         this.current_page = response.data.data.current_page;
         // console.log(response);
         this.last_page = response.data.data.last_page;
@@ -390,51 +374,36 @@ export default {
 		},
 
     getEmployee() {  
-			this.$axios.get("/employees", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.employees = data.data.data;
+			this.$axios.get("/employees")
+      .then(response => {
+				this.employees = response.data;
 			});     
 		},
 
     getDepartment() {
-			this.$axios.get("/departments", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.departments = data.data.data;
+			this.$axios.get("/departments")
+      .then(response => {
+				this.departments = response.data;
 			});     
 		},
 
     getRoom() {
-			this.$axios.get("/rooms", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.rooms = data.data.data;
+			this.$axios.get("/rooms")
+      .then(response => {
+				this.rooms = response.data;
 			});     
 		}, 
     getCategories() { 
-			this.$axios.get("/categories", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.categories = data.data.data;
+			this.$axios.get("/categories")
+      .then(response => {
+				this.categories = response.data;
 			});     
 		},
 
     getSuggestion() {
-			this.$axios.get("/suggestions", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.suggestions = data.data.data;
+			this.$axios.get("/suggestions")
+      .then(response => {
+				this.suggestions = response.data;
 			});     
 		},
 

@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 // import swal from "sweetalert2";
 export default {
 	name: "HistoryPengajuan",
@@ -81,21 +81,15 @@ export default {
 
 		getHistory() {
   
-			axios.get("https://api.klikagenda.com/api/suggestions", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(response => {
-				this.suggestions = response.data.data;
+			this.$axios.get("/suggestions")
+      .then(response => {
+				this.suggestions = response.data;
 			});     
 		},
 
     approveAgenda(id) {
-			axios.post("https://api.klikagenda.com/api/suggestions-approve/" + id, {}, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(() => {
+			this.$axios.post("/suggestions-approve/" + id, {})
+      .then(() => {
         alert("Suggestion berhasil ditambahkan ke agenda");
         this.getHistory();
 			}).catch((error) => {
@@ -105,11 +99,8 @@ export default {
 
     denyAgenda(id) {
       // alert("ditolak");
-      axios.post("https://api.klikagenda.com/api/suggestions-deny/" + id, {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(() => {
+      this.$axios.post("/suggestions-deny/" + id, {})
+      .then(() => {
         alert("Suggestion telah ditolak"); // ganti alert input 
         this.getHistory();
 			}).catch((error) => {

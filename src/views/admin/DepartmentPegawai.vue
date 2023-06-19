@@ -10,25 +10,16 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-12 grid-margin">
-            <div class="row">
-              <div class="col-lg-5">
-                <input type="text" placeholder="Search..." name="cari" id="cari" class="form-control">
-              </div>
-            </div>
-          </div>
-        </div> 
-        <div class="row">
           <div class="col-lg-6 grid-margin stretch-card">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Data Posisi</h4>
+                <h4 class="card-title">Data Bidang</h4>
                 <div class="table-responsive">
                   <table class="table table-hover">
                     <thead>
                       <tr>
                         <th>No</th>
-                        <th>Department</th>
+                        <th>Bidang</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -68,11 +59,11 @@
           <div class="col-lg-6">
             <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">Form Tambah Department Bapenda</h4>
+                  <h4 class="card-title">Form Tambah Bidang Bapenda</h4>
                   <div class="table-responsive">
                     <form class="forms-sample" v-on:submit.prevent="createDepartment()">
                       <div class="form-group">
-                        <label for="inputDepartments">Department</label>
+                        <label for="inputDepartments">Bidang</label>
                         <input type="text" class="form-control" v-model="form.name" :class="{ 'is-invalid': form.errors.has('name') }" id="inputDepartments" placeholder="Masukkan Department Bapenda">
                         <has-error :form="form" field="name"></has-error>
                       </div>
@@ -83,46 +74,6 @@
                 </div>
               </div>
           </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-              <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                  <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                      <span class="sr-only">Previous</span>
-                    </a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
-                      <span class="sr-only">Next</span>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-            <div class="col-6 col-xl-4">
-              <!-- <div id="search_processes" class="center">   <div id="filter_content" class="table pull-left"> -->
-                <table id="table_filters">
-                  <tr id="row_special">
-                    <td class="exp">
-                      <label>Records per Page:</label>
-                      <select id="records_comboBox">
-                        <option id="any" value="any">Any</option>
-                        <option id="10" value="10">10</option>
-                        <option id="25" value="25">25</option>
-                        <option id="50" value="50">50</option>
-                      </select>
-                    </td>
-                  </tr>
-                </table>   
-              <!-- </div>    -->
-            </div> 
         </div>
     </div>    
 </template>
@@ -147,23 +98,26 @@ export default {
 	methods: {
 
 		getDepartment() {  
-			this.$axios.get("https://api.klikagenda.com/api/departments")
-      .then(data => {
-				this.departments = data.data.data;
+			this.$axios.get("/departments")
+      		.then((response) => {
+				this.departments = response.data;
+			})
+			.catch((error) => {
+				console.log(error);
 			});     
 		},
 
 		createDepartment() {
 			// request post
 			this.form.post("https://api.klikagenda.com/api/departments")
-      .then(() => {
+      		.then(() => {
 				swal.fire({
 					icon: "success",
-					title: "departments created successfully"
+					title: "Bidang berhasil ditambahkan"
 				});
 				this.getDepartment();
-			}).catch(() => {
-				console.log("transaction fail");
+			}).catch((error) => {
+				console.log(error);
 			});
 		},
 
@@ -189,12 +143,12 @@ export default {
 			}).then(() => {
 				swal.fire({
 					icon: "success",
-					title: "Department updated successfully"
+					title: "Bidang berhasil diubah"
 				});
 				this.getDepartment();
 
-			}).catch(() => {
-				console.log("transaction fail");
+			}).catch((error) => {
+				console.log(error);
 			});
 		}, 
 
@@ -219,8 +173,8 @@ export default {
 					}).then(() => {
 						// sweet alert success
 						swal.fire(
-							"Deleted!",
-							"Your file has been deleted.",
+							"Terhapus",
+							"Bidang berhasil dihapus",
 							"success"
 						);   
   
@@ -230,8 +184,8 @@ export default {
 						swal.fire({
 							icon: "error",
 							title: "Oops...",
-							text: "Something went wrong!",
-							footer: "<a href>Why do I have this issue?</a>"
+							text: "Terjadi kesalahan",
+							// footer: "<a href>Why do I have this issue?</a>"
 						});
 					}); 
 				}

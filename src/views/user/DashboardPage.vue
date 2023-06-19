@@ -35,7 +35,7 @@
                                     <th>Tanggal</th>
                                     <th>Waktu</th>
                                     <th>Lokasi</th>
-                                    <th>Disposisi</th>
+                                    <th>Penanggungjawab</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -74,7 +74,7 @@
                                     <th>Tanggal</th>
                                     <th>Waktu</th>
                                     <th>Lokasi</th>
-                                    <th>Disposisi</th>
+                                    <th>Penanggungjawab</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -113,7 +113,7 @@
                                     <th>Tanggal</th>
                                     <th>Waktu</th>
                                     <th>Lokasi</th>
-                                    <th>Disposisi</th>
+                                    <th>Penanggungjawab</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -157,6 +157,11 @@ import moment from "moment";
 import Footer from "../../components/TheFooter.vue";
 export default {
 	name: "LandingPage",
+  computed: {
+    user(){
+      return this.$store.state.employees;
+    }
+  },
   components: {
     Footer
   },

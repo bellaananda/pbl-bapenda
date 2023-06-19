@@ -3,27 +3,32 @@ import axios from "axios";
 
 export default createStore({
 	state: {
-		access_token: localStorage.getItem("access_token") || "",
-    	employees: {},
+		access_token: null,
+		employees: {},
+		isLoggedIn: false,
+		userRole: null,
 	},
 	mutations: {
-		setToken(state, access_token) {
-			state.access_token = access_token;
-			localStorage.setItem("access_token", access_token);
-		},
-
-		employeDetail(state, employees) {
+		setUser(state, employees) {
 			state.employees = employees;
 		},
-		logout(state) {
-			state.access_token = "";
-			state.currentUser = null;
-			localStorage.removeItem("access_token");
+
+		setToken(state, access_token) {
+			state.access_token = access_token;
 		},
+
+		setLoggedIn(state, isLoggedIn) {
+			state.isLoggedIn = isLoggedIn;
+		},
+		SET_USER_ROLE(state, role) {
+			state.userRole = role;
+		  },
 	},
 	actions: {
-		login({ commit }, {access_token}) {
+		login({ commit }, { employees, access_token}) {
+			commit("setUser", employees);
 			commit("setToken", access_token);
+			commit("setLoggedIn", true);
 		},
 
 		logout({ commit }) {
@@ -43,9 +48,10 @@ export default createStore({
 		},
 		
 	},
-    getters: {
-		isLoggedIn: (state) => !!state.access_token,
-    	currentUser: (state) => state.employees,
-		employeDetail: state => state.employees
-	},
+
+	getters: {
+		getUserRole(state) {
+		  return state.userRole;
+		},
+	  },
 });

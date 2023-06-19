@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import axios from "axios";
+// import axios from "axios";
 export default {
 	name: "LandingPage",
 	data() {
@@ -171,12 +171,9 @@ export default {
 		getAgenda() {
       // let conf = { headers: { "Authorization" : "Bearer " + this.access_token } };
   
-			axios.get("https://api.klikagenda.com/api/agendas" , {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        }, 
-			}).then(data => {
-				this.agendas = data.data.data;
+			this.$axios.get("/agendas")
+      .then(response => {
+				this.agendas = response.data;
 			});     
 		},
 	},

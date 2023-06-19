@@ -85,7 +85,7 @@
                     </div>
                     <div class="col-md-6">
                       <div class="form-group row">
-                        <label class="col-sm-3 col-form-label" for="person_in_charge">Penanggung Jawab</label>
+                        <label class="col-sm-3 col-form-label" for="person_in_charge">Penanggungjawab</label>
                         <div class="col-sm-9">
                           <select class="form-control" id="person_in_charge" v-model="form.person_in_charge">
                             <option disabled value>Pilih PenanggungJawab</option>
@@ -111,37 +111,7 @@
                       <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Disposisi</label>
                         <div class="col-sm-9">
-                          <select class="form-control" id="disposition" v-model="disposition">
-                            <option disabled value>Pilih Disposisi</option>
-                            <option value="1">Semua Pegawai</option>
-                            <option value="departments">Bidang</option>
-                            <option value="employees">Pegawai</option>
-                            <option value="description">Input Peserta</option>
-                          </select>
-
-                          <div v-if="disposition === '1'">
-                            <select class="form-control" v-model="form.disposition_is_all">
-                              <option value="Semua Pegawai">Semua Pegawai</option>
-                            </select>
-                          </div>
-
-                          <div v-else-if="disposition === 'departments'">
-                            <select class="form-control" v-model="form.disposition_department">
-                              <option disabled value>Pilih Bidang</option>
-                              <option v-for="department in departments.data" :key="department.id" :value="department.id">{{ department.name }}</option>
-                            </select>
-                          </div>
-
-                          <div v-else-if="disposition === 'employees'">
-                            <select class="form-control" v-model="form.disposition_employee">
-                              <option disabled value>Pilih Pegawai</option>
-                              <option v-for="user in employees.data" :key="user.id" :value="user.id">{{ user.name }}</option>
-                            </select>
-                          </div>
-
-                          <div v-else-if="disposition === 'description'">
-                            <textarea type="text" class="form-control" v-model="form.disposition_description" placeholder="Masukkan Disposisi"></textarea>
-                          </div>
+                          <textarea type="text" class="form-control" v-model="form.disposition_description" placeholder="Masukkan Disposisi"></textarea>
                         </div> 
                       </div>
                     </div>
@@ -168,7 +138,6 @@
 
 <script>
 import { Form } from "vform";
-import axios from "axios";
 import swal from "sweetalert2";
 import Footer from "../../components/TheFooter.vue";
 
@@ -200,10 +169,10 @@ export default {
         location: null,
         attachment: null,
         status: "",
-        disposition_employee: null,
-        disposition_department: null,
+        // disposition_employee: null,
+        // disposition_department: null,
         disposition_description: null,
-        disposition_is_all: null,
+        // disposition_is_all: null,
         // disposition: null,
       }),
     };
@@ -216,42 +185,30 @@ export default {
     },
 
     getEmployee() {  
-			axios.get("https://api.klikagenda.com/api/employees", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.employees = data.data.data;
+			this.$axios.get("/employees")
+      .then(response => {
+				this.employees = response.data;
 			});     
 		},
 
     getDepartment() {
-			axios.get("https://api.klikagenda.com/api/departments", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.departments = data.data.data;
+			this.$axios.get("/departments")
+      .then(response => {
+				this.departments = response.data;
 			});     
 		},
 
     getRoom() {
-			axios.get("https://api.klikagenda.com/api/rooms", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.rooms = data.data.data;
+			this.$axios.get("/rooms")
+      .then(response => {
+				this.rooms = response.data;
 			});     
 		},
 
     getCategories() {
-			axios.get("https://api.klikagenda.com/api/categories", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.categories = data.data.data;
+			this.$axios.get("/categories")
+      .then(response => {
+				this.categories = response.data;
 			});     
 		},
 

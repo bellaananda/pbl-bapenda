@@ -57,10 +57,10 @@
                           {{ employe.role }}
                         </td>
                         <td>
-                          <template v-if="employe.status === 'Aktif'">
+                          <template v-if="employe.status === '1'">
                             <span class="badge badge-success">Aktif</span>
                           </template>
-                          <template v-else-if="employe.status === 'Nonaktif'">
+                          <template v-else-if="employe.status === '0'">
                             <span class="badge badge-warning">Nonaktif</span>
                           </template>
                         </td>
@@ -153,7 +153,7 @@
                   <label class="col-sm-3 col-form-label">Status</label>
                     <div class="col-sm-4">
                       <div class="form-check">
-                        <input type="radio" class="form-check-input" name="status" id="status" value="Aktif" v-model="form.status" checked>
+                        <input type="radio" class="form-check-input" name="status" id="status" value="1" v-model="form.status" checked>
                         <label class="form-check-label" for="Aktif">
                           Aktif
                         </label>
@@ -161,7 +161,7 @@
                     </div>
                     <div class="col-sm-5">
                       <div class="form-check">
-                        <input type="radio" class="form-check-input" name="status" id="status" value="Nonaktif" v-model="form.status">
+                        <input type="radio" class="form-check-input" name="status" id="status" value="0" v-model="form.status">
                         <label class="form-check-label" for="Nonaktif">
                             Nonaktif
                         </label>
@@ -213,8 +213,8 @@
               <p>Alamat: {{ form.address }}</p>
               <p>Role: {{ form.role }}</p>
               <p>Status: {{ form.status }}</p>
-              <p>Posisi Pegawai: {{ getPositionNameById(form.position_id) }}</p>
-              <p>Department Pegawai: {{ getDepartmentNameById(form.department_id) }}</p>
+              <!-- <p>Posisi Pegawai: {{ getPositionNameById(form.position_id) }}</p> -->
+              <!-- <p>Department Pegawai: {{ getDepartmentNameById(form.department_id) }}</p> -->
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -276,7 +276,7 @@ export default {
       },
       })
       .then(response => {
-				this.employees = response.data.data;
+				this.employees = response.data;
         this.current_page = response.data.data.current_page;
         this.last_page = response.data.data.last_page;
         this.totalItems = response.data.data.total;
@@ -312,14 +312,14 @@ export default {
         });     
 		},
 
-    getPositionNameById(positionId) {
-    const position = this.positions.data.find(position => position.id === positionId);
-    return position ? position.name : "";
-  },
-  getDepartmentNameById(departmentId) {
-    const department = this.departments.data.find(department => department.id === departmentId);
-    return department ? department.name : "";
-  },
+  //   getPositionNameById(positionId) {
+  //   const position = this.positions.data.find(position => position.id === positionId);
+  //   return position ? position.name : "";
+  // },
+  // getDepartmentNameById(departmentId) {
+  //   const department = this.departments.data.find(department => department.id === departmentId);
+  //   return department ? department.name : "";
+  // },
 
 		createEmployee() {
 			// request post

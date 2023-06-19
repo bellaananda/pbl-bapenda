@@ -8,12 +8,12 @@
               </div>
               <h3>Login</h3>
               <h6 class="font-weight-light">Masukkan email dan password untuk dapat login</h6>
-              <form class="pt-3" @submit.prevent="login">
+              <form class="pt-3" @submit.prevent="submitLogin">
                 <div class="form-group">
-                  <input type="email" class="form-control form-control-lg" id="email" v-model="email" placeholder="Email" required>
+                  <input type="email" class="form-control form-control-lg" id="email" v-model="form.email" placeholder="Email" required>
                 </div>
                 <div class="form-group">
-                  <input type="password" class="form-control form-control-lg" id="password" v-model="password" placeholder="Password" required>
+                  <input type="password" class="form-control form-control-lg" id="password" v-model="form.password" placeholder="Password" required>
                 </div>
                 <div class="mt-3">
                   <button type="submit" class="btn btn-primary btn-block my-4">Login</button>
@@ -24,42 +24,49 @@
         </div>
       </div>
 </template>
-
-<script> 
+<script>
 export default {
-  name: "LoginPage",
   data() {
     return {
-      email: "",
-      password: ""
+      form: {
+        email: "",
+        password: "",
+      },
     };
   },
-
-  methods:{
-    login() { 
-      this.$axios.post("/login", {
-          email: this.email,
-          password: this.password,
-        })
-        .then(response => {
-          const access_token = response.data.access_token; // Token autentikasi yang diterima dari server.
+  methods: {
+    async submitLogin() {
+      try {
+        const response = await this.$axios.post("/login", this.form);
+        // console.log(response.data);
+        if(response.data.success){
+          const access_token = response.data.access_token;
+          // const userRole = "admin";
           localStorage.setItem("access_token", access_token);
-          if (this.email === "admin@gmail.com") {
+
+          const employeesId = response.data.id;
+          const userResponse = await this.$axios.get(`/employees/${employeesId}`);
+          const userRole = userResponse.data.data[0].role;
+          this.$store.commit("SET_USER_ROLE", userRole);
+
+
+          if (userRole === "admin") {
             this.$router.push("/dashboard-admin");
-          } else if (this.email === "operator@gmail.com") {
+          } else if (userRole === "user") {
+            this.$router.push("/dashboard-user");
+          } else if (userRole === "operator") {
             this.$router.push("/dashboard-operator");
           } else {
-            this.$router.push("/dashboard-user");
-          } 
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    }
+            console.log("Invalid role", userRole);
+          }
 
-
-  
-
+        } else {
+            console.log("Invalid user");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      },
   },
 };
 </script>

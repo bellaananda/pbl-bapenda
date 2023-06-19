@@ -22,7 +22,7 @@
           <div class="col-lg-6 grid-margin stretch-card">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Data Posisi</h4>
+                <h4 class="card-title">Data Kategori</h4>
                 <div class="table-responsive">
                   <table class="table table-hover">
                     <thead>
@@ -84,46 +84,6 @@
               </div>
           </div>
         </div>
-        <div class="row">
-            <div class="col-6">
-              <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                  <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Previous">
-                      <span aria-hidden="true">&laquo;</span>
-                      <span class="sr-only">Previous</span>
-                    </a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                      <span aria-hidden="true">&raquo;</span>
-                      <span class="sr-only">Next</span>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-            <div class="col-6 col-xl-4">
-              <!-- <div id="search_processes" class="center">   <div id="filter_content" class="table pull-left"> -->
-                <table id="table_filters">
-                  <tr id="row_special">
-                    <td class="exp">
-                      <label>Records per Page:</label>
-                      <select id="records_comboBox">
-                        <option id="any" value="any">Any</option>
-                        <option id="10" value="10">10</option>
-                        <option id="25" value="25">25</option>
-                        <option id="50" value="50">50</option>
-                      </select>
-                    </td>
-                  </tr>
-                </table>   
-              <!-- </div>    -->
-            </div> 
-        </div>
       </div>
 </template> 
 
@@ -150,12 +110,12 @@ export default {
 	methods: {
 
 		getCategories() {
-			this.$axios.get("https://api.klikagenda.com/api/categories", {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("access_token"),
-        },
-			}).then(data => {
-				this.categories = data.data.data;
+			this.$axios.get("/categories")
+      .then((response) => {
+				this.categories = response.data;
+			})
+			.catch((error) => {
+				console.log(error);
 			});     
 		},
 
@@ -170,13 +130,13 @@ export default {
 				// this.modalKategori = false;
 				swal.fire({
 					icon: "success",
-					title: "Categories created successfully"
+					title: "Kategori berhasil ditambahkan"
               
 				});
 				this.getCategories();
             
-			}).catch(() => {
-				console.log("transaction fail");
+			}).catch((error) => {
+				console.log(error);
 			});
 		},
 
@@ -201,12 +161,12 @@ export default {
 			}).then(() => {
 				swal.fire({
 					icon: "success",
-					title: "Category updated successfully"
+					title: "Kategori berhasil diubah"
 				});
 				this.getCategories();
 
-			}).catch(() => {
-				console.log("transaction fail");
+			}).catch((error) => {
+				console.log(error);
 			});
 		}, 
 
@@ -230,8 +190,8 @@ export default {
 					}).then(() => {
 						// sweet alert success
 						swal.fire(
-							"Deleted!",
-							"Your file has been deleted.",
+							"Terhapus",
+							"Kategori berhasil dihapus",
 							"success"
 						);   
   
@@ -241,8 +201,8 @@ export default {
 						swal.fire({
 							icon: "error",
 							title: "Oops...",
-							text: "Something went wrong!",
-							footer: "<a href>Why do I have this issue?</a>"
+							text: "Terjadi kesalahan",
+							// footer: "<a href>Why do I have this issue?</a>"
 						});
 					}); 
 				}

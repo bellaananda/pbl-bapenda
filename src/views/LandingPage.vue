@@ -30,8 +30,8 @@
                     <tr v-for="(agenda, index) in agendas.data" :key="index">
                       <td>{{ index + 1}}</td>
                       <td>{{ agenda.title }}</td>
-                      <td>{{ agenda.date }}</td>
-                      <td>{{ agenda.start_time }} - {{ agenda.end_time }}</td>
+                      <td>{{ formatTanggal(agenda.date) }}</td>
+                      <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
                       <td>{{ agenda.location }}</td>
                       <!-- <td>{{ agenda.disposition }}</td> -->
                     </tr>
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import Footer from "../components/TheFooter.vue";
 export default {
 	name: "LandingPage",
@@ -66,6 +67,16 @@ export default {
   },
 
 	methods: {
+    formatTanggal(date) {
+      moment.locale("id");
+      // console.log("Formatting date:", date);
+      return moment(date).format("DD MMMM YYYY");
+    },
+
+    formatWaktu(time) {
+      return moment(time, "HH:mm").format("HH:mm");
+    },
+
     getAgenda(){
 		  this.$axios.get("/agendas-today", {
 			  }).then(response => {

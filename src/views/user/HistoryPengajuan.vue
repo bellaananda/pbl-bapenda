@@ -90,8 +90,9 @@
                         <p>Penanggung Jawab: {{ form.person_in_charge }}</p>
                         <p>Isi Agenda: {{ form.contents }}</p>
                         <p>Lokasi: {{ form.location }}</p>
-                        <p>Disposisi: {{ form.disposition_employee }} {{ form.disposition_department }} {{ form.disposition_description }} {{ form.disposition_is_all }} {{ disposition }}</p>
+                        <p>Disposisi: {{ form.disposition_description }}</p>
                         <p>Attachment: {{ form.attachment }}</p>
+                        
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -167,10 +168,11 @@ export default {
         location: null,
         attachment: null,
         status: "",
-        disposition_employee: null,
-        disposition_department: null,
-        disposition_description: null,
-        disposition_is_all: null,
+        // disposition_employee: null,
+        // disposition_department: null,
+        disposition_description: "",
+        attachment_url: "",
+        // disposition_is_all: null,
         
       }),
 		};
@@ -207,7 +209,7 @@ export default {
       },
       })
       .then(response => {
-				this.suggestions = response.data.data;
+				this.suggestions = response.data;
         this.current_page = response.data.data.current_page;
         this.last_page = response.data.data.last_page;
         this.totalItems = response.data.data.total;
@@ -219,8 +221,8 @@ export default {
 
     getEmployee() {  
 			this.$axios.get("/employees")
-      .then(data => {
-				this.employees = data.data.data;
+      .then(response => {
+				this.employees = response.data;
 			})
       .catch(error => {
         console.error(error);
@@ -229,8 +231,8 @@ export default {
 
     getDepartment() {
 			this.$axios.get("/departments")
-      .then(data => {
-				this.departments = data.data.data;
+      .then(response => {
+				this.departments = response.data;
 			})
       .catch(error => {
         console.error(error);
@@ -239,8 +241,8 @@ export default {
 
     getRoom() {
 			this.$axios.get("/rooms")
-      .then(data => {
-				this.rooms = data.data.data;
+      .then(response => {
+				this.rooms = response.data;
 			})
       .catch(error => {
         console.error(error);
@@ -249,8 +251,8 @@ export default {
 
     getCategories() {
 			this.$axios.get("/categories")
-      .then(data => {
-				this.categories = data.data.data;
+      .then(response => {
+				this.categories = response.data;
 			})
       .catch(error => {
         console.error(error);
