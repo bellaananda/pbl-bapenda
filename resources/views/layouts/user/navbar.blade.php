@@ -9,73 +9,75 @@
         </button>
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item dropdown">
+                {{ Session::get('details')['name'] }}
+            </li>
+            <li class="nav-item dropdown">
                 <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
                     <i class="icon-bell mx-0"></i>
                     <span class="count"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
-                    <p class="mb-0 font-weight-bold float-left dropdown-header">Notifications</p>
-                    <a class="dropdown-item preview-item">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-warning">
-                                <i class="ti-info-alt mx-0"></i>
+                    <p class="mb-0 font-weight-bold float-left dropdown-header">Notifikasi Ajuan Agenda</p>
+                    @foreach ($notify as $notification)
+                        <a class="dropdown-item preview-item" onclick="event.preventDefault(); document.getElementById('notifyForm-{{ $notification['id'] }}').submit();">
+                            <div class="preview-thumbnail">
+                                <div class="preview-icon {{ $notification['status'] == 1 || $notification['status'] == 3 ? 'bg-success' : 'bg-danger' }}">
+                                    <i class="{{ $notification['status'] == 1 || $notification['status'] == 3 ? 'ti-check' : 'ti-close' }} mx-0"></i>
+                                </div>
                             </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <div>
-                                <p class="text-info mb-1">Ajuan Agenda</p>
-                                <p class="mb-0">Operator menyetujui ajuan agenda ...</p>
-                                <small>9:30 am</small>
+                            <div class="preview-item-content">
+                                <div>
+                                    <p class="text-info mb-1 word-wrap-width">{{ $notification['title'] }}</p>
+                                    @if ($notification['status'] == 1 || $notification['status'] == 3)
+                                        <p class="mb-0">Ajuan agenda diterima</p>
+                                    @elseif ($notification['status'] == 2)
+                                        <p class="mb-0">Ajuan agenda ditolak</p>
+                                    @endif
+                                    <small>{{ $notification['hour'] }}</small><br>
+                                    <small>{{ date('d-m-Y', strtotime($notification['date'])) }}</small>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                    <a class="dropdown-item preview-item">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-warning">
-                                <i class="ti-info-alt mx-0"></i>
-                            </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <div>
-                                <p class="text-info mb-1">Ajuan Agenda</p>
-                                <p class="mb-0">Operator menyetujui ajuan agenda ...</p>
-                                <small>10:30 am</small>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="dropdown-item preview-item">
-                        <div class="preview-thumbnail">
-                            <div class="preview-icon bg-warning">
-                                <i class="ti-info-alt mx-0"></i>
-                            </div>
-                        </div>
-                        <div class="preview-item-content">
-                            <div>
-                                <p class="text-info mb-1">Ajuan Agenda</p>
-                                <p class="mb-0">Operator menyetujui ajuan agenda ...</p>
-                                <small>10:30 am</small>
-                            </div>
-                        </div>
-                    </a>
+                        </a>
+
+                        <form id="notifyForm-{{ $notification['id'] }}" method="POST" action="/notify" style="display: none;">
+                            @csrf
+                            <input type="hidden" id="id" name="id" value="{{ $notification['id'] }}">
+                        </form>
+                    @endforeach
                 </div>
             </li>
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                    <img src="asset/images/faces/face28.jpg" alt="profile"/>
+                    <img src="asset/images/profile.png" alt="profil"/>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                    <a class="dropdown-item">
-                        <i class="ti-user text-primary"></i>
-                        Armidham Azhaf R.
-                    </a>
                     <a class="dropdown-item" href="#">
-                        <i class="ti-user text-primary"></i>
-                        Internal Profile
+                        <table>
+                            <tr>
+                                <td>
+                                    <h6>{{ Session::get('details')['name'] }}</h6>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h6 class="text-primary">
+                                        {{ Str::title(Session::get('details')['role']) }}
+                                    </h6>
+                                </td>
+                            </tr>
+                        </table>
                     </a>
-                    <button class="dropdown-item" @click.prevent="logout">
-                        <i class="ti-power-off text-primary"></i>
-                        Logout
-                    </button>
+                    <a class="dropdown-item" href="/profil">
+                        <i class="ti-user text-primary"></i>
+                        Profil
+                    </a>
+                    <form action="/logout" method="post">
+                        @csrf
+                        <button type="submit" class="dropdown-item">
+                            <i class="ti-power-off text-primary"></i>
+                            Logout
+                        </button>
+                    </form>
                 </div>
             </li>
         </ul>

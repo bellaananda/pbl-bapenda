@@ -12,10 +12,17 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
+    protected $notification;
+
+    public function __construct(NotificationController $notification)
+    {
+        $this->notification = $notification;
+    }
+
     public function index()
     {   
+        //landing page, dashboard
         $token = Session::get('access_token');
-        setlocale (LC_TIME, 'id_ID');
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/agendas-today", ['verify' => false]);
@@ -24,7 +31,8 @@ class HomeController extends Controller
         $data =  $result['data'];
         $fileUrl = "https://api.klikagenda.com/public/uploads/agendas_attachments/";
         if ($token == null) {
-            return view('landing', compact('data', 'fileUrl'));
+            $page = 'landing';
+            return view('landing', compact('data', 'fileUrl', 'page'));
         }
         $client_yesterday = new Client;
         $response_yesterday = $client_yesterday->request('GET', "{$base_uri}/agendas-yesterday", [
@@ -50,6 +58,10 @@ class HomeController extends Controller
         $data_tomorrow =  $result_tomorrow['data'];
         $role = Session::get('details')['role'];
         $page = 'dashboard';
+        if ($role == 'user') {
+            $notify = $this->notification->index();
+            return view($role.'.dashboard', compact('data', 'fileUrl', 'data_yesterday', 'data_tomorrow', 'page', 'notify'));
+        }
         return view($role.'.dashboard', compact('data', 'fileUrl', 'data_yesterday', 'data_tomorrow', 'page'));
     }
 

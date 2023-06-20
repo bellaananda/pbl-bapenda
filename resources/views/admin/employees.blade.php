@@ -86,9 +86,8 @@
                                             <tr>
                                                 <td>{{ ($loop->index + 1) + 15*($currentPage-1) }}</td>
                                                 <td>{{$item['nip']}}</td>
-                                                <td>{{$item['name']}}</td>
+                                                <td class="max-width-column">{{$item['name']}}</td>
                                                 <td>{{$item['phone_number']}}</td>
-                                                {{-- <td>{{$item['role']}}</td> --}}
                                                 <td>
                                                     @if ($item['status'] == 1)
                                                         <span class="badge badge-success">{{$item['status_name']}}</span>
@@ -96,14 +95,20 @@
                                                         <span class="badge badge-warning">{{$item['status_name']}}</span>
                                                     @endif
                                                 </td>
-                                                <td>{{$item['position']}}</td>
+                                                <td class="max-width-column">{{$item['position']}}</td>
                                                 <td>
                                                     <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#detailModal{{$loop->index}}">
-                                                        <i class="mdi mdi-file-document-box-outline btn-icon-prepend"></i>
+                                                        <i class="mdi mdi-magnify btn-icon-prepend"></i>
                                                     </a>
                                                     <a href="" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editModal{{$loop->index}}">
                                                         <i class="mdi mdi-pencil btn-icon-prepend"></i>
                                                     </a>
+                                                    <form action="/password-reset/{{$item['id']}}" method="POST" id="resetPassword{{ $item['id'] }}" style="display: inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-warning text-white" onclick="event.preventDefault(); confirmReset('{{ $item['id'] }}')">
+                                                            <i class="mdi mdi-sync btn-icon-prepend"></i>
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                             <div class="modal fade" id="detailModal{{$loop->index}}" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true"> 
@@ -472,10 +477,34 @@
                 }
             });
         }
+        function confirmReset(itemId) {
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: 'Anda yakin untuk mereset password pengguna ini? Tindakan ini tidak dapat dibatalkan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Reset',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                customClass: {
+                    icon: 'swal-icon-custom' // Add your custom CSS class here
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('resetPassword' + itemId).submit();
+                }
+            });
+        }
     </script>
     <style>
         .swal-icon-custom {
             margin-top: 100px;
+        }
+        .max-width-column {
+            max-width: 200px; /* Ubah nilai sesuai kebutuhan */
+            white-space: nowrap; /* Untuk mencegah pemotongan teks */
+            overflow: hidden; /* Untuk menyembunyikan konten yang terpotong */
+            text-overflow: ellipsis; /* Untuk menampilkan tanda elipsis (...) jika terpotong */
         }
     </style>
 @endsection

@@ -15,6 +15,7 @@ class EmployeeController extends Controller
      */
     public function index(Request $request)
     {
+        //show employees
         $search = $request->input('search', null);
         $order = $request->input('order', 'name');
         $sort = $request->input('sort', 'asc');
@@ -25,7 +26,6 @@ class EmployeeController extends Controller
         if ($token == null) {
             return redirect('/');
         }
-        setlocale (LC_TIME, 'id_ID');
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/employees", [
@@ -92,6 +92,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        //create employee (admin)
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');
@@ -173,6 +174,7 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        //update employee (admin)
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');
@@ -226,5 +228,35 @@ class EmployeeController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function passwordReset($id) {
+        //update password employee (all)
+        $token = Session::get('access_token');
+        if ($token == null) {
+            return redirect('/');
+        }
+
+        $client = new Client;
+        $base_uri = "https://api.klikagenda.com/api";
+        $response = $client->post("{$base_uri}/employee-password-update/{$id}", [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token,
+            ],
+            'form_params' => [
+                'id' => $id,
+                'new_password' => 'bapenda123'
+            ],
+            'verify' => false
+        ]);
+
+        $data = json_decode($response->getBody(), true);
+    
+        if ($response->getStatusCode() == 200 && $data['success']) {
+            return redirect('/pegawai')->with('success_message', 'Password pegawai berhasil direset!');
+        } else {
+            return back()->with('error_message', 'Password pegawai gagal direset!');
+        }
     }
 }

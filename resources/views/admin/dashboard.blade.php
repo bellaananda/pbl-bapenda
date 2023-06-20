@@ -47,15 +47,15 @@
                                                                     @foreach ($data as $item)
                                                                         <tr>
                                                                             <td>{{ $loop->index + 1}}</td>
-                                                                            <td>{{ $item['title'] }}</td>
+                                                                            <td class="max-width-column">{{ $item['title'] }}</td>
                                                                             <td>{{ date('d-m-Y', strtotime($item['date'])) }}</td>
                                                                             @if ($item['end_time'] != null)
                                                                                 <td>{{ date('H:i', strtotime($item['start_time'])) . ' - ' . date('H:i', strtotime($item['end_time'])) }}</td>
                                                                             @else
                                                                                 <td>{{ date('H:i', strtotime($item['start_time'])) }}</td>                                            
                                                                             @endif
-                                                                            <td>{{ $item['disposition'] }}</td>
-                                                                            <td>{{ $item['location'] }}</td>
+                                                                            <td class="max-width-column">{{ $item['disposition'] }}</td>
+                                                                            <td class="max-width-column">{{ $item['location'] }}</td>
                                                                             <td>
                                                                                 <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#detailModal{{$loop->index}}">
                                                                                     Detail
@@ -126,7 +126,7 @@
                                                                                                     <label for="attachment" class="font-weight-bold">Lampiran</label><br>
                                                                                                     @if (substr(strrchr($item['attachment'], '.'), 1) == 'PDF')
                                                                                                         <embed id="attachment" src="{{ $fileUrl.$item['attachment'] }}" width="600px" height="150px" />
-                                                                                                    @elseif (substr(strrchr($item['attachment'], '.'), 1) == 'jpg' || substr(strrchr($item['attachment'], '.'), 1) == 'jpge' || substr(strrchr($item['attachment'], '.'), 1) == 'png')
+                                                                                                    @elseif (substr(strrchr($item['attachment'], '.'), 1) == 'jpg' || substr(strrchr($item['attachment'], '.'), 1) == 'jpeg' || substr(strrchr($item['attachment'], '.'), 1) == 'png')
                                                                                                         <img src="{{ $fileUrl.$item['attachment'] }}" alt="File Preview">
                                                                                                     @endif
                                                                                                     <a href="{{ $fileUrl.$item['attachment'] }}" download="{{ $item['attachment'] }}">Unduh Lampiran</a>
@@ -176,15 +176,15 @@
                                                                     @foreach ($data_tomorrow as $item)
                                                                         <tr>
                                                                             <td>{{ $loop->index + 1}}</td>
-                                                                            <td>{{ $item['title'] }}</td>
+                                                                            <td class="max-width-column">{{ $item['title'] }}</td>
                                                                             <td>{{ date('d-m-Y', strtotime($item['date'])) }}</td>
                                                                             @if ($item['end_time'] != null)
                                                                                 <td>{{ date('H:i', strtotime($item['start_time'])) . ' - ' . date('H:i', strtotime($item['end_time'])) }}</td>
                                                                             @else
                                                                                 <td>{{ date('H:i', strtotime($item['start_time'])) }}</td>                                            
                                                                             @endif
-                                                                            <td>{{ $item['disposition'] }}</td>
-                                                                            <td>{{ $item['location'] }}</td>
+                                                                            <td class="max-width-column">{{ $item['disposition'] }}</td>
+                                                                            <td class="max-width-column">{{ $item['location'] }}</td>
                                                                             <td>
                                                                                 <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#detailModalTomorrow{{$loop->index}}">
                                                                                     Detail
@@ -255,7 +255,7 @@
                                                                                                     <label for="attachment" class="font-weight-bold">Lampiran</label><br>
                                                                                                     @if (substr(strrchr($item['attachment'], '.'), 1) == 'PDF')
                                                                                                         <embed id="attachment" src="{{ $fileUrl.$item['attachment'] }}" width="600px" height="150px" />
-                                                                                                    @elseif (substr(strrchr($item['attachment'], '.'), 1) == 'jpg' || substr(strrchr($item['attachment'], '.'), 1) == 'jpge' || substr(strrchr($item['attachment'], '.'), 1) == 'png')
+                                                                                                    @elseif (substr(strrchr($item['attachment'], '.'), 1) == 'jpg' || substr(strrchr($item['attachment'], '.'), 1) == 'jpeg' || substr(strrchr($item['attachment'], '.'), 1) == 'png')
                                                                                                         <img src="{{ $fileUrl.$item['attachment'] }}" alt="File Preview">
                                                                                                     @endif
                                                                                                     <a href="{{ $fileUrl.$item['attachment'] }}" download="{{ $item['attachment'] }}">Unduh Lampiran</a>
@@ -305,15 +305,15 @@
                                                                     @foreach ($data_yesterday as $item)
                                                                         <tr>
                                                                             <td>{{ $loop->index + 1}}</td>
-                                                                            <td>{{ $item['title'] }}</td>
+                                                                            <td class="max-width-column">{{ $item['title'] }}</td>
                                                                             <td>{{ date('d-m-Y', strtotime($item['date'])) }}</td>
                                                                             @if ($item['end_time'] != null)
                                                                                 <td>{{ date('H:i', strtotime($item['start_time'])) . ' - ' . date('H:i', strtotime($item['end_time'])) }}</td>
                                                                             @else
                                                                                 <td>{{ date('H:i', strtotime($item['start_time'])) }}</td>                                            
                                                                             @endif
-                                                                            <td>{{ $item['disposition'] }}</td>
-                                                                            <td>{{ $item['location'] }}</td>
+                                                                            <td class="max-width-column">{{ $item['disposition'] }}</td>
+                                                                            <td class="max-width-column">{{ $item['location'] }}</td>
                                                                             <td>
                                                                                 <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#detailModalYesterday{{$loop->index}}">
                                                                                     Detail
@@ -384,7 +384,7 @@
                                                                                                     <label for="attachment" class="font-weight-bold">Lampiran</label><br>
                                                                                                     @if (substr(strrchr($item['attachment'], '.'), 1) == 'PDF')
                                                                                                         <embed id="attachment" src="{{ $fileUrl.$item['attachment'] }}" width="600px" height="150px" />
-                                                                                                    @elseif (substr(strrchr($item['attachment'], '.'), 1) == 'jpg' || substr(strrchr($item['attachment'], '.'), 1) == 'jpge' || substr(strrchr($item['attachment'], '.'), 1) == 'png')
+                                                                                                    @elseif (substr(strrchr($item['attachment'], '.'), 1) == 'jpg' || substr(strrchr($item['attachment'], '.'), 1) == 'jpeg' || substr(strrchr($item['attachment'], '.'), 1) == 'png')
                                                                                                         <img src="{{ $fileUrl.$item['attachment'] }}" alt="File Preview">
                                                                                                     @endif
                                                                                                     <a href="{{ $fileUrl.$item['attachment'] }}" download="{{ $item['attachment'] }}">Unduh Lampiran</a>
@@ -423,4 +423,13 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .max-width-column {
+            max-width: 200px; /* Ubah nilai sesuai kebutuhan */
+            white-space: nowrap; /* Untuk mencegah pemotongan teks */
+            overflow: hidden; /* Untuk menyembunyikan konten yang terpotong */
+            text-overflow: ellipsis; /* Untuk menampilkan tanda elipsis (...) jika terpotong */
+        }
+    </style>
 @endsection

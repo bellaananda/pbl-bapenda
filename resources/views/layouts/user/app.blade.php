@@ -9,6 +9,7 @@
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{asset('./asset/vendors/feather/feather.css')}}">
     <link rel="stylesheet" href="{{asset('./asset/vendors/ti-icons/css/themify-icons.css')}}">
+    <link rel="stylesheet" href="{{asset('./asset/vendors/mdi/css/materialdesignicons.min.css')}}">
     <link rel="stylesheet" href="{{asset('./asset/vendors/css/vendor.bundle.base.css')}}">
     <!-- endinject -->
     <!-- Plugin css for this page -->
@@ -24,11 +25,12 @@
 </head>
 <body>
     <div class="container-scroller">
-        @extends('../layouts.navbar')
+        @extends('layouts.user.navbar')
         <div class="container-fluid page-body-wrapper">
+            @include('layouts.user.sidebar')
             @yield('main')
         </div>
-        @extends('../layouts.footer')
+        @extends('layouts.footer')
     </div>
 
     <!-- plugins:js -->
@@ -52,14 +54,12 @@
     <script src="{{asset('./asset/js/dashboard.js')}}"></script>
     <script src="{{asset('./asset/js/Chart.roundedBarCharts.js')}}"></script>
     <!-- End custom js for this page-->
-
-    @if(request()->query('refresh'))
-        <script>
-            window.onload = function() {
-                window.location.reload();
-            }
-        </script>
-    @endif
+    <style>
+        .word-wrap-width {
+            word-wrap: break-word;
+            max-width: 200px; /* Adjust the max-width value as per your preference */
+        }
+    </style>
 </body>
 
 </html>

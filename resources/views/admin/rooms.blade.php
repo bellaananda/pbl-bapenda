@@ -36,16 +36,18 @@
                                                 <td>{{ $loop->index+1 }}</td>
                                                 <td>{{$item['name']}}</td>
                                                 <td>
-                                                    <a href="" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editModal{{$loop->index}}">
-                                                        <i class="mdi mdi-pencil btn-icon-prepend"></i>
-                                                    </a>
-                                                    <form action="/ruangan/{{$item['id']}}" method="POST" id="deleteForm{{ $item['id'] }}" style="display: inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger" onclick="event.preventDefault(); confirmDelete('{{ $item['id'] }}')">
-                                                            <i class="mdi mdi-delete btn-icon-prepend"></i>
-                                                        </button>
-                                                    </form>
+                                                    @if ($item['id'] != 1 && $item['id'] != 2)
+                                                        <a href="" class="btn btn-sm btn-info" data-toggle="modal" data-target="#editModal{{$loop->index}}">
+                                                            <i class="mdi mdi-pencil btn-icon-prepend"></i>
+                                                        </a>
+                                                        <form action="/ruangan/{{$item['id']}}" method="POST" id="deleteForm{{ $item['id'] }}" style="display: inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-sm btn-danger" onclick="event.preventDefault(); confirmDelete('{{ $item['id'] }}')">
+                                                                <i class="mdi mdi-delete btn-icon-prepend"></i>
+                                                            </button>
+                                                        </form>
+                                                    @endif
                                                 </td>
                                             </tr>
                                             <div class="modal fade" id="editModal{{$loop->index}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true"> 

@@ -13,13 +13,13 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        //show categories
         $search = $request->input('search', null);
 
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');
         }
-        setlocale (LC_TIME, 'id_ID');
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/categories", [
@@ -54,6 +54,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        //create category (admin)
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');
@@ -123,6 +124,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        //update category (admin)
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');
@@ -177,6 +179,7 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
+        //delete category (admin)
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');

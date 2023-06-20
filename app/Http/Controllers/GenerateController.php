@@ -66,12 +66,12 @@ class GenerateController extends Controller
     }
 
     public function generateAgendaText(Request $request) {
+        //generate text (operator, admin)
         $date = $request->input('copydate', today()->format("Y-m-d"));
         $token = Session::get('access_token');
         if ($token == null) {
             return null;
         }
-        setlocale (LC_TIME, 'id_ID');
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/generate-agenda-text", [
@@ -91,6 +91,7 @@ class GenerateController extends Controller
     }
 
     public function generateAgendaExcel(Request $request) {
+        //generate text (operator, admin)
         $selected = $request->input('exceldate', date('Y-m'));
         $array = explode("-", $selected);
         $month = $array[1];
@@ -99,7 +100,6 @@ class GenerateController extends Controller
         if ($token == null) {
             return null;
         }
-        setlocale (LC_TIME, 'id_ID');
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/download-agenda-excel", [

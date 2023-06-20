@@ -1,4 +1,4 @@
-@extends('../layouts.operator.app')
+@extends('../layouts.user.app')
 
 @section('title', 'BAPENDA Surakarta')
 

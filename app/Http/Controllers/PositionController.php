@@ -13,13 +13,13 @@ class PositionController extends Controller
      */
     public function index(Request $request)
     {
+        //show positions
         $search = $request->input('search', null);
 
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');
         }
-        setlocale (LC_TIME, 'id_ID');
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/positions", [
@@ -54,6 +54,7 @@ class PositionController extends Controller
      */
     public function store(Request $request)
     {
+        //create position (admin)
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');
@@ -123,6 +124,7 @@ class PositionController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        //update position (admin)
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');
@@ -177,6 +179,7 @@ class PositionController extends Controller
      */
     public function destroy($id)
     {
+        //delete position (admin)
         $token = Session::get('access_token');
         if ($token == null) {
             return redirect('/');
