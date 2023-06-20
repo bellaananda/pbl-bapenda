@@ -175,7 +175,8 @@
     </script>
     <style>
         .swal-icon-custom {
-            margin-top: 100px;
+            position: relative;
+            top: 20px;
         }
     </style>
 @endsection

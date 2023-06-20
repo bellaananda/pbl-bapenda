@@ -189,4 +189,11 @@
             confirmUpdate();
         }
     </script>
+
+    <style>
+        .swal-icon-custom {
+            position: relative;
+            top: 20px;
+        }
+    </style>
 @endsection

@@ -535,7 +535,8 @@
 
     <style>
         .swal-icon-custom {
-            margin-top: 100px;
+            position: relative;
+            top: 20px;
         }
         .max-width-column {
             max-width: 200px; /* Ubah nilai sesuai kebutuhan */

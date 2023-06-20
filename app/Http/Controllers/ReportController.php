@@ -20,6 +20,7 @@ class ReportController extends Controller
 
         $role = Session::get('details')['role'];
         $page = 'grafik';
+        $date_val = $request->input('date') ? $request->input('date') : null;
         $room_val = $request->input('room') ? $request->input('room') : null;
         //default value
         $selected = $request->input('date', date('Y-m'));
@@ -58,7 +59,7 @@ class ReportController extends Controller
             ],
         ];
 
-        return view($role.'.graph', compact('page', 'room_val', 'rooms_data', 'agendas', 'rooms'));
+        return view($role.'.graph', compact('page', 'date_val', 'room_val', 'rooms_data', 'agendas', 'rooms'));
     }
 
     /**

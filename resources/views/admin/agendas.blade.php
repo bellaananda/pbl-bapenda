@@ -45,7 +45,7 @@
                     <div class="card-body">
                         <form action="/agenda" method="get">
                             <div class="input-group">
-                                <input type="text" id="search" name="search" class="form-control" placeholder="Cari Agenda" aria-label="Cari Agenda">
+                                <input type="text" id="search" name="search" class="form-control" placeholder="Cari Agenda" aria-label="Cari Agenda" value="{{ request()->input('search') }}">
                                 <div class="input-group-append">
                                     <button class="btn btn-sm btn-primary" type="submit">
                                         <i class="ti-search text-white"></i>
@@ -258,7 +258,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/js/bootstrap-datetimepicker.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script type="text/javascript">
         function copyToClipboard() {
@@ -299,7 +299,8 @@
     </script>
     <style>
         .swal-icon-custom {
-            margin-top: 100px;
+            position: relative;
+            top: 20px;
         }
         .max-width-column {
             max-width: 200px; /* Ubah nilai sesuai kebutuhan */

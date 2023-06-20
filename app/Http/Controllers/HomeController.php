@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use GuzzleHttp\Client;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -23,6 +24,7 @@ class HomeController extends Controller
     {   
         //landing page, dashboard
         $token = Session::get('access_token');
+        Carbon::setLocale('id');
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/agendas-today", ['verify' => false]);

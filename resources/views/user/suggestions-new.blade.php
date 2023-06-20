@@ -252,6 +252,10 @@
         $( "#copydate" ).datepicker();
     </script>
     <style>
+        .swal-icon-custom {
+            position: relative;
+            top: 20px;
+        }
         .max-width-column {
             max-width: 200px; /* Ubah nilai sesuai kebutuhan */
             white-space: nowrap; /* Untuk mencegah pemotongan teks */

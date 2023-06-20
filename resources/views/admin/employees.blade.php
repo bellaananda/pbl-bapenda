@@ -44,7 +44,7 @@
                     <div class="card-body">
                         <form action="/pegawai" method="get">
                             <div class="input-group">
-                                <input type="text" id="search" name="search" class="form-control" placeholder="Cari Pegawai" aria-label="Cari Pegawai">
+                                <input type="text" id="search" name="search" class="form-control" placeholder="Cari Pegawai" aria-label="Cari Pegawai" value="{{ request()->input('search') }}">
                                 <div class="input-group-append">
                                     <button class="btn btn-sm btn-primary" type="submit">
                                         <i class="ti-search text-white"></i>
@@ -498,7 +498,8 @@
     </script>
     <style>
         .swal-icon-custom {
-            margin-top: 100px;
+            position: relative;
+            top: 20px;
         }
         .max-width-column {
             max-width: 200px; /* Ubah nilai sesuai kebutuhan */
