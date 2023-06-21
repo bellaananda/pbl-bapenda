@@ -141,7 +141,26 @@
               <div class="row">
                 <div class="col-6">
                   <nav aria-label="Page navigation example">
-                    <ul class="pagination">
+                    <div class="template-demo">
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        :disabled="current_page === 1"
+                        @click="previousPage()"
+                      >
+                        Previous
+                      </button>
+                      <span>Page {{ current_page }} of {{ totalPages }}</span>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        :class="{ disabled: current_page === totalPages }"
+                        @click="nextPage()"
+                      >
+                        Next
+                      </button>
+                    </div>
+                    <!-- <ul class="pagination">
                       <li
                         :class="{ disabled: current_page === 1 }"
                         @click="previousPage()"
@@ -151,17 +170,7 @@
                           <span class="sr-only">Previous</span>
                         </a>
                       </li>
-                      <span>
-                        page {{ current_page }} of {{ totalPages }}
-                      </span>
-                      <!-- <li
-                        v-for="pageNumber in totalPages"
-                        :key="pageNumber"
-                        :class="{ active: current_page === pageNumber }"
-                        @click="changePage(pageNumber)"
-                      >
-                        <a class="page-link" href="#">{{ pageNumber }}</a>
-                      </li> -->
+                      <span> page {{ current_page }} of {{ totalPages }} </span>
                       <li
                         :class="{ disabled: current_page === totalPages }"
                         @click="nextPage()"
@@ -171,7 +180,7 @@
                           <span class="sr-only">Next</span>
                         </a>
                       </li>
-                    </ul>
+                    </ul> -->
                   </nav>
                 </div>
                 <div class="col-6 col-xl-4">
@@ -210,14 +219,14 @@ import moment from "moment";
 import { Form } from "vform";
 import Footer from "../../components/TheFooter.vue";
 export default {
-	name: "AgendaBapenda",
+  name: "AgendaBapenda",
   components: {
-    Footer
+    Footer,
   },
-	data() {
-		return {
+  data() {
+    return {
       isGenerateAgenda: true,
-			agendas: {},
+      agendas: {},
       search: "",
       current_page: 1,
       per_page: 15,
@@ -239,10 +248,10 @@ export default {
         status: "",
         disposition_description: "",
       }),
-		};
-	},
+    };
+  },
 
-	methods: {
+  methods: {
     searchAgenda() {
       this.current_page = 1; // Reset halaman saat melakukan pencarian
       this.getAgenda();
@@ -257,12 +266,15 @@ export default {
       return moment(time, "HH:mm").format("HH:mm");
     },
 
-    generateAgendaExcel(){
-      this.$axios.get("/download-agenda-excel", {
-        responseType: "blob"
-      })
-        .then(response => {
-          const blob = new Blob([response.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+    generateAgendaExcel() {
+      this.$axios
+        .get("/download-agenda-excel", {
+          responseType: "blob",
+        })
+        .then((response) => {
+          const blob = new Blob([response.data], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
           const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
           link.href = url;
@@ -273,63 +285,66 @@ export default {
           document.body.removeChild(link);
           URL.revokeObjectURL(url);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Failed to export Excel", error);
         });
     },
 
-    generateAgendaText(){
-      this.$axios.post("/generate-agenda-text")
-        .then(response  => {
+    generateAgendaText() {
+      this.$axios
+        .post("/generate-agenda-text")
+        .then((response) => {
           const textData = response.data;
           const link = document.createElement("a");
-          link.href = "data:text/plain;charset=utf-8," + encodeURIComponent(textData);
+          link.href =
+            "data:text/plain;charset=utf-8," + encodeURIComponent(textData);
           link.download = "export.txt";
           link.style.display = "none";
-
+ 
           // Menambahkan elemen <a> ke DOM dan mengkliknya untuk memulai unduhan
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
         })
-        .catch(error => {
+        .catch((error) => {
           // Tangani kesalahan jika ada
           console.error("Failed to copy agenda", error);
         });
     },
 
     previousPage() {
-    if (this.current_page > 1) {
-      this.current_page--;
-      this.getAgenda();
-    }
-  },
-  nextPage() {
-    if (this.current_page < this.totalPages) {
-      this.current_page++;
-      this.getAgenda();
-    }
-  },
+      if (this.current_page > 1) {
+        this.current_page--;
+        this.getAgenda();
+      }
+    },
+    nextPage() {
+      if (this.current_page < this.totalPages) {
+        this.current_page++;
+        this.getAgenda();
+      }
+    },
 
-		getAgenda(page = 1) {
-      this.$axios.get("/agendas", {
-        params: {
-          page: page,
-          per_page: this.per_page,
-          search: this.search,
-        },
-      })
-      .then(response => {
-        console.log(response.data);
-        // this.agendas = response.data.data;
-        this.agendas = this.getItemsOnCurrentPage(response.data.data);
-        this.totalItems = response.data.data.length;
-        this.totalPages = Math.ceil(this.totalItems / this.per_page);
-        // this.current_page = response.data;
-      })
-      .catch((error) => {
-        console.error("Failed to fetch agendas", error);
-      });
+    getAgenda(page = 1) {
+      this.$axios
+        .get("/agendas", {
+          params: {
+            page: page,
+            per_page: this.per_page,
+            search: this.search,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          // this.agendas = response.data.data;
+          this.agendas = this.getItemsOnCurrentPage(response.data.data);
+          this.totalItems = response.data.data.length;
+          this.totalPages = Math.ceil(this.totalItems / this.per_page);
+          // this.current_page = response.data;
+        })
+        .catch((error) => {
+          console.error("Failed to fetch agendas", error);
+        });
     },
 
     getItemsOnCurrentPage(items) {
@@ -343,24 +358,25 @@ export default {
       this.getAgenda(pageNumber);
     },
     changePerPage() {
-    this.current_page = 1; // Reset halaman saat per_page berubah
-    this.per_page = parseInt(this.per_page);
-    this.getAgenda();
-  },
+      this.current_page = 1; // Reset halaman saat per_page berubah
+      this.per_page = parseInt(this.per_page);
+      this.getAgenda();
+    },
 
     getAgendaDetails(agenda) {
       const agendaId = agenda.id;
-      this.$axios.get(`/agendas/${agendaId}`)
+      this.$axios
+        .get(`/agendas/${agendaId}`)
         .then(() => {
           // const suggestionDetails = response.data;
           this.form.fill(agenda);
           $("#exampleModalDetail").modal("show");
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         });
     },
-	},
+  },
 
   // computed: {
   //   totalPages() {
@@ -368,11 +384,11 @@ export default {
   //   }
   // },
 
-	created() {
-		this.getAgenda();
-	},
-	mounted() {
-		console.log("Component mounted.");
-	}
+  created() {
+    this.getAgenda();
+  },
+  mounted() {
+    console.log("Component mounted.");
+  },
 };
 </script>

@@ -9,15 +9,49 @@
         </div>
       </div>
     </div>
-    <div class="col-md-6 grid-margin stretch-card">
-      <div class="card">
-        <div class="card-body">
-          <div class="d-flex justify-content-between">
-            <p class="card-title">Agenda Per Bulan</p>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="month">Bulan</label>
+          <input
+            type="month"
+            class="form-control"
+            id="month"
+            v-model="selectedMonth"
+            @input="handleMonthInput"
+            placeholder="YYYY-MM"
+          />
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="rooms">Ruangan</label>
+          <select class="form-control" id="rooms">
+            <option disabled value>Pilih Ruangan</option>
+            <option value="rooms">Ruang</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <p class="card-title">Agenda Per Bulan</p>
+            </div>
+            <canvas ref="chart1"> </canvas>
           </div>
-          <canvas ref="chart">
-            
-          </canvas>
+        </div>
+      </div>
+      <div class="col-md-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <p class="card-title">Agenda Per Bulan</p>
+            </div>
+            <canvas ref="chart2"> </canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -28,50 +62,62 @@
 import Chart from "chart.js";
 // import axios from "axios";
 export default {
-  mounted(){
+  data() {
+  return {
+    selectedDate: null,
+    selectedMonth: ""
+  };
+},
+  mounted() {
     this.getGraphAgenda();
   },
 
   methods: {
-    getGraphAgenda() {
+    handleMonthInput(event) {
+      this.selectedMonth = event.target.value;
+    },
 
-      this.$axios.post("/agendas-graph")
-      .then(response => {
-        this.createChart(response.data.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    getGraphAgenda() {
+      this.$axios
+        .post("/agendas-graph")
+        .then((response) => {
+          this.createChart(response.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
 
     createChart(data) {
       const ctx = this.$refs.chart.getContext("2d");
-      const labels = data.map(item => item.date);
-      const values = data.map(item => item.agenda_count);
+      const labels = data.map((item) => item.date);
+      const values = data.map((item) => item.agenda_count);
 
       new Chart(ctx, {
         type: "bar",
         data: {
           labels: labels,
-          datasets: [{
-            label: "Agenda",
-            data: values,
-            backgroundColor: "rgba(75, 192, 192, 0.6)",
-            borderColor: "rgba(75, 192, 192, 1)",
-            borderWidth: 1
-          }]
+          datasets: [
+            {
+              label: "Agenda",
+              data: values,
+              backgroundColor: "rgba(75, 192, 192, 0.6)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+            },
+          ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           scales: {
             y: {
-              beginAtZero: true
-            }
-          }
-        }
+              beginAtZero: true,
+            },
+          },
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>

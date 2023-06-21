@@ -11,6 +11,25 @@
         </div>
       </div>
       <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <input
+              type="text"
+              class="form-control"
+              v-model="search"
+              placeholder="Cari agenda..."
+            />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" @click="searchAgenda">
+              Cari
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-12 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
@@ -28,7 +47,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(suggestion, index) in suggestions.data" :key="suggestion.id">
+                    <tr v-for="(suggestion, index) in suggestions" :key="suggestion.id">
                       <td>{{ index + 1}}</td>
                       <td>{{ suggestion.title }}</td>
                       <td>{{ suggestion.date }}</td>
@@ -56,6 +75,25 @@
                     </tr>
                   </tbody>
                 </table>
+                <div class="template-demo">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  :disabled="current_page === 1"
+                  @click="previousPage()"
+                >
+                  Previous
+                </button>
+                <span>Page {{ current_page }} of {{ totalPages }}</span>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  :class="{ disabled: current_page === totalPages }"
+                  @click="nextPage()"
+                >
+                  Next
+                </button>
+              </div>
               </div>
             </div>
           </div>
@@ -74,18 +112,70 @@ export default {
 		return {
 			editId: "",
 			suggestions: {},
+      current_page: 1,
+      per_page: 15,
+      totalItems: 0,
+      totalPages: 0,
+      search: "",
 		};
 	},
 
 	methods: {
 
-		getHistory() {
-  
-			this.$axios.get("/suggestions")
-      .then(response => {
-				this.suggestions = response.data;
-			});     
-		},
+    previousPage() {
+      if (this.current_page > 1) {
+        this.current_page--;
+        this.getHistory();
+      }
+    },
+    nextPage() {
+      if (this.current_page < this.totalPages) {
+        this.current_page++;
+        this.getHistory();
+      }
+    },
+
+    searchAgenda() {
+      this.current_page = 1; // Reset halaman saat melakukan pencarian
+      this.getHistory();
+    },
+
+		getHistory(page = 1) {
+      // if (suggestion.user_id === this.loggedInUser.id) {
+      this.$axios
+        .get("/suggestions", {
+          params: {
+            page: page,
+            per_page: this.per_page,
+            search: this.search,
+          },
+        })
+        .then((response) => {
+          this.suggestions = this.getItemsOnCurrentPage(response.data.data);
+          this.totalItems = response.data.data.length;
+          this.totalPages = Math.ceil(this.totalItems / this.per_page);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      // }
+    },
+
+    getItemsOnCurrentPage(items) {
+      const startIndex = (this.current_page - 1) * this.per_page;
+      const endIndex = startIndex + this.per_page;
+      return items.slice(startIndex, endIndex);
+    },
+
+    changePage(pageNumber) {
+      this.current_page = pageNumber;
+      this.getHistory(pageNumber);
+    },
+    changePerPage() {
+      this.current_page = 1; // Reset halaman saat per_page berubah
+      this.per_page = parseInt(this.per_page);
+      this.getHistory();
+    },
 
     approveAgenda(id) {
 			this.$axios.post("/suggestions-approve/" + id, {})

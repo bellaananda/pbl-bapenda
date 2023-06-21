@@ -6,7 +6,7 @@
           <div class="row">
             <div class="col-12 align-items-center">
               <h3 class="font-weight-bold">AGENDA BAPENDA SURAKARTA</h3>
-            </div>
+            </div> 
           </div>
         </div>
       </div>
@@ -57,8 +57,8 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(agenda, index) in agendas.data" :key="agenda.id">
-                      <td>{{ index + 1}}</td>
+                    <tr v-for="(agenda, index) in agendas" :key="agenda.id">
+                      <td>{{ (current_page - 1) * per_page + index + 1 }}</td>
                       <td>{{ agenda.title }}</td>
                       <td>{{ formatTanggal(agenda.date) }}</td>
                       <td>{{ formatWaktu(agenda.start_time) }} - {{ formatWaktu(agenda.end_time) }}</td>
@@ -75,21 +75,22 @@
               </div>
               <div class="template-demo">
                 <button
-                  type="button"
-                  class="btn btn-primary"
-                  :disabled="current_page === 1"
-                  @click="getAgenda(current_page - 1)"
-                >
-                  Previous
-                </button>
-                <span>Page {{ current_page }} of {{ last_page }}</span>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  @click="getAgenda(current_page + 1)"
-                >
-                  Next
-                </button>
+                        type="button"
+                        class="btn btn-primary"
+                        :disabled="current_page === 1"
+                        @click="previousPage()"
+                      >
+                        Previous
+                      </button>
+                      <span>Page {{ current_page }} of {{ totalPages }}</span>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        :class="{ disabled: current_page === totalPages }"
+                        @click="nextPage()"
+                      >
+                        Next
+                      </button>
               </div>
             </div>
           </div>
@@ -248,8 +249,8 @@ export default {
 			editId: "",
       current_page: 1,
       per_page: 15,
-      last_page: 0,
       totalItems: 0,
+      totalPages: 0,
       search: "",
 			agendas: {},
       rooms: {},
@@ -260,7 +261,7 @@ export default {
       form: new Form({
         id: "",
         department_id: "",
-        category_id: 3,
+        category_id: "",
         room_id: "",
         suggestion_id: "",
         title: "",
@@ -271,10 +272,7 @@ export default {
         person_in_charge: "",
         location: null,
         attachment: null,
-        disposition_employee: null,
-        disposition_department: null,
         disposition_description: null,
-        disposition_is_all: null,
       }),
       isFormCreateAgendaMode: true
 		};
@@ -339,20 +337,49 @@ export default {
 			this.$axios.get("/agendas", {
         params: {
         page: page,
+        per_page: this.per_page,
         search: this.search,
       },
       })
       .then(response => {
 				this.agendas = response.data;
-        this.current_page = response.data.data.current_page;
-        // console.log(response);
-        this.last_page = response.data.data.last_page;
-        this.totalItems = response.data.data.total;
+        this.agendas = this.getItemsOnCurrentPage(response.data.data);
+          this.totalItems = response.data.data.length;
+          this.totalPages = Math.ceil(this.totalItems / this.per_page);
 			})
       .catch((error) => {
         console.error("Failed to fetch agendas", error);
       });     
 		},
+
+    previousPage() {
+      if (this.current_page > 1) {
+        this.current_page--;
+        this.getAgenda();
+      }
+    },
+    nextPage() {
+      if (this.current_page < this.totalPages) {
+        this.current_page++;
+        this.getAgenda();
+      }
+    },
+
+    getItemsOnCurrentPage(items) {
+      const startIndex = (this.current_page - 1) * this.per_page;
+      const endIndex = startIndex + this.per_page;
+      return items.slice(startIndex, endIndex);
+    },
+
+    changePage(pageNumber) {
+      this.current_page = pageNumber;
+      this.getAgenda(pageNumber);
+    },
+    changePerPage() {
+      this.current_page = 1; // Reset halaman saat per_page berubah
+      this.per_page = parseInt(this.per_page);
+      this.getAgenda();
+    },
 
     getAgendaDetails(agenda) {
       const agendaId = agenda.id;
