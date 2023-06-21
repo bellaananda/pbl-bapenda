@@ -312,7 +312,7 @@ class SuggestionController extends Controller
 
         $data = json_decode($response->getBody(), true);
     
-        if ($response->getStatusCode() == 200 && $data['success']) {
+        if ($response->getStatusCode() == 201 && $data['success']) {
             return redirect('/pengajuan')->with('success_message', 'Agenda berhasil diajukan!');
         } else {
             return back()->with('error_message', 'Agenda gagal diajukan!');

@@ -39,7 +39,7 @@ Route::resource('/posisi', PositionController::class)->only(['index', 'store', '
 Route::resource('/bidang', DepartmentController::class)->only(['index', 'store', 'update', 'destroy']);
 Route::resource('/kategori', CategoryController::class)->only(['index', 'store', 'update', 'destroy']);
 Route::resource('/ruangan', RoomController::class)->only(['index', 'store', 'update', 'destroy']);
-Route::resource('/pengajuan', SuggestionController::class)->only(['index', 'create', 'store']);
+Route::resource('/pengajuan', SuggestionController::class)->only(['index', 'create', 'store', 'update']);
 Route::get('/ajuan-agenda', [SuggestionController::class, 'create']);
 Route::resource('/grafik', ReportController::class)->only(['index']);
 Route::post('/grafik', [ReportController::class, 'index']);

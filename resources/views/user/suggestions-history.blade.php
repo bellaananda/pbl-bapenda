@@ -3,11 +3,37 @@
 @section('title', 'BAPENDA Surakarta')
 
 @section('additional')
-
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
+    <style class="pagination justify-content-center">
+        ul.pagination {
+            display: inline-block;
+            padding: 0;
+            margin: 0;
+        }
+        
+        ul.pagination li {display: inline;}
+        
+        ul.pagination li a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+        
+        ul.pagination li a.active {
+            background-color: #3f2ab5;
+            color: white;
+            border: 1px solid #3f2ab5;
+        }
+        
+        ul.pagination li a:hover:not(.active) {background-color: #ddd;}
+    </style>
 @endsection
 
 @section('main')
@@ -338,6 +364,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="pagination justify-content-center">
+                <ul class="pagination">
+                    @for ($i = 0; $i <= $totalPagination; $i++)
+                        <li><a href="/pengajuan?page={{$i+1}}" class="@if($i+1==$currentPage) active @endif">{{$i+1}}</a></li>
+                    @endfor
+                </ul>
             </div>
         </div>
     </div>

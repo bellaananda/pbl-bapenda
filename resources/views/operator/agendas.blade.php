@@ -46,7 +46,7 @@
                     <div class="card-body">
                         <form action="/agenda" method="get">
                             <div class="input-group">
-                                <input type="text" id="search" name="search" class="form-control" placeholder="Cari Agenda" aria-label="Cari Agenda">
+                                <input type="text" id="search" name="search" class="form-control" placeholder="Cari Agenda" aria-label="Cari Agenda" value="{{ request()->input('search') }}">
                                 <div class="input-group-append">
                                     <button class="btn btn-sm btn-primary" type="submit">
                                         <i class="ti-search text-white"></i>

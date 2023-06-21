@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="{{asset('./asset/css/vertical-layout-light/style.css')}}">
     <!-- endinject -->
     <link rel="shortcut icon" href="{{URL('./asset/images/logo-surakarta.png')}}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     @yield('additional')
 </head>
 <body>
@@ -52,6 +54,48 @@
     <script src="{{asset('./asset/js/dashboard.js')}}"></script>
     <script src="{{asset('./asset/js/Chart.roundedBarCharts.js')}}"></script>
     <!-- End custom js for this page-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+
+    @if (Session::has('success_message'))
+        <script>
+            $(document).ready(function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success_message') }}',
+                    timer: 2000, // Display duration in milliseconds
+                    showConfirmButton: false,
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+            });
+        </script>
+    @endif
+
+    @if (Session::has('error_message'))
+        <script>
+            $(document).ready(function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ session('error_message') }}',
+                    timer: 2000, // Display duration in milliseconds
+                    showConfirmButton: false,
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+            });
+        </script>
+    @endif
+
+    <style>
+        .swal-icon-custom {
+            position: relative;
+            top: 20px;
+        }
+    </style>
 
     @if(request()->query('refresh'))
         <script>
@@ -60,6 +104,7 @@
             }
         </script>
     @endif
+
 </body>
 
 </html>

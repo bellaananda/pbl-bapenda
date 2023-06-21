@@ -96,7 +96,7 @@ class CategoryController extends Controller
 
         $data = json_decode($response->getBody(), true);
     
-        if ($response->getStatusCode() == 200 && $data['success']) {
+        if ($response->getStatusCode() == 201 && $data['success']) {
             return redirect('/kategori')->with('success_message', 'Kategori berhasil ditambahkan!');
         } else {
             return back()->with('error_message', 'Kategori gagal ditambahkan!');

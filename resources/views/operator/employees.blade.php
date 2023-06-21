@@ -44,7 +44,7 @@
                     <div class="card-body">
                         <form action="/pegawai" method="get">
                             <div class="input-group">
-                                <input type="text" id="search" name="search" class="form-control" placeholder="Cari Pegawai" aria-label="Cari Pegawai">
+                                <input type="text" id="search" name="search" class="form-control" placeholder="Cari Pegawai" aria-label="Cari Pegawai" value="{{ request()->input('search') }}">
                                 <div class="input-group-append">
                                     <button class="btn btn-sm btn-primary" type="submit">
                                         <i class="ti-search text-white"></i>

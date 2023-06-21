@@ -133,7 +133,7 @@ class AuthController extends Controller
             return back()->with('error_message', 'Logout gagal!');
         }
         Session::flush();
-        return redirect('/')->with('success_message', 'Logout gagal!');
+        return redirect('/')->with('success_message', 'Logout berhasil!');
     }
 
     public function getUserDetails() {

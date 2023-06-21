@@ -146,7 +146,7 @@ class EmployeeController extends Controller
 
         $data = json_decode($response->getBody(), true);
     
-        if ($response->getStatusCode() == 200 && $data['success']) {
+        if ($response->getStatusCode() == 201 && $data['success']) {
             return redirect('/pegawai')->with('success_message', 'Pegawai berhasil ditambahkan!');
         } else {
             return back()->with('error_message', 'Pegawai gagal ditambahkan!');

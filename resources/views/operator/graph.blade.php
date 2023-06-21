@@ -18,7 +18,7 @@
                     <div class="card-transparent">
                         <div class="card-body">
                             <label for="date" class="font-weight-bold">Pilih Bulan</label>
-                            <input type="month" class="form-control" id="date" name="date" value="{{date('Y-m')}}">
+                            <input type="month" class="form-control" id="date" name="date" value="{{ old('date', $date_val ?? date('Y-m')) }}">
                         </div>
                     </div>
                 </div>

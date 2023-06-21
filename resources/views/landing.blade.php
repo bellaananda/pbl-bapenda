@@ -35,15 +35,15 @@
                                         @foreach ($data as $item)
                                             <tr>
                                                 <td>{{ $loop->index + 1}}</td>
-                                                <td>{{ $item['title'] }}</td>
+                                                <td class="max-width-column">{{ $item['title'] }}</td>
                                                 <td>{{ date('d-m-Y', strtotime($item['date'])) }}</td>
                                                 @if ($item['end_time'] != null)
                                                     <td>{{ date('H:i', strtotime($item['start_time'])) . ' - ' . date('H:i', strtotime($item['end_time'])) }}</td>
                                                 @else
                                                     <td>{{ date('H:i', strtotime($item['start_time'])) }}</td>                                            
                                                 @endif
-                                                <td>{{ $item['disposition'] }}</td>
-                                                <td>{{ $item['location'] }}</td>
+                                                <td class="max-width-column">{{ $item['disposition'] }}</td>
+                                                <td class="max-width-column">{{ $item['location'] }}</td>
                                                 <td>
                                                     <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#detailModal{{ $loop->index }}">
                                                         Detail
@@ -138,4 +138,13 @@
             </div>
         </div>
     </div>  
+
+    <style>
+        .max-width-column {
+            max-width: 200px; /* Ubah nilai sesuai kebutuhan */
+            white-space: nowrap; /* Untuk mencegah pemotongan teks */
+            overflow: hidden; /* Untuk menyembunyikan konten yang terpotong */
+            text-overflow: ellipsis; /* Untuk menampilkan tanda elipsis (...) jika terpotong */
+        }
+    </style>
 @endsection
