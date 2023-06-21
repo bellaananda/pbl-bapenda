@@ -15,7 +15,11 @@ class NotificationController extends Controller
     {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $client = new Client;
@@ -48,7 +52,11 @@ class NotificationController extends Controller
     {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $client = new Client;

@@ -18,8 +18,13 @@ class DepartmentController extends Controller
 
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
         }
+        $role = Session::get('details')['role'];
+        if ($role != 'admin') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+        }
+
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/departments", [
@@ -35,7 +40,6 @@ class DepartmentController extends Controller
         $body = $response->getBody();
         $result = json_decode($body, true);
         $data =  $result['data'];
-        $role = Session::get('details')['role'];
         $page = 'bidang';
 
         return view($role.'.departments', compact('page', 'data'));
@@ -57,7 +61,11 @@ class DepartmentController extends Controller
         //create department (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'admin') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $request->validate([
@@ -127,7 +135,11 @@ class DepartmentController extends Controller
         //update department (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'admin') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $request->validate([
@@ -182,7 +194,11 @@ class DepartmentController extends Controller
         //delete department (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'admin') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $client = new Client;

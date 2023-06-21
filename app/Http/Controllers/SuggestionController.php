@@ -31,8 +31,13 @@ class SuggestionController extends Controller
 
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
         }
+        $role = Session::get('details')['role'];
+        if ($role == 'admin') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+        }
+
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $role = Session::get('details')['role'];
@@ -53,7 +58,6 @@ class SuggestionController extends Controller
         $body = $response->getBody();
         $result = json_decode($body, true);
         $data =  $result['data'];
-        $role = Session::get('details')['role'];
         $page = 'pengajuan';
         $fileUrl = "https://api.klikagenda.com/public/uploads/suggestions_attachments/";
         $totalPagination = count($data) / 15;
@@ -148,7 +152,11 @@ class SuggestionController extends Controller
         //show create suggestion (user)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
         $page = 'add_pengajuan';
         $client = new Client;
@@ -226,7 +234,11 @@ class SuggestionController extends Controller
         //create suggestion (user)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $request->validate([
@@ -343,7 +355,11 @@ class SuggestionController extends Controller
         //update suggestion (user)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $request->validate([
@@ -447,7 +463,11 @@ class SuggestionController extends Controller
     public function approveAgenda($id) {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'operator') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $client = new Client;
@@ -472,7 +492,11 @@ class SuggestionController extends Controller
     public function denyAgenda(Request $request, $id) {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'operator') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $client = new Client;

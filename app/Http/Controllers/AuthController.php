@@ -25,7 +25,7 @@ class AuthController extends Controller
         $token = Session::get('access_token');
 
         if ($token) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda sudah login!');
         }
         $page = 'login';
         return view('login', compact('page'));
@@ -118,7 +118,7 @@ class AuthController extends Controller
         $token = Session::get('access_token');
 
         if (!$token) {
-            return null;
+            return back()->with('error_message', 'Logout gagal! Anda tidak login.');
         }
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
@@ -163,7 +163,7 @@ class AuthController extends Controller
     public function getProfile() {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
         }
 
         $page = 'profil';
@@ -186,7 +186,7 @@ class AuthController extends Controller
     public function changePassword(Request $request) {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
         }
 
         $id = Session::get('details')['id'];

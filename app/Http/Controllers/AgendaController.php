@@ -24,8 +24,13 @@ class AgendaController extends Controller
 
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
         }
+        $role = Session::get('details')['role'];
+        if ($role == 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+        }
+
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/agendas", [
@@ -44,7 +49,7 @@ class AgendaController extends Controller
         $body = $response->getBody();
         $result = json_decode($body, true);
         $data =  $result['data'];
-        $role = Session::get('details')['role'];
+
         $page = 'agenda';
         $fileUrl = "https://api.klikagenda.com/public/uploads/agendas_attachments/";
         $totalPagination = count($data) / 15;
@@ -147,7 +152,11 @@ class AgendaController extends Controller
         //store agenda (operator)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role == 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $request->validate([

@@ -15,10 +15,13 @@ class ReportController extends Controller
     {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role == 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
-        $role = Session::get('details')['role'];
         $page = 'grafik';
         $date_val = $request->input('date') ? $request->input('date') : null;
         $room_val = $request->input('room') ? $request->input('room') : null;

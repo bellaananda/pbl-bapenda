@@ -9,9 +9,6 @@
         </button>
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item dropdown">
-                {{ Session::get('details')['name'] }}
-            </li>
-            <li class="nav-item dropdown">
                 <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
                     <i class="icon-bell mx-0"></i>
                     <span class="count"></span>
@@ -46,7 +43,7 @@
                     @endforeach
                 </div>
             </li>
-            <li class="nav-item nav-profile dropdown">
+            <li class="nav-item nav-profile dropdown mr-2">
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                     <img src="asset/images/profile.png" alt="profil"/>
                 </a>
@@ -79,6 +76,9 @@
                         </button>
                     </form>
                 </div>
+            </li>
+            <li class="nav-item dropdown ml-0">
+                {{ Session::get('details')['name'] }}
             </li>
         </ul>
     </div>

@@ -70,7 +70,11 @@ class GenerateController extends Controller
         $date = $request->input('copydate', today()->format("Y-m-d"));
         $token = Session::get('access_token');
         if ($token == null) {
-            return null;
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role == 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
@@ -98,7 +102,11 @@ class GenerateController extends Controller
         $year = $array[0];
         $token = Session::get('access_token');
         if ($token == null) {
-            return null;
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role == 'user') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";

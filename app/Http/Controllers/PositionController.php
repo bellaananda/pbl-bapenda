@@ -18,7 +18,11 @@ class PositionController extends Controller
 
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'admin') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
@@ -35,7 +39,6 @@ class PositionController extends Controller
         $body = $response->getBody();
         $result = json_decode($body, true);
         $data =  $result['data'];
-        $role = Session::get('details')['role'];
         $page = 'posisi';
 
         return view($role.'.positions', compact('page', 'data'));
@@ -57,7 +60,11 @@ class PositionController extends Controller
         //create position (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'admin') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $request->validate([
@@ -127,7 +134,11 @@ class PositionController extends Controller
         //update position (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'admin') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $request->validate([
@@ -182,7 +193,11 @@ class PositionController extends Controller
         //delete position (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/');
+            return redirect('/')->with('error_message', 'Anda tidak login!');
+        }
+        $role = Session::get('details')['role'];
+        if ($role != 'admin') {
+            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
         }
 
         $client = new Client;
