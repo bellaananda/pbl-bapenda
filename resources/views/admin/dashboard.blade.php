@@ -421,6 +421,57 @@
                     </div>
                 </div>
             </div>
+            <form action="/grafik" method="post" id="monthForm">
+                @csrf
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-transparent">
+                            <div class="card-body">
+                                <label for="date" class="font-weight-bold">Pilih Bulan</label>
+                                <input type="month" class="form-control" id="date" name="date" value="{{ old('date', $date_val ?? date('Y-m')) }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card-transparent">
+                            <div class="card-body">
+                                <label for="room" class="font-weight-bold">Pilih Ruangan</label>
+                                <select class="form-control" id="room" name="room" required>
+                                    {{-- <option disabled value selected>Pilih Ruangan</option>
+                                    @foreach ($rooms_data as $room)
+                                        <option {{ old('room', $room_val) == $room['id'] ? 'selected' : '' }} value="{{ $room['id'] }}">{{ $room['name'] }}</option>
+                                    @endforeach --}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <br>
+            <div class="row">
+                <div class="col-md-6 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <p class="card-title">Total Agenda</p>
+                            </div>
+                            <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                            <canvas id="agendas-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <p class="card-title">Total Penggunaan Ruangan</p>
+                            </div>
+                            <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                            <canvas id="rooms-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

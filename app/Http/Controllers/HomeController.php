@@ -24,7 +24,6 @@ class HomeController extends Controller
     {   
         //landing page, dashboard
         $token = Session::get('access_token');
-        Carbon::setLocale('id');
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
         $response = $client->request('GET', "{$base_uri}/agendas-today", ['verify' => false]);
@@ -34,7 +33,7 @@ class HomeController extends Controller
         $fileUrl = "https://api.klikagenda.com/public/uploads/agendas_attachments/";
         if ($token == null) {
             $page = 'landing';
-            return view('landing', compact('data', 'fileUrl', 'page'));
+            return view('landingpage', compact('data', 'fileUrl', 'page'));
         }
         $client_yesterday = new Client;
         $response_yesterday = $client_yesterday->request('GET', "{$base_uri}/agendas-yesterday", [

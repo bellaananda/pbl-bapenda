@@ -22,13 +22,7 @@ class AuthController extends Controller
     public function index()
     {
         //login page
-        $token = Session::get('access_token');
-
-        if ($token) {
-            return redirect('/');
-        }
-        $page = 'login';
-        return view('login', compact('page'));
+        return redirect('/');
     }
 
     /**
