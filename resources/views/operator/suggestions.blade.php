@@ -66,10 +66,10 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
+                                            <th>Tanggal Pengajuan</th>
                                             <th>Judul Agenda</th>
-                                            <th>Tanggal</th>
+                                            <th>Tanggal Agenda</th>
                                             <th>Waktu</th>
-                                            <th>Disposisi</th>
                                             <th>Tempat</th>
                                             <th></th>
                                         </tr>
@@ -78,6 +78,7 @@
                                         @foreach ($data as $item)
                                             <tr>
                                                 <td>{{ ($loop->index + 1) + 15*($currentPage-1) }}</td>
+                                                <td>{{ date('d-m-Y', strtotime($item['suggestion_date'])) }}</td>
                                                 <td class="max-width-column">{{ $item['title'] }}</td>
                                                 <td>{{ date('d-m-Y', strtotime($item['date'])) }}</td>
                                                 @if ($item['end_time'] != null)
@@ -85,7 +86,6 @@
                                                 @else
                                                     <td>{{ date('H:i', strtotime($item['start_time'])) }}</td>                                            
                                                 @endif
-                                                <td class="max-width-column">{{ $item['disposition'] }}</td>
                                                 <td class="max-width-column">{{ $item['location'] }}</td>
                                                 <td>
                                                     <a class="btn btn-sm btn-primary" data-toggle="modal" data-target="#detailModal{{$loop->index}}">
@@ -122,9 +122,19 @@
                                                                         <label for="title" class="font-weight-bold">Judul Agenda</label>
                                                                         <input type="text" class="form-control" id="title" value="{{$item['title']}}" disabled/>
                                                                     </div>
-                                                                    <div class="form-group">
-                                                                        <label for="date" class="font-weight-bold">Tanggal</label>
-                                                                        <input type="date" class="form-control" id="date" value="{{$item['date']}}" disabled/>
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="date" class="font-weight-bold">Tanggal Pengajuan</label>
+                                                                                <input type="date" class="form-control" id="date" value="{{$item['suggestion_date']}}" disabled/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label for="date" class="font-weight-bold">Tanggal Agenda</label>
+                                                                                <input type="date" class="form-control" id="date" value="{{$item['date']}}" disabled/>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                     <div class="row">
                                                                         <div class="col-md-6">

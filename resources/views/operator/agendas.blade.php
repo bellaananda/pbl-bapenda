@@ -175,9 +175,9 @@
                                                                     <div class="form-group">
                                                                         <label for="attachment" class="font-weight-bold">Lampiran</label><br>
                                                                         @if (substr(strrchr($item['attachment'], '.'), 1) == 'PDF')
-                                                                            <embed id="attachment" src="{{ $fileUrl.$item['attachment'] }}" width="600px" height="150px" />
+                                                                            <embed id="attachment" src="{{ $fileUrl.$item['attachment'] }}" width="600px" height="150px" alt="Lampiran" />
                                                                         @elseif (substr(strrchr($item['attachment'], '.'), 1) == 'jpg' || substr(strrchr($item['attachment'], '.'), 1) == 'jpeg' || substr(strrchr($item['attachment'], '.'), 1) == 'png')
-                                                                            <img src="{{ $fileUrl.$item['attachment'] }}" alt="File Preview">
+                                                                            <img src="{{ $fileUrl.$item['attachment'] }}" alt="Lampiran" style="max-width: 600px; max-height: 150px;">
                                                                         @endif
                                                                         <a href="{{ $fileUrl.$item['attachment'] }}" download="{{ $item['attachment'] }}">Unduh Lampiran</a>
                                                                     </div>
@@ -268,7 +268,7 @@
                                         <div class="form-group">
                                             <label for="title" class="font-weight-bold">Judul Agenda</label>
                                             <span class="required-field">*</span>
-                                            <input type="text" class="form-control" id="title" name="title" value="{{old('title')}}" placeholder="Masukkan Judul Agenda" required/>
+                                            <input type="text" class="form-control" id="create_title" name="title" value="{{old('title')}}" placeholder="Masukkan Judul Agenda" required/>
                                             @error('title')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -278,7 +278,7 @@
                                         <div class="form-group">
                                             <label for="date" class="font-weight-bold">Tanggal</label>
                                             <span class="required-field">*</span>
-                                            <input type="date" class="form-control" id="date" name="date" value="{{old('date') ?? date('Y-m-d')}}" required/>
+                                            <input type="date" class="form-control" id="create_date" name="date" value="{{old('date') ?? date('Y-m-d')}}" required/>
                                             @error('date')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -288,7 +288,7 @@
                                         <div class="form-group">
                                             <label for="room_id" class="font-weight-bold">Tempat</label>
                                             <span class="required-field">*</span>
-                                            <select class="form-control" id="room_id" name="room_id" required>
+                                            <select class="form-control" id="create_room_id" name="room_id" required>
                                                 <option disabled value selected>Pilih Tempat</option>
                                                 @foreach ($rooms as $room)
                                                     <option value="{{$room['id']}}" {{ old('room_id') == $room['id'] ? 'selected' : '' }}>{{$room['name']}}</option>
@@ -303,7 +303,7 @@
                                         <div class="form-group" id="textareaLocation" style="display: none;">
                                             <label for="location" id="location_label" class="font-weight-bold"></label>
                                             <span class="required-field">*</span>
-                                            <textarea class="form-control" id="location" name="location" rows="4" placeholder="Masukkan Detail Tempat" required>{{ old('location') }}</textarea>
+                                            <textarea class="form-control" id="create_location" name="location" rows="4" placeholder="Masukkan Detail Tempat" required>{{ old('location') }}</textarea>
                                             @error('location')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -315,7 +315,7 @@
                                                 <div class="form-group">
                                                     <label for="start_time" class="font-weight-bold">Waktu Mulai</label>
                                                     <span class="required-field">*</span>
-                                                    <input type="time" class="form-control" id="start_time" name="start_time" value="{{old('start_time')}}" required/>
+                                                    <input type="time" class="form-control" id="create_start_time" name="start_time" value="{{old('start_time')}}" required/>
                                                     @error('start_time')
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $message }}</strong>
@@ -327,7 +327,7 @@
                                                 <div class="form-group">
                                                     <label for="end_time" class="font-weight-bold">Waktu Selesai</label>
                                                     <span class="required-field">*</span>
-                                                    <input type="time" class="form-control" id="end_time" name="end_time" value="{{old('end_time')}}"/>
+                                                    <input type="time" class="form-control" id="create_end_time" name="end_time" value="{{old('end_time')}}"/>
                                                     @error('end_time')
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $message }}</strong>
@@ -339,7 +339,7 @@
                                         <div class="form-group">
                                             <label for="disposition_description" class="font-weight-bold">Peserta</label>
                                             <span class="required-field">*</span>
-                                            <textarea class="form-control" id="disposition_description" name="disposition_description" rows="4" required placeholder="Masukkan Peserta Agenda">{{old('disposition_description')}}</textarea>
+                                            <textarea class="form-control" id="create_disposition_description" name="disposition_description" rows="4" required placeholder="Masukkan Peserta Agenda">{{old('disposition_description')}}</textarea>
                                             @error('disposition_description')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -351,7 +351,7 @@
                                         <div class="form-group">
                                             <label for="category_id" class="font-weight-bold">Kategori</label>
                                             <span class="required-field">*</span>
-                                            <select class="form-control" id="category_id" name="category_id" required>
+                                            <select class="form-control" id="create_category_id" name="category_id" required>
                                                 <option disabled value selected>Pilih Kategori</option>
                                                 @foreach ($categories as $category)
                                                     <option value="{{$category['id']}}" {{ old('category_id') == $category['id'] ? 'selected' : '' }}>{{$category['name']}}</option>
@@ -366,7 +366,7 @@
                                         <div class="form-group">
                                             <label for="department_id" class="font-weight-bold">Bidang</label>
                                             <span class="required-field">*</span>
-                                            <select class="form-control" id="department_id" name="department_id" required>
+                                            <select class="form-control" id="create_department_id" name="department_id" required>
                                                 <option disabled value selected>Pilih Bidang</option>
                                                 @foreach ($departments as $department)
                                                     <option value="{{$department['id']}}" {{ old('department_id') == $department['id'] ? 'selected' : '' }}>{{$department['name']}}</option>
@@ -381,7 +381,7 @@
                                         <div class="form-group">
                                             <label for="person_in_charge" class="font-weight-bold">Penanggung Jawab</label>
                                             <span class="required-field">*</span>
-                                            <select class="form-control" id="person_in_charge" name="person_in_charge" required>
+                                            <select class="form-control" id="create_person_in_charge" name="person_in_charge" required>
                                                 <option value="" selected disabled>Pilih Penanggung Jawab</option>
                                                 @foreach ($employees as $employee)
                                                     <option value="{{$employee['id']}}" {{ old('person_in_charge') == $employee['id'] ? 'selected' : '' }}>{{$employee['name']}}</option>
@@ -396,7 +396,7 @@
                                         <div class="form-group">
                                             <label for="contents" class="font-weight-bold">Isi Agenda</label>
                                             <span class="required-field">*</span>
-                                            <textarea class="form-control" id="contents" name="contents" rows="4" required placeholder="Masukkan Isi Agenda">{{old('contents')}}</textarea>
+                                            <textarea class="form-control" id="create_contents" name="contents" rows="4" required placeholder="Masukkan Isi Agenda">{{old('contents')}}</textarea>
                                             @error('contents')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -406,7 +406,7 @@
                                         <div class="form-group">
                                             <label for="attachment" class="font-weight-bold">Lampiran</label>
                                             <span class="required-field">*</span><br>
-                                            <input type="file" id="attachment" name="attachment" class="form-control file-upload-default" required accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png" max="2048">
+                                            <input type="file" id="create_attachment" name="attachment" class="form-control file-upload-default" required accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png" max="2048">
                                             <div class="input-group col-xs-12">
                                                 <input type="text" id="filename" class="form-control file-upload-info" disabled placeholder="Unggah Lampiran">
                                                 <span class="input-group-append">
@@ -423,7 +423,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
-                                <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); confirmCreate()">Simpan</button>
+                                <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); validateCreateForm()">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -482,10 +482,10 @@
             });
         }
 
-        document.getElementById('room_id').addEventListener('change', function() {
+        document.getElementById('create_room_id').addEventListener('change', function() {
             var selectedOption = this.value;
             var textareaContainer = document.getElementById('textareaLocation');
-            var endDateInput = document.getElementById('end_date');
+            var endDateInput = document.getElementById('create_end_date');
             
             if (selectedOption === '1') {
                 console.log(selectedOption);
@@ -497,19 +497,19 @@
             // Show/hide the textarea based on the selected option
             if (selectedOption === '1' || selectedOption === '2') {
                 textareaContainer.style.display = 'block';
-                document.getElementById('location').required = true;
+                document.getElementById('create_location').required = true;
                 endDateInput.required = true;
             } else {
                 textareaContainer.style.display = 'none';
-                document.getElementById('location').required = false;
+                document.getElementById('create_location').required = false;
                 endDateInput.required = false;
             }
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             // Get the input elements
-            var startTimeInput = document.getElementById('start_time');
-            var endTimeInput = document.getElementById('end_time');
+            var startTimeInput = document.getElementById('create_start_time');
+            var endTimeInput = document.getElementById('create_end_time');
 
             // Add event listener to check time validity on change
             startTimeInput.addEventListener('change', validateEndTime);
@@ -549,6 +549,179 @@
                     document.getElementById('createForm').submit();
                 }
             });
+        }
+
+        function validateCreateForm() {
+            var title = document.getElementById('create_title').value;
+            var date = document.getElementById('create_date').value;
+            var room_id = document.getElementById('create_room_id').value;
+            var location = document.getElementById('create_location').value;
+            var start_time = document.getElementById('create_start_time').value;
+            var end_time = document.getElementById('create_end_time').value;
+            var disposition_description = document.getElementById('create_disposition_description').value;
+            var category_id = document.getElementById('create_category_id').value;
+            var department_id = document.getElementById('create_department_id').value;
+            var person_in_charge = document.getElementById('create_person_in_charge').value;
+            var contents = document.getElementById('create_contents').value;
+            var attachment = document.getElementById('create_attachment').value;
+
+            if (title === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Judul Agenda tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (date === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Tanggal tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (room_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Tempat harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if ((room_id === '1' || room_id === '2') && location === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Detail Tempat tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if ((room_id !== '1' && room_id !== '2') && end_time === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Waktu Selesai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (start_time === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Waktu Mulai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (disposition_description === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Peserta tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (category_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Kategori harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (department_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Bidang harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (person_in_charge === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Penanggung Jawab harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (contents === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Isi Agenda tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (attachment === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Lampiran tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            confirmCreate();
         }
     
         // Initialize the datepicker

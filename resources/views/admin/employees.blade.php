@@ -207,7 +207,7 @@
                                                                         <div class="form-group">
                                                                             <label for="nip" class="font-weight-bold">NIP</label>
                                                                             <span class="required-field">*</span>
-                                                                            <input type="text" class="form-control" id="nip" name="nip" placeholder="Masukkan NIP Pegawai" value="{{ old('nip', $item['nip']) }}" required>
+                                                                            <input type="text" class="form-control" id="update_nip{{ $item['id'] }}" name="nip" placeholder="Masukkan NIP Pegawai" value="{{ old('nip', $item['nip']) }}" required>
                                                                             @error('nip')
                                                                                 <span class="invalid-feedback" role="alert">
                                                                                     <strong>{{ $message }}</strong>
@@ -217,7 +217,7 @@
                                                                         <div class="form-group">
                                                                             <label for="name" class="font-weight-bold">Nama</label>
                                                                             <span class="required-field">*</span>
-                                                                            <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Pegawai" value="{{ old('name', $item['name']) }}" required>
+                                                                            <input type="text" class="form-control" id="update_name{{ $item['id'] }}" name="name" placeholder="Masukkan Nama Pegawai" value="{{ old('name', $item['name']) }}" required>
                                                                             @error('name')
                                                                                 <span class="invalid-feedback" role="alert">
                                                                                     <strong>{{ $message }}</strong>
@@ -227,7 +227,7 @@
                                                                         <div class="form-group">
                                                                             <label for="email" class="font-weight-bold">Email</label>
                                                                             <span class="required-field">*</span>
-                                                                            <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan Email Pegawai" value="{{ old('email', $item['email']) }}" required>
+                                                                            <input type="email" class="form-control" id="update_email{{ $item['id'] }}" name="email" placeholder="Masukkan Email Pegawai" value="{{ old('email', $item['email']) }}" required>
                                                                             @error('email')
                                                                                 <span class="invalid-feedback" role="alert">
                                                                                     <strong>{{ $message }}</strong>
@@ -237,7 +237,7 @@
                                                                         <div class="form-group">
                                                                             <label for="phone_number" class="font-weight-bold">No. Telepon</label>
                                                                             <span class="required-field">*</span>
-                                                                            <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Masukkan Nomor Telepon Pegawai" value="{{ old('phone_number', $item['phone_number']) }}" required>
+                                                                            <input type="tel" class="form-control" id="update_phone_number{{ $item['id'] }}" name="phone_number" placeholder="Masukkan Nomor Telepon Pegawai" value="{{ old('phone_number', $item['phone_number']) }}" required>
                                                                             @error('phone_number')
                                                                                 <span class="invalid-feedback" role="alert">
                                                                                     <strong>{{ $message }}</strong>
@@ -247,7 +247,7 @@
                                                                         <div class="form-group">
                                                                             <label for="address" class="font-weight-bold">Alamat</label>
                                                                             <span class="required-field">*</span>
-                                                                            <textarea class="form-control" id="address" name="address" rows="4" placeholder="Masukkan Alamat Pegawai"required>{{ old('address', $item['address']) }}</textarea>
+                                                                            <textarea class="form-control" id="update_address{{ $item['id'] }}" name="address" rows="4" placeholder="Masukkan Alamat Pegawai"required>{{ old('address', $item['address']) }}</textarea>
                                                                             @error('address')
                                                                                 <span class="invalid-feedback" role="alert">
                                                                                     <strong>{{ $message }}</strong>
@@ -259,7 +259,7 @@
                                                                         <div class="form-group">
                                                                             <label for="position_id" class="font-weight-bold">Posisi</label>
                                                                             <span class="required-field">*</span>
-                                                                            <select class="form-control" id="position_id" name="position_id" required>
+                                                                            <select class="form-control" id="update_position_id{{ $item['id'] }}" name="position_id" required>
                                                                                 <option disabled value selected>Pilih Posisi Pegawai</option>
                                                                                 @foreach ($positions as $position)
                                                                                     <option {{ (old("position_id", $position['id'])==$item['position_id'])?'selected':'' }} value="{{$position['id']}}">{{$position['name']}}</option>
@@ -274,7 +274,7 @@
                                                                         <div class="form-group">
                                                                             <label for="department_id" class="font-weight-bold">Bidang Pegawai</label>
                                                                             <span class="required-field">*</span>
-                                                                            <select class="form-control" id="department_id" name="department_id" required>
+                                                                            <select class="form-control" id="update_department_id{{ $item['id'] }}" name="department_id" required>
                                                                                 <option disabled value selected>Pilih Bidang Pegawai</option>
                                                                                 @foreach ($departments as $department)
                                                                                     <option {{ (old("department_id", $department['id'])==$item['department_id'])?'selected':'' }} value="{{$department['id']}}">{{$department['name']}}</option>
@@ -289,7 +289,7 @@
                                                                         <div class="form-group">
                                                                             <label for="role" class="font-weight-bold">Hak Akses</label>
                                                                             <span class="required-field">*</span>
-                                                                            <select class="form-control" id="role" name="role" required>
+                                                                            <select class="form-control" id="update_role{{ $item['id'] }}" name="role" required>
                                                                                 <option disabled value selected>Pilih Hak Akses</option>
                                                                                 <option {{ (old("role", $item['role'])=='user')?'selected':'' }} value="user">Pengguna Biasa</option>
                                                                                 <option {{ (old("role", $item['role'])=='operator')?'selected':'' }} value="operator">Operator</option>
@@ -339,7 +339,7 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
-                                                                <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); confirmUpdate('{{ $item['id'] }}')">Simpan</button>
+                                                                <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); validateUpdateForm('{{ $item['id'] }}')">Simpan</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -379,7 +379,7 @@
                                         <div class="form-group">
                                             <label for="nip" class="font-weight-bold">NIP</label>
                                             <span class="required-field">*</span>
-                                            <input type="text" class="form-control" id="nip" name="nip" placeholder="Masukkan NIP Pegawai" value="{{ old('nip') }}" required>
+                                            <input type="text" class="form-control" id="create_nip" name="nip" placeholder="Masukkan NIP Pegawai" value="{{ old('nip') }}" required>
                                             @error('nip')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -389,7 +389,7 @@
                                         <div class="form-group">
                                             <label for="name" class="font-weight-bold">Nama Pegawai</label>
                                             <span class="required-field">*</span>
-                                            <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Pegawai" value="{{ old('name') }}" required>
+                                            <input type="text" class="form-control" id="create_name" name="name" placeholder="Masukkan Nama Pegawai" value="{{ old('name') }}" required>
                                             @error('name')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -399,7 +399,7 @@
                                         <div class="form-group">
                                             <label for="email" class="font-weight-bold">Email</label>
                                             <span class="required-field">*</span>
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan Email Pegawai" value="{{ old('email') }}" required>
+                                            <input type="email" class="form-control" id="create_email" name="email" placeholder="Masukkan Email Pegawai" value="{{ old('email') }}" required>
                                             @error('email')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -409,7 +409,7 @@
                                         <div class="form-group">
                                             <label for="phone_number" class="font-weight-bold">No. Telepon</label>
                                             <span class="required-field">*</span>
-                                            <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Masukkan Nomor Telepon Pegawai" value="{{ old('phone_number') }}" required>
+                                            <input type="tel" class="form-control" id="create_phone_number" name="phone_number" placeholder="Masukkan Nomor Telepon Pegawai" value="{{ old('phone_number') }}" required>
                                             @error('phone_number')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -421,7 +421,7 @@
                                         <div class="form-group">
                                             <label for="address" class="font-weight-bold">Alamat</label>
                                             <span class="required-field">*</span>
-                                            <textarea class="form-control" id="address" name="address" rows="4" placeholder="Masukkan Alamat Pegawai"required>{{ old('address') }}</textarea>
+                                            <textarea class="form-control" id="create_address" name="address" rows="4" placeholder="Masukkan Alamat Pegawai"required>{{ old('address') }}</textarea>
                                             @error('address')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -431,7 +431,7 @@
                                         <div class="form-group">
                                             <label for="position_id" class="font-weight-bold">Posisi Pegawai</label>
                                             <span class="required-field">*</span>
-                                            <select class="form-control" id="position_id" name="position_id" required>
+                                            <select class="form-control" id="create_position_id" name="position_id" required>
                                                 <option disabled value selected>Pilih Posisi Pegawai</option>
                                                 @foreach ($positions as $item)
                                                     <option value="{{$item['id']}}">{{$item['name']}}</option>
@@ -446,7 +446,7 @@
                                         <div class="form-group">
                                             <label for="department_id" class="font-weight-bold">Bidang Pegawai</label>
                                             <span class="required-field">*</span>
-                                            <select class="form-control" id="department_id" name="department_id" required>
+                                            <select class="form-control" id="create_department_id" name="department_id" required>
                                                 <option disabled value selected>Pilih Bidang Pegawai</option>
                                                 @foreach ($departments as $item)
                                                     <option value="{{$item['id']}}">{{$item['name']}}</option>
@@ -466,7 +466,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
-                                <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); confirmCreate()">Simpan</button>
+                                <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); validateCreateForm()">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -533,6 +533,213 @@
                 }
             });
         }
+
+        function validateCreateForm() {
+            var nip = document.getElementById('create_nip').value;
+            var name = document.getElementById('create_name').value;
+            var email = document.getElementById('create_email').value;
+            var phone_number = document.getElementById('create_phone_number').value;
+            var address = document.getElementById('create_address').value;
+            var position_id = document.getElementById('create_position_id').value;
+            var department_id = document.getElementById('create_department_id').value;
+
+            if (nip === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'NIP Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (name === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Nama Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (email === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Email Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (phone_number === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Nomor Telepon Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (address === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Alamat Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (position_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Posisi Pegawai harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (department_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Bidang Pegawai harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            confirmCreate();
+        }
+
+        function validateUpdateForm(itemId) {
+            var nip = document.getElementById('update_nip'+itemId).value;
+            var name = document.getElementById('update_name'+itemId).value;
+            var email = document.getElementById('update_email'+itemId).value;
+            var phone_number = document.getElementById('update_phone_number'+itemId).value;
+            var address = document.getElementById('update_address'+itemId).value;
+            var position_id = document.getElementById('update_position_id'+itemId).value;
+            var department_id = document.getElementById('update_department_id'+itemId).value;
+
+            if (nip === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'NIP Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (name === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Nama Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (email === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Email Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (phone_number === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Nomor Telepon Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (address === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Alamat Pegawai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (position_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Posisi Pegawai harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (department_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Bidang Pegawai harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            confirmUpdate(itemId);
+        }
+
     </script>
     <style>
         .required-field {

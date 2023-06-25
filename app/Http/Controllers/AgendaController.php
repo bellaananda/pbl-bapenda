@@ -182,19 +182,56 @@ class AgendaController extends Controller
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $token,
             ],
-            'form_params' => [
-                'department_id' => $request->department_id,
-                'category_id' => $request->category_id,
-                'room_id' => $request->room_id,
-                'person_in_charge' => $request->person_in_charge,
-                'title' => $request->title,
-                'date' => $request->date,
-                'start_time' => $request->start_time,
-                'end_time' => $request->end_time,
-                'location' => $request->location,
-                'contents' => $request->contents,
-                'attachment' => $request->file('attachment'),
-                'disposition_description' => $request->disposition_description
+            'multipart' => [
+                [
+                    'name' => 'department_id',
+                    'contents' => $request->department_id,
+                ],
+                [
+                    'name' => 'category_id',
+                    'contents' => $request->category_id,
+                ],
+                [
+                    'name' => 'room_id',
+                    'contents' => $request->room_id,
+                ],
+                [
+                    'name' => 'person_in_charge',
+                    'contents' => $request->person_in_charge,
+                ],
+                [
+                    'name' => 'title',
+                    'contents' => $request->title,
+                ],
+                [
+                    'name' => 'date',
+                    'contents' => $request->date,
+                ],
+                [
+                    'name' => 'start_time',
+                    'contents' => $request->start_time,
+                ],
+                [
+                    'name' => 'end_time',
+                    'contents' => $request->end_time,
+                ],
+                [
+                    'name' => 'location',
+                    'contents' => $request->location,
+                ],
+                [
+                    'name' => 'contents',
+                    'contents' => $request->contents,
+                ],
+                [
+                    'name' => 'attachment',
+                    'contents' => fopen($request->file('attachment')->getRealPath(), 'r'),
+                    'filename' => $request->file('attachment')->getClientOriginalName(),
+                ],
+                [
+                    'name' => 'disposition_description',
+                    'contents' => $request->disposition_description,
+                ]
             ],
             'verify' => false
         ]);

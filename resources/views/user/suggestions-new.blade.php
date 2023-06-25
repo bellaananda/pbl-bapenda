@@ -57,7 +57,7 @@
                                             @enderror
                                         </div>
                                         <div class="form-group" id="textareaLocation" style="display: none;">
-                                            <label for="location" class="font-weight-bold">Detail Tempat</label>
+                                            <label for="location" id="location_label" class="font-weight-bold"></label>
                                             <span class="required-field">*</span><br>
                                             <textarea class="form-control" id="location" name="location" rows="4" placeholder="Masukkan Detail Tempat" required>{{ old('location') }}</textarea>
                                             @error('location')
@@ -182,7 +182,7 @@
                                     <label class="required-field">*) Wajib Diisi</label>
                                 </div>
                                 <div class="form-group pb-3">
-                                    <button type="submit" class="btn btn-primary float-right" onclick="event.preventDefault(); confirmCreate()">Ajukan</button>
+                                    <button type="submit" class="btn btn-primary float-right" onclick="event.preventDefault(); validateCreateForm()">Ajukan</button>
                                 </div>
                             </div>
                         </form>
@@ -205,6 +205,13 @@
             var selectedOption = this.value;
             var textareaContainer = document.getElementById('textareaLocation');
             var endDateInput = document.getElementById('end_date');
+
+            if (selectedOption === '1') {
+                console.log(selectedOption);
+                document.getElementById('location_label').innerHTML = 'Detail Link';
+            } else {
+                document.getElementById('location_label').innerHTML = 'Detail Tempat';
+            }
 
             // Show/hide the textarea based on the selected option
             if (selectedOption === '1' || selectedOption === '2') {
@@ -261,6 +268,179 @@
                     document.getElementById('createForm').submit();
                 }
             });
+        }
+
+        function validateCreateForm() {
+            var title = document.getElementById('title').value;
+            var date = document.getElementById('date').value;
+            var room_id = document.getElementById('room_id').value;
+            var location = document.getElementById('location').value;
+            var start_time = document.getElementById('start_time').value;
+            var end_time = document.getElementById('end_time').value;
+            var disposition_description = document.getElementById('disposition_description').value;
+            var category_id = document.getElementById('category_id').value;
+            var department_id = document.getElementById('department_id').value;
+            var person_in_charge = document.getElementById('person_in_charge').value;
+            var contents = document.getElementById('contents').value;
+            var attachment = document.getElementById('attachment').value;
+
+            if (title === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Judul Agenda tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (date === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Tanggal tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (room_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Tempat harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if ((room_id === '1' || room_id === '2') && location === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Detail Tempat tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if ((room_id !== '1' && room_id !== '2') && end_time === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Waktu Selesai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (start_time === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Waktu Mulai tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (disposition_description === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Peserta tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (category_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Kategori harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (department_id === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Bidang harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (person_in_charge === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Penanggung Jawab harus dipilih!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (contents === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Isi Agenda tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (attachment === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Lampiran tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            confirmCreate();
         }
     
         // Initialize the datepicker

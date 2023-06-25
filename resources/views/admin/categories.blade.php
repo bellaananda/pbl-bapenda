@@ -64,7 +64,7 @@
                                                                 <div class="form-group">
                                                                     <label for="name" class="font-weight-bold">Nama Kategori</label>
                                                                     <span class="required-field">*</span>
-                                                                    <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Kategori" value="{{ old('name', $item['name']) }}" required>
+                                                                    <input type="text" class="form-control" id="update_name{{ $item['id'] }}" name="name" placeholder="Masukkan Nama Kategori" value="{{ old('name', $item['name']) }}" required>
                                                                     @error('name')
                                                                         <span class="invalid-feedback" role="alert">
                                                                             <strong>{{ $message }}</strong>
@@ -77,7 +77,7 @@
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batalkan</button>
-                                                                <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); confirmUpdate('{{ $item['id'] }}')">Simpan</button>
+                                                                <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); validateUpdateForm('{{ $item['id'] }}')">Simpan</button>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -100,7 +100,7 @@
                                     <div class="form-group">
                                         <label for="name">Nama Kategori</label>
                                         <span class="required-field">*</span>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Kategori" value="{{ old('name') }}" required>
+                                        <input type="text" class="form-control" id="create_name" name="name" placeholder="Masukkan Nama Kategori" value="{{ old('name') }}" required>
                                         @error('name')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -110,7 +110,7 @@
                                     <div class="form-group">
                                         <label class="required-field lead">*) Wajib Diisi</label>
                                     </div>
-                                    <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); confirmCreate()">Simpan</button>
+                                    <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); validateCreateForm()">Simpan</button>
                                 </form>
                             </div>
                         </div>
@@ -177,6 +177,44 @@
                     document.getElementById('createForm').submit();
                 }
             });
+        }
+        
+        function validateCreateForm() {
+            var name = document.getElementById('create_name').value;
+
+            if (name === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Nama kategori tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            confirmCreate();
+        }
+
+        function validateUpdateForm(id) {
+            var name = document.getElementById('update_name'+id).value;
+            
+            if (name === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Nama kategori tidak boleh kosong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            confirmUpdate(id);
         }
     </script>
     <style>
