@@ -23,6 +23,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="title" class="font-weight-bold">Judul Agenda</label>
+                                            <span class="required-field">*</span><br>
                                             <input type="text" class="form-control" id="title" name="title" value="{{old('title')}}" placeholder="Masukkan Judul Agenda" required/>
                                             @error('title')
                                                 <span class="invalid-feedback" role="alert">
@@ -32,6 +33,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="date" class="font-weight-bold">Tanggal</label>
+                                            <span class="required-field">*</span><br>
                                             <input type="date" class="form-control" id="date" name="date" value="{{old('date') ?? date('Y-m-d')}}" required/>
                                             @error('date')
                                                 <span class="invalid-feedback" role="alert">
@@ -41,6 +43,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="room_id" class="font-weight-bold">Tempat</label>
+                                            <span class="required-field">*</span><br>
                                             <select class="form-control" id="room_id" name="room_id" required>
                                                 <option disabled value selected>Pilih Tempat</option>
                                                 @foreach ($rooms as $room)
@@ -55,6 +58,7 @@
                                         </div>
                                         <div class="form-group" id="textareaLocation" style="display: none;">
                                             <label for="location" class="font-weight-bold">Detail Tempat</label>
+                                            <span class="required-field">*</span><br>
                                             <textarea class="form-control" id="location" name="location" rows="4" placeholder="Masukkan Detail Tempat" required>{{ old('location') }}</textarea>
                                             @error('location')
                                                 <span class="invalid-feedback" role="alert">
@@ -66,6 +70,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="start_time" class="font-weight-bold">Waktu Mulai</label>
+                                                    <span class="required-field">*</span><br>
                                                     <input type="time" class="form-control" id="start_time" name="start_time" value="{{old('start_time')}}" required/>
                                                     @error('start_time')
                                                         <span class="invalid-feedback" role="alert">
@@ -77,6 +82,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="end_time" class="font-weight-bold">Waktu Selesai</label>
+                                                    <span class="required-field">*</span><br>
                                                     <input type="time" class="form-control" id="end_time" name="end_time" value="{{old('end_time')}}"/>
                                                     @error('end_time')
                                                         <span class="invalid-feedback" role="alert">
@@ -88,6 +94,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="disposition_description" class="font-weight-bold">Peserta</label>
+                                            <span class="required-field">*</span><br>
                                             <textarea class="form-control" id="disposition_description" name="disposition_description" rows="4" required placeholder="Masukkan Peserta Agenda">{{old('disposition_description')}}</textarea>
                                             @error('disposition_description')
                                                 <span class="invalid-feedback" role="alert">
@@ -99,6 +106,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="category_id" class="font-weight-bold">Kategori</label>
+                                            <span class="required-field">*</span><br>
                                             <select class="form-control" id="category_id" name="category_id" required>
                                                 <option disabled value selected>Pilih Kategori</option>
                                                 @foreach ($categories as $category)
@@ -113,6 +121,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="department_id" class="font-weight-bold">Bidang</label>
+                                            <span class="required-field">*</span><br>
                                             <select class="form-control" id="department_id" name="department_id" required>
                                                 <option disabled value selected>Pilih Bidang</option>
                                                 @foreach ($departments as $department)
@@ -127,6 +136,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="person_in_charge" class="font-weight-bold">Penanggung Jawab</label>
+                                            <span class="required-field">*</span><br>
                                             <select class="form-control" id="person_in_charge" name="person_in_charge" required>
                                                 <option value="" selected disabled>Pilih Penanggung Jawab</option>
                                                 @foreach ($employees as $employee)
@@ -141,6 +151,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="contents" class="font-weight-bold">Isi Agenda</label>
+                                            <span class="required-field">*</span><br>
                                             <textarea class="form-control" id="contents" name="contents" rows="4" required placeholder="Masukkan Isi Agenda">{{old('contents')}}</textarea>
                                             @error('contents')
                                                 <span class="invalid-feedback" role="alert">
@@ -149,7 +160,8 @@
                                             @enderror
                                         </div>
                                         <div class="form-group">
-                                            <label for="attachment" class="font-weight-bold">Lampiran</label><br>
+                                            <label for="attachment" class="font-weight-bold">Lampiran</label>
+                                            <span class="required-field">*</span><br>
                                             <input type="file" id="attachment" name="attachment" class="form-control file-upload-default" required accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,.jpg,.jpeg,.png" max="2048">
                                             <div class="input-group col-xs-12">
                                                 <input type="text" id="filename" class="form-control file-upload-info" disabled placeholder="Unggah Lampiran">
@@ -166,9 +178,12 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-primary float-right" onclick="event.preventDefault(); confirmCreate()">Ajukan</button>
+                                <div class="form-group">
+                                    <label class="required-field">*) Wajib Diisi</label>
+                                </div>
+                                <div class="form-group pb-3">
+                                    <button type="submit" class="btn btn-primary float-right" onclick="event.preventDefault(); confirmCreate()">Ajukan</button>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -252,6 +267,10 @@
         $( "#copydate" ).datepicker();
     </script>
     <style>
+        .required-field {
+            color: red;
+            margin-left: 5px;
+        }
         .swal-icon-custom {
             position: relative;
             top: 20px;

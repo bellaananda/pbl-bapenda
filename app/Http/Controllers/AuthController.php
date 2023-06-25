@@ -25,7 +25,7 @@ class AuthController extends Controller
         $token = Session::get('access_token');
 
         if ($token) {
-            return redirect('/')->with('error_message', 'Anda sudah login!');
+            return redirect('/');
         }
         $page = 'login';
         return view('login', compact('page'));
@@ -75,13 +75,13 @@ class AuthController extends Controller
                 $details = $this->getUserDetails();
                 session(['details' => $details]);
     
-                return redirect('/')->with('success_message', 'Login berhasil!');
+                return redirect('/');
             }
         } catch (\Exception $e) {
             // API request failed or response error
-            return back()->with('error_message', 'Login gagal! Silakan cek email atau password.');
+            return back();
         }
-        return back()->with('error_message', 'Login gagal! Silakan cek email atau password.');
+        return back();
     }
 
     /**
@@ -118,7 +118,7 @@ class AuthController extends Controller
         $token = Session::get('access_token');
 
         if (!$token) {
-            return back()->with('error_message', 'Logout gagal! Anda tidak login.');
+            return back();
         }
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
@@ -130,10 +130,10 @@ class AuthController extends Controller
             'verify' => false
         ]);
         if (!$response) {
-            return back()->with('error_message', 'Logout gagal!');
+            return back();
         }
         Session::flush();
-        return redirect('/')->with('success_message', 'Logout berhasil!');
+        return redirect('/');
     }
 
     public function getUserDetails() {
@@ -163,7 +163,7 @@ class AuthController extends Controller
     public function getProfile() {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
 
         $page = 'profil';
@@ -179,14 +179,17 @@ class AuthController extends Controller
             'verify' => false
         ]);
         $data = json_decode($response->getBody(), true)['data'][0];
-        $notify = $this->notification->index();
-        return view($role.'.profile', compact('page', 'notify', 'data'));
+        if ($role == 'user') {
+            $notify = $this->notification->index();
+            return view('user.profile', compact('page', 'notify', 'data'));
+        }
+        return view($role.'.profile', compact('page', 'data'));
     }
 
     public function changePassword(Request $request) {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
 
         $id = Session::get('details')['id'];

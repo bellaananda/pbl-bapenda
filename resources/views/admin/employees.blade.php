@@ -106,7 +106,7 @@
                                                     <form action="/password-reset/{{$item['id']}}" method="POST" id="resetPassword{{ $item['id'] }}" style="display: inline">
                                                         @csrf
                                                         <button type="submit" class="btn btn-sm btn-warning text-white" onclick="event.preventDefault(); confirmReset('{{ $item['id'] }}')">
-                                                            <i class="mdi mdi-sync btn-icon-prepend"></i>
+                                                            <i class="mdi mdi mdi-key-variant btn-icon-prepend"></i>
                                                         </button>
                                                     </form>
                                                 </td>
@@ -206,6 +206,7 @@
                                                                     <div class="col-md-6">
                                                                         <div class="form-group">
                                                                             <label for="nip" class="font-weight-bold">NIP</label>
+                                                                            <span class="required-field">*</span>
                                                                             <input type="text" class="form-control" id="nip" name="nip" placeholder="Masukkan NIP Pegawai" value="{{ old('nip', $item['nip']) }}" required>
                                                                             @error('nip')
                                                                                 <span class="invalid-feedback" role="alert">
@@ -215,6 +216,7 @@
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label for="name" class="font-weight-bold">Nama</label>
+                                                                            <span class="required-field">*</span>
                                                                             <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Pegawai" value="{{ old('name', $item['name']) }}" required>
                                                                             @error('name')
                                                                                 <span class="invalid-feedback" role="alert">
@@ -224,6 +226,7 @@
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label for="email" class="font-weight-bold">Email</label>
+                                                                            <span class="required-field">*</span>
                                                                             <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan Email Pegawai" value="{{ old('email', $item['email']) }}" required>
                                                                             @error('email')
                                                                                 <span class="invalid-feedback" role="alert">
@@ -233,6 +236,7 @@
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label for="phone_number" class="font-weight-bold">No. Telepon</label>
+                                                                            <span class="required-field">*</span>
                                                                             <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Masukkan Nomor Telepon Pegawai" value="{{ old('phone_number', $item['phone_number']) }}" required>
                                                                             @error('phone_number')
                                                                                 <span class="invalid-feedback" role="alert">
@@ -242,6 +246,7 @@
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label for="address" class="font-weight-bold">Alamat</label>
+                                                                            <span class="required-field">*</span>
                                                                             <textarea class="form-control" id="address" name="address" rows="4" placeholder="Masukkan Alamat Pegawai"required>{{ old('address', $item['address']) }}</textarea>
                                                                             @error('address')
                                                                                 <span class="invalid-feedback" role="alert">
@@ -253,6 +258,7 @@
                                                                     <div class="col-md-6">
                                                                         <div class="form-group">
                                                                             <label for="position_id" class="font-weight-bold">Posisi</label>
+                                                                            <span class="required-field">*</span>
                                                                             <select class="form-control" id="position_id" name="position_id" required>
                                                                                 <option disabled value selected>Pilih Posisi Pegawai</option>
                                                                                 @foreach ($positions as $position)
@@ -267,6 +273,7 @@
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label for="department_id" class="font-weight-bold">Bidang Pegawai</label>
+                                                                            <span class="required-field">*</span>
                                                                             <select class="form-control" id="department_id" name="department_id" required>
                                                                                 <option disabled value selected>Pilih Bidang Pegawai</option>
                                                                                 @foreach ($departments as $department)
@@ -281,6 +288,7 @@
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label for="role" class="font-weight-bold">Hak Akses</label>
+                                                                            <span class="required-field">*</span>
                                                                             <select class="form-control" id="role" name="role" required>
                                                                                 <option disabled value selected>Pilih Hak Akses</option>
                                                                                 <option {{ (old("role", $item['role'])=='user')?'selected':'' }} value="user">Pengguna Biasa</option>
@@ -295,11 +303,28 @@
                                                                         </div>
                                                                         <div class="form-group">
                                                                             <label for="status" class="font-weight-bold">Status</label>
-                                                                            <select class="form-control" id="status" name="status" required>
-                                                                                <option disabled value selected>Pilih Status Pegawai</option>
-                                                                                <option {{ (old("status", $item['status'])==1)?'selected':'' }} value="1">Aktif</option>
-                                                                                <option {{ (old("status", $item['status'])==0)?'selected':'' }} value="0">Nonaktif</option>
-                                                                            </select>
+                                                                            <span class="required-field">*</span>
+                                                                            <div class="form-group">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3">
+                                                                                        <div class="form-check">
+                                                                                            <label class="form-check-label" for="active">
+                                                                                                <input class="form-check-input" type="radio" name="status" id="active" value="1" {{ (old("status", $item['status']) == 1) ? 'checked' : '' }}>
+                                                                                                Aktif
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-3">
+                                                                                        <div class="form-check">
+                                                                                            <label class="form-check-label" for="inactive">
+                                                                                                <input class="form-check-input" type="radio" name="status" id="inactive" value="0" {{ (old("status", $item['status']) == 0) ? 'checked' : '' }}>
+                                                                                                Nonaktif
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </div>
+                                                                            </div>
                                                                             @error('position_id')
                                                                                 <span class="invalid-feedback" role="alert">
                                                                                     <strong>{{ $message }}</strong>
@@ -307,6 +332,9 @@
                                                                             @enderror
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <span class="required-field">*) Wajib Diisi</span>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
@@ -350,6 +378,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="nip" class="font-weight-bold">NIP</label>
+                                            <span class="required-field">*</span>
                                             <input type="text" class="form-control" id="nip" name="nip" placeholder="Masukkan NIP Pegawai" value="{{ old('nip') }}" required>
                                             @error('nip')
                                                 <span class="invalid-feedback" role="alert">
@@ -359,6 +388,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="name" class="font-weight-bold">Nama Pegawai</label>
+                                            <span class="required-field">*</span>
                                             <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Pegawai" value="{{ old('name') }}" required>
                                             @error('name')
                                                 <span class="invalid-feedback" role="alert">
@@ -368,6 +398,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="email" class="font-weight-bold">Email</label>
+                                            <span class="required-field">*</span>
                                             <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan Email Pegawai" value="{{ old('email') }}" required>
                                             @error('email')
                                                 <span class="invalid-feedback" role="alert">
@@ -377,6 +408,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="phone_number" class="font-weight-bold">No. Telepon</label>
+                                            <span class="required-field">*</span>
                                             <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="Masukkan Nomor Telepon Pegawai" value="{{ old('phone_number') }}" required>
                                             @error('phone_number')
                                                 <span class="invalid-feedback" role="alert">
@@ -388,6 +420,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="address" class="font-weight-bold">Alamat</label>
+                                            <span class="required-field">*</span>
                                             <textarea class="form-control" id="address" name="address" rows="4" placeholder="Masukkan Alamat Pegawai"required>{{ old('address') }}</textarea>
                                             @error('address')
                                                 <span class="invalid-feedback" role="alert">
@@ -397,6 +430,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="position_id" class="font-weight-bold">Posisi Pegawai</label>
+                                            <span class="required-field">*</span>
                                             <select class="form-control" id="position_id" name="position_id" required>
                                                 <option disabled value selected>Pilih Posisi Pegawai</option>
                                                 @foreach ($positions as $item)
@@ -411,6 +445,7 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="department_id" class="font-weight-bold">Bidang Pegawai</label>
+                                            <span class="required-field">*</span>
                                             <select class="form-control" id="department_id" name="department_id" required>
                                                 <option disabled value selected>Pilih Bidang Pegawai</option>
                                                 @foreach ($departments as $item)
@@ -424,6 +459,9 @@
                                             @enderror
                                         </div>
                                     </div>
+                                </div>
+                                <div class="form-group">
+                                    <span class="required-field">*) Wajib Diisi</span>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -497,6 +535,10 @@
         }
     </script>
     <style>
+        .required-field {
+            color: red;
+            margin-left: 5px;
+        }
         .swal-icon-custom {
             position: relative;
             top: 20px;

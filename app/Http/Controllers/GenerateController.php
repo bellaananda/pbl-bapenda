@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
 use GuzzleHttp\Client;
 
@@ -70,11 +71,11 @@ class GenerateController extends Controller
         $date = $request->input('copydate', today()->format("Y-m-d"));
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role == 'user') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";
@@ -100,13 +101,14 @@ class GenerateController extends Controller
         $array = explode("-", $selected);
         $month = $array[1];
         $year = $array[0];
+        $day = Carbon::today()->day;
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role == 'user') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
         $client = new Client;
         $base_uri = "https://api.klikagenda.com/api";

@@ -64,13 +64,17 @@
                                                             @method('PUT')
                                                             <div class="modal-body">
                                                                 <div class="form-group">
-                                                                    <label for="name" class="font-weight-bold">Nama</label>
+                                                                    <label for="name" class="font-weight-bold">Nama Ruangan</label>
+                                                                    <span class="required-field">*</span>
                                                                     <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Ruangan" value="{{ old('name', $item['name']) }}" required>
                                                                     @error('name')
                                                                         <span class="invalid-feedback" role="alert">
                                                                             <strong>{{ $message }}</strong>
                                                                         </span>
                                                                     @enderror
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="required-field">*) Wajib Diisi</label>
                                                                 </div>
                                                             </div>
                                                             <div class="modal-footer">
@@ -97,6 +101,7 @@
                                     @csrf
                                     <div class="form-group">
                                         <label for="name">Nama Ruangan</label>
+                                        <span class="required-field">*</span>
                                         <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Ruangan" value="{{ old('name') }}" required>
                                         @error('name')
                                             <span class="invalid-feedback" role="alert">
@@ -104,7 +109,10 @@
                                             </span>
                                         @enderror
                                     </div>
-                                    <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); confirmCreate()">Simpan</button>
+                                    <div class="form-group">
+                                        <label class="required-field lead">*) Wajib Diisi</label>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" onclick="event.preventDefault(); validateForm('create')">Simpan</button>
                                 </form>
                             </div>
                         </div>
@@ -172,8 +180,34 @@
                 }
             });
         }
+
+        function validateForm(status) {
+            var name = document.getElementById('name').value;
+
+            if (name === '') {
+                Swal.fire({
+                    title: 'Validasi Gagal',
+                    text: 'Konfirmasi password tidak sesuai.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    customClass: {
+                        icon: 'swal-icon-custom' // Add your custom CSS class here
+                    }
+                });
+                return false;
+            }
+
+            if (status === 'create') {
+                confirmCreate();
+            }
+            //confirmUpdate();
+        }
     </script>
     <style>
+        .required-field {
+            color: red;
+            margin-left: 5px;
+        }
         .swal-icon-custom {
             position: relative;
             top: 20px;
