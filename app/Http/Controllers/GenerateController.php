@@ -124,50 +124,14 @@ class GenerateController extends Controller
             'verify' => false
         ]);
         $fileContent = $response->getBody()->getContents();
-        $filename = 'Agenda-Bapenda.xlsx';
+        $currentDay = date('d');
+        $currentMonth = $this->getMonthName(date('m'));
+        $currentYear = date('Y');
+        $filename = 'Agenda Bapenda ' . $currentDay . ' ' . $currentMonth . ' ' . $currentYear . '.xlsx';
         if ($month != null && $year != null) {
             //file name by selected month - year
-            switch ($month) {
-                case 1:
-                    $bulan = 'Januari';
-                    break;
-                case 2:
-                    $bulan = 'Februari';
-                    break;
-                case 3:
-                    $bulan = 'Maret';
-                    break;
-                case 4:
-                    $bulan = 'April';
-                    break;
-                case 5:
-                    $bulan = 'Mei';
-                    break;
-                case 6:
-                    $bulan = 'Juni';
-                    break;
-                case 7:
-                    $bulan = 'Juli';
-                    break;
-                case 8:
-                    $bulan = 'Agustus';
-                    break;
-                case 9:
-                    $bulan = 'September';
-                    break;
-                case 10:
-                    $bulan = 'Oktober';
-                    break;
-                case 11:
-                    $bulan = 'November';
-                    break;
-                case 12:
-                    $bulan = 'Desember';
-                    break;
-                default:
-                    $bulan = 'Januari';
-            }
-            $filename = 'Agenda-Bapenda' . '-' . $bulan . '-' . $year . '.xlsx';
+            $bulan = $this->getMonthName($month);
+            $filename = 'Agenda Bapenda Bulan ' . $bulan . ' ' . $year . ' (' . $currentDay . ' ' . $currentMonth . ' ' . $currentYear . ').xlsx';
         }
 
         // Set the appropriate content type and disposition headers
@@ -181,5 +145,49 @@ class GenerateController extends Controller
 
         // Return the response to trigger the file download
         return $response;
+    }
+
+    function getMonthName($month) {
+        switch ($month) {
+            case 1:
+                $bulan = 'Januari';
+                break;
+            case 2:
+                $bulan = 'Februari';
+                break;
+            case 3:
+                $bulan = 'Maret';
+                break;
+            case 4:
+                $bulan = 'April';
+                break;
+            case 5:
+                $bulan = 'Mei';
+                break;
+            case 6:
+                $bulan = 'Juni';
+                break;
+            case 7:
+                $bulan = 'Juli';
+                break;
+            case 8:
+                $bulan = 'Agustus';
+                break;
+            case 9:
+                $bulan = 'September';
+                break;
+            case 10:
+                $bulan = 'Oktober';
+                break;
+            case 11:
+                $bulan = 'November';
+                break;
+            case 12:
+                $bulan = 'Desember';
+                break;
+            default:
+                $bulan = 'Januari';
+        }
+        return $bulan;
     }
 }

@@ -15,6 +15,30 @@
                 </div>
             </div>
             <div class="row">
+                <div class="col-md-6 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <p class="card-title">Total Agenda Bulan Ini</p>
+                            </div>
+                            <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                            <canvas id="agendas-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 grid-margin stretch-card">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <p class="card-title">Total Penggunaan Ruang Rapat</p>
+                            </div>
+                            <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                            <canvas id="rooms-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-12 grid-margin stretch-card">
                     <div class="card position-relative">
                         <div class="card-body">
@@ -423,6 +447,82 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ asset('asset/vendors/chart.js/Chart.min.js') }}"></script>
+    <script src="{{ asset('asset/js/chart.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the chart data
+            var dataAgenda = @json($agendasGraph);
+            var labelAgendas = dataAgenda.labels;
+            var valueAgendas = dataAgenda.datasets[0].data;
+            
+            var dataRoom = @json($roomGraph);
+            var labelRooms = dataRoom.labels;
+            var valueRooms = dataRoom.datasets[0].data;
+
+            // Create the agenda chart
+            var ctxAgenda = document.getElementById('agendas-chart').getContext('2d');
+            var myChart = new Chart(ctxAgenda, {
+                type: 'bar',
+                data: {
+                    labels: labelAgendas,
+                    datasets: [{
+                        label: 'Jumlah Agenda',
+                        data: valueAgendas,
+                        backgroundColor: 'rgba(75, 73, 172, 1)',
+                        borderColor: 'rgba(75, 73, 172, 1)',
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxTicksLimit: null,
+                                maxRotation: 0,
+                                minRotation: 0
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Create the room chart
+            var ctxRoom = document.getElementById('rooms-chart').getContext('2d');
+            var myChart = new Chart(ctxRoom, {
+                type: 'bar',
+                data: {
+                    labels: labelRooms,
+                    datasets: [{
+                        label: 'Penggunaan Ruangan',
+                        data: valueRooms,
+                        backgroundColor: 'rgba(75, 73, 172, 1)',
+                        borderColor: 'rgba(75, 73, 172, 1)',
+                        borderWidth: 0,
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            ticks: {
+                                maxTicksLimit: null,
+                                maxRotation: 0,
+                                minRotation: 0
+                            }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 
     <style>
         .max-width-column {

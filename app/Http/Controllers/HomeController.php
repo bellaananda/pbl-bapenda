@@ -13,57 +13,37 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    protected $notification;
+    protected $notificationController;
+    protected $reportController;
 
-    public function __construct(NotificationController $notification)
+    public function __construct(NotificationController $notificationController, ReportController $reportController)
     {
-        $this->notification = $notification;
+        $this->notificationController = $notificationController;
+        $this->reportController = $reportController;
     }
 
     public function index()
     {   
         //landing page, dashboard
         $token = Session::get('access_token');
-        $client = new Client;
-        $base_uri = "https://api.klikagenda.com/api";
-        $response = $client->request('GET', "{$base_uri}/agendas-today", ['verify' => false]);
-        $body = $response->getBody();
-        $result = json_decode($body, true);
-        $data =  $result['data'];
         $fileUrl = "https://api.klikagenda.com/public/uploads/agendas_attachments/";
+        $base_uri = "https://api.klikagenda.com/api";
+        $data =  $this->getTodayAgendas($base_uri);
         if ($token == null) {
             $page = 'landing';
             return view('landingpage', compact('data', 'fileUrl', 'page'));
         }
-        $client_yesterday = new Client;
-        $response_yesterday = $client_yesterday->request('GET', "{$base_uri}/agendas-yesterday", [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ],
-            'verify' => false
-        ]);
-        $body_yesterday = $response_yesterday->getBody();
-        $result_yesterday = json_decode($body_yesterday, true);
-        $data_yesterday =  $result_yesterday['data'];
-        $client_tomorrow = new Client;
-        $response_tomorrow = $client->request('GET', "{$base_uri}/agendas-tomorrow", [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $token,
-            ],
-            'verify' => false
-        ]);
-        $body_tomorrow = $response_tomorrow->getBody();
-        $result_tomorrow = json_decode($body_tomorrow, true);
-        $data_tomorrow =  $result_tomorrow['data'];
+        $data_yesterday = $this->getYesterdayAgendas($token, $base_uri);
+        $data_tomorrow =  $this->getTomorrowAgendas($token, $base_uri);
         $role = Session::get('details')['role'];
         $page = 'dashboard';
         if ($role == 'user') {
-            $notify = $this->notification->index();
-            return view($role.'.dashboard', compact('data', 'fileUrl', 'data_yesterday', 'data_tomorrow', 'page', 'notify'));
+            $notify = $this->notificationController->index();
+            return view($role.'.dashboard', compact('fileUrl', 'data', 'data_yesterday', 'data_tomorrow', 'page', 'notify'));
         }
-        return view($role.'.dashboard', compact('data', 'fileUrl', 'data_yesterday', 'data_tomorrow', 'page'));
+        $agendasGraph = $this->getAgendasGraph($token);
+        $roomGraph = $this->getRoomGraph($token, 3);
+        return view($role.'.dashboard', compact('fileUrl', 'data', 'data_yesterday', 'data_tomorrow', 'page', 'agendasGraph', 'roomGraph'));
     }
 
     /**
@@ -112,5 +92,80 @@ class HomeController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getTodayAgendas($base_uri) {
+        $client = new Client;
+        $response = $client->request('GET', "{$base_uri}/agendas-today", ['verify' => false]);
+        $body = $response->getBody();
+        $result = json_decode($body, true);
+        $data =  $result['data'];
+        return $data;
+    }
+
+    public function getYesterdayAgendas($token, $base_uri) {
+        $client = new Client;
+        $response = $client->request('GET', "{$base_uri}/agendas-yesterday", [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token,
+            ],
+            'verify' => false
+        ]);
+        $body = $response->getBody();
+        $result = json_decode($body, true);
+        $data =  $result['data'];
+        return $data;
+    }
+
+    public function getTomorrowAgendas($token, $base_uri) {
+        $client = new Client;
+        $response = $client->request('GET', "{$base_uri}/agendas-tomorrow", [
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => 'Bearer ' . $token,
+            ],
+            'verify' => false
+        ]);
+        $body = $response->getBody();
+        $result = json_decode($body, true);
+        $data =  $result['data'];
+        return $data;
+    }
+
+    function getAgendasGraph($token) {
+        $year = date('Y');
+        $month = date('m');
+        $dataAgenda = $this->reportController->showMonthlyAgenda($token, $year, $month);
+        $labelAgendas = array_column($dataAgenda, 'day');
+        $valueAgendas = array_column($dataAgenda, 'agenda_count');
+        $agendas = [
+            'labels' => $labelAgendas,
+            'datasets' => [
+                [
+                    'label' => 'Grafik Agenda',
+                    'data' => $valueAgendas
+                ],
+            ],
+        ];
+        return $agendas;
+    }
+
+    function getRoomGraph($token, $room) {
+        $year = date('Y');
+        $month = date('m');
+        $dataRoom = $this->reportController->showMonthlyRoom($token, $year, $month, $room);
+        $labelRooms = array_column($dataRoom, 'day');
+        $valueRooms = array_column($dataRoom, 'agenda_count');
+        $rooms = [
+            'labels' => $labelRooms,
+            'datasets' => [
+                [
+                    'label' => 'Grafik Ruangan',
+                    'data' => $valueRooms,
+                ],
+            ],
+        ];
+        return $rooms;
     }
 }
