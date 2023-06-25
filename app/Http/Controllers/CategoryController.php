@@ -18,11 +18,11 @@ class CategoryController extends Controller
 
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'admin') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $client = new Client;
@@ -61,11 +61,11 @@ class CategoryController extends Controller
         //create category (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'admin') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $request->validate([
@@ -135,11 +135,11 @@ class CategoryController extends Controller
         //update category (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'admin') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $request->validate([
@@ -194,11 +194,11 @@ class CategoryController extends Controller
         //delete category (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'admin') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $client = new Client;

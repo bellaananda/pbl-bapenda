@@ -66,7 +66,7 @@
                                                                 <div class="form-group">
                                                                     <label for="name" class="font-weight-bold">Nama Ruangan</label>
                                                                     <span class="required-field">*</span>
-                                                                    <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Ruangan" value="{{ old('name', $item['name']) }}" required>
+                                                                    <input type="text" class="form-control" id="update_name" name="name" placeholder="Masukkan Nama Ruangan" value="{{ old('name', $item['name']) }}" required>
                                                                     @error('name')
                                                                         <span class="invalid-feedback" role="alert">
                                                                             <strong>{{ $message }}</strong>
@@ -102,7 +102,7 @@
                                     <div class="form-group">
                                         <label for="name">Nama Ruangan</label>
                                         <span class="required-field">*</span>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="Masukkan Nama Ruangan" value="{{ old('name') }}" required>
+                                        <input type="text" class="form-control" id="create_name" name="name" placeholder="Masukkan Nama Ruangan" value="{{ old('name') }}" required>
                                         @error('name')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -181,8 +181,11 @@
             });
         }
 
+        //pisah validasi create, update
         function validateForm(status) {
-            var name = document.getElementById('name').value;
+            console.log(status);
+            var name = document.getElementById('update_name').value;
+            console.log(name);
 
             if (name === '') {
                 Swal.fire({

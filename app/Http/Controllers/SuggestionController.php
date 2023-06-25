@@ -31,11 +31,11 @@ class SuggestionController extends Controller
 
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role == 'admin') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $client = new Client;
@@ -152,11 +152,11 @@ class SuggestionController extends Controller
         //show create suggestion (user)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'user') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
         $page = 'add_pengajuan';
         $client = new Client;
@@ -234,11 +234,11 @@ class SuggestionController extends Controller
         //create suggestion (user)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'user') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $request->validate([
@@ -355,11 +355,11 @@ class SuggestionController extends Controller
         //update suggestion (user)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'user') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $request->validate([
@@ -463,11 +463,11 @@ class SuggestionController extends Controller
     public function approveAgenda($id) {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'operator') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $client = new Client;
@@ -492,11 +492,11 @@ class SuggestionController extends Controller
     public function denyAgenda(Request $request, $id) {
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'operator') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $client = new Client;

@@ -18,11 +18,11 @@ class DepartmentController extends Controller
 
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'admin') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $client = new Client;
@@ -61,11 +61,11 @@ class DepartmentController extends Controller
         //create department (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'admin') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $request->validate([
@@ -135,11 +135,11 @@ class DepartmentController extends Controller
         //update department (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'admin') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $request->validate([
@@ -194,11 +194,11 @@ class DepartmentController extends Controller
         //delete department (admin)
         $token = Session::get('access_token');
         if ($token == null) {
-            return redirect('/')->with('error_message', 'Anda tidak login!');
+            return redirect('/');
         }
         $role = Session::get('details')['role'];
         if ($role != 'admin') {
-            return redirect('/')->with('error_message', 'Anda tidak memiliki akses ke halaman ini!');
+            return redirect('/');
         }
 
         $client = new Client;

@@ -301,7 +301,7 @@
                                             @enderror
                                         </div>
                                         <div class="form-group" id="textareaLocation" style="display: none;">
-                                            <label for="location" class="font-weight-bold">Detail Tempat</label>
+                                            <label for="location" id="location_label" class="font-weight-bold"></label>
                                             <span class="required-field">*</span>
                                             <textarea class="form-control" id="location" name="location" rows="4" placeholder="Masukkan Detail Tempat" required>{{ old('location') }}</textarea>
                                             @error('location')
@@ -486,6 +486,13 @@
             var selectedOption = this.value;
             var textareaContainer = document.getElementById('textareaLocation');
             var endDateInput = document.getElementById('end_date');
+            
+            if (selectedOption === '1') {
+                console.log(selectedOption);
+                document.getElementById('location_label').innerHTML = 'Detail Link';
+            } else {
+                document.getElementById('location_label').innerHTML = 'Detail Tempat';
+            }
 
             // Show/hide the textarea based on the selected option
             if (selectedOption === '1' || selectedOption === '2') {
